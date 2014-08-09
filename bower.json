@@ -1,0 +1,22 @@
+{
+  "name": "LightSDKWeb",
+  "version": "0.0.0",
+  "homepage": "https://github.com/LightCircle/LightSDKWeb",
+  "authors": [
+    "LI LIN <r2space@gmail.com>"
+  ],
+  "description": "Light SDK for web",
+  "main": "light.js",
+  "keywords": [
+    "light",
+    "LightSDK"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

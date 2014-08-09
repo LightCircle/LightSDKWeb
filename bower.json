@@ -1,11 +1,11 @@
 {
-  "name": "LightSDKWeb",
-  "version": "0.0.0",
+  "name": "light",
+  "version": "0.0.1",
   "homepage": "https://github.com/LightCircle/LightSDKWeb",
   "authors": [
     "LI LIN <r2space@gmail.com>"
   ],
-  "description": "Light SDK for web",
+  "description": "LightSDK for web",
   "main": "light.js",
   "keywords": [
     "light",

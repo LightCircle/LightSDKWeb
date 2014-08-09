@@ -8,6 +8,12 @@ light.selectbox = light.selectbox || {};
 light.selectbox.selected = {};
 
 /**
+ * 显示对象的附加条件
+ * @type {{}}
+ */
+light.selectbox.condition = {};
+
+/**
  * 选择用户的回调函数
  */
 light.selectbox.callback = undefined;
@@ -16,10 +22,12 @@ light.selectbox.callback = undefined;
  * 常量
  * @type {string}
  */
-light.selectbox.user = "user";
-light.selectbox.group = "group";
-light.selectbox.category = "category";
-light.selectbox.role = "role";
+light.selectbox.user      = "user";
+light.selectbox.group     = "group";
+light.selectbox.category  = "category";
+light.selectbox.role      = "role";
+light.selectbox.tag       = "tag";
+light.selectbox.file      = "file";
 
 /**
  * 依赖的API
@@ -27,6 +35,7 @@ light.selectbox.role = "role";
  *  /group/list
  *  /category/list
  *  /role/list
+ *  /tag/list
  */
 $(function () {
 
@@ -37,17 +46,27 @@ $(function () {
   light.selectbox.show = function(type) {
 
     light.selectbox.selected = {};
-    if (type === light.selectbox.user) {
-      getUserList();
-    }
-    if (type === light.selectbox.group) {
-      getGroupList();
-    }
-    if (type === light.selectbox.category) {
-      getCategoryList();
-    }
-    if (type === light.selectbox.role) {
-      getRoleList();
+    switch (type) {
+      case light.selectbox.user:
+        getUserList();
+        break;
+      case light.selectbox.user:
+        break;
+      case light.selectbox.group:
+        getGroupList();
+        break;
+      case light.selectbox.category:
+        getCategoryList();
+        break;
+      case light.selectbox.role:
+        getRoleList();
+        break;
+      case light.selectbox.tag:
+        getTagList();
+        break;
+      case light.selectbox.file:
+        getFileList();
+        break;
     }
 
     $("#dlgSelectBox").modal("show");
@@ -62,7 +81,7 @@ $(function () {
    */
   var getUserList = function() {
 
-    light.doget("/user/list", function(err, result) {
+    light.doget("/user/list", light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -85,15 +104,89 @@ $(function () {
   };
 
   /**
+   * 获取标签一览
+   */
+  var getTagList = function() {
+    light.doget("/tag/list", light.selectbox.condition, function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {
+          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+            index: index + 1,
+            id: item._id,
+            icon: "tag",
+            name: item.name,
+            option1: "",
+            option2: ""
+          }));
+        });
+      }
+    });
+  };
+
+  /**
    * 获取组一览
    */
   var getGroupList = function() {
+    light.doget("/group/list", light.selectbox.condition, function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {
+
+          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+            index: index + 1,
+            id: item._id,
+            icon: "group",
+            name: item.name,
+            option1: "",
+            option2: ""
+          }));
+        });
+      }
+    });
   };
 
   /**
    * 获取分类一览
    */
   var getCategoryList = function() {
+  };
+
+  /**
+   * 获取文件一览
+   */
+  var getFileList = function() {
+    light.doget("/file/list", light.selectbox.condition, function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {
+          console.log(item);
+          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+            index: index + 1,
+            id: item._id,
+            icon: "file",
+            name: item.name,
+            option1: Math.ceil(item.length / 1024) + " KB",
+            option2: ""
+          }));
+        });
+      }
+    });
   };
 
   /**

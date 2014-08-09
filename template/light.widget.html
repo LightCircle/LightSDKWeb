@@ -1,0 +1,138 @@
+<!-- 上传文件时的文件选择用 -->
+<input type="file" id="_uploadfile" style="display: none" multiple="multiple" accept="*" />
+
+<!-- 控件模板 -->
+<script type="text/template" id="tmplLabel">
+  <div class="form-group" name="{{key}}">
+    <label class="col-md-3 control-label">{{title}}</label>
+    <div class="col-md-7" style="padding-top: 7px;">
+      <span>{{label}}</span>
+    </div>
+    <$ if(canEdit) { $>
+    <div style="line-height: 34px;">
+      <a href="#"><i class="fa fa-cog" name="modify" key="{{key}}"></i></a>
+    </div>
+    <$ } $>
+  </div>
+</script>
+
+<script type="text/template" id="tmplSelect">
+  <div class="form-group" name="{{key}}">
+    <label class="col-md-3 control-label">{{title}}</label>
+    <div class="col-md-7">
+      <div class="btn-group" value="0" id="_{{key}}">
+        <$ _.each(selectOption, function(option, i) { $>
+        <button type="button" class="btn btn-sm btn-default btn-flat" value="{{i}}">{{option}}</button>
+        <$ }) $>
+      </div>
+    </div>
+    <$ if(canEdit) { $>
+    <div style="line-height: 34px;">
+      <a href="#"><i class="fa fa-cog" name="modify" key="{{key}}"></i></a>
+    </div>
+    <$ } $>
+  </div>
+</script>
+
+<script type="text/template" id="tmplText">
+  <div class="form-group" name="{{key}}">
+    <label class="col-md-3 control-label">{{title}}</label>
+    <div class="col-md-7">
+      <$ if(textType === '4') { $>
+      <textarea class="form-control" placeholder="{{textPlaceholder}}" id="_{{key}}"></textarea>
+      <$ } else { $>
+      <input type="text" class="form-control" placeholder="{{textPlaceholder}}" id="_{{key}}">
+      <$ } $>
+    </div>
+    <$ if(canEdit) { $>
+    <div style="line-height: 34px; color: black;">
+      <a href="#"><i class="fa fa-cog" name="modify" key="{{key}}"></i></a>
+    </div>
+    <$ } $>
+  </div>
+</script>
+
+<script type="text/template" id="tmplFile">
+  <div class="form-group">
+    <label class="col-md-3 control-label">{{title}}</label>
+    <div class="col-md-5" style="line-height: 34px;">
+      <span id="_{{key}}_filename"></span>
+    </div>
+    <div class="col-md-2" id="_{{key}}_file">
+      <input type="hidden" id="_{{key}}">
+      <button class="btn btn-default btn-flat pull-right">选择</button>
+    </div>
+    <$ if(canEdit) { $>
+    <div style="line-height: 34px;">
+      <a href="#"><i class="fa fa-cog" name="modify" key="{{key}}"></i></a>
+    </div>
+    <$ } $>
+  </div>
+</script>
+
+<script type="text/template" id="tmplGrid">
+  <div class="form-group" name="{{key}}">
+    <label class="col-md-3 control-label">{{title}}</label>
+    <div class="col-md-7">
+      <table class="table table-bordered">
+        <!-- 表格标题 -->
+        <tr>
+          <$ _.each(gridTitle, function(col) { $>
+          <th style="padding: 2px; background-color: #d3d3d3;">{{col}}</th>
+          <$ }) $>
+        </tr>
+        <!-- 表格内容 -->
+        <$ for(var i=0; i < gridRow; i++) { $>
+        <tr>
+          <$ _.each(gridTitle, function(col, j) { $>
+          <td style="padding: 2px;">
+            <input type="text" style="width: 100%; border: 0px;" id="_{{key}}_{{i}}_{{j}}" />
+          </td>
+          <$ }) $>
+        </tr>
+        <$ } $>
+        </tbody>
+      </table>
+    </div>
+    <$ if(canEdit) { $>
+    <div style="line-height: 34px;">
+      <a href="#"><i class="fa fa-cog" name="modify" key="{{key}}"></i></a>
+    </div>
+    <$ } $>
+  </div>
+</script>
+
+<script type="text/template" id="tmplSplit">
+  <div class="form-group" name="{{key}}">
+    <$ if(canEdit) { $>
+    <div class="col-md-10">
+      <hr style="width: 80%; margin-right: 0px;" name="{{key}}" />
+    </div>
+    <$ } else { $>
+    <div class="col-md-12">
+      <hr style="width: 80%;" name="{{key}}" />
+    </div>
+    <$ } $>
+    <$ if(canEdit) { $>
+    <div style="line-height: 34px;">
+      <a href="#"><i class="fa fa-cog" name="modify" key="{{key}}"></i></a>
+    </div>
+    <$ } $>
+  </div>
+</script>
+
+<!-- 文件上传进度条 -->
+<div class="modal fade" id="_upload_progress_dlg" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress" style="margin-top: 20px;">
+          <div class="progress-bar" role="progressbar" style="width: 60%;" id="_upload_progress_bar">
+            <span class="sr-only">60% Complete</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+

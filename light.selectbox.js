@@ -1,6 +1,4 @@
 
-var light = smart; // TODO: 临时对应，将来smart名称全部改成light
-
 light.selectbox = light.selectbox || {};
 
 /**

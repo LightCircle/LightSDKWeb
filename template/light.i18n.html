@@ -1,0 +1,6 @@
+
+<script type="text/javascript">
+  light.i18n = light.i18n || {};
+  <% for(var key in catalog) { %> light.i18n["<%=key%>"] = "<%= catalog[key] || key %>"; <% } %>
+</script>
+

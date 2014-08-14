@@ -56,12 +56,20 @@
     <td>{{name}}</td>
     <td>{{option1}}</td>
     <td>{{option2}}</td>
-    <td style="width: 10px;"></td>
+    <$ if (checked) { $>
+    <td style="width: 30px;" checked="checked"><i class="fa fa-check-square-o"></i></td>
+    <$ } else { $>
+    <td style="width: 30px;"><i class="fa fa-square-o"></i></td>
+    <$ } $>
   </tr>
 </script>
 
 <script type="text/template" id="tmplCheck">
-  <i class="fa fa-check"></i>
+  <i class="fa fa-check-square-o"></i>
+</script>
+
+<script type="text/template" id="tmplUnCheck">
+  <i class="fa fa-square-o"></i>
 </script>
 
 <script type="text/template" id="tmplAlphabet">

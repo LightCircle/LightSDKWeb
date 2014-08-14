@@ -43,29 +43,31 @@ $(function () {
    * 显示选择对话框
    * @param type
    */
-  light.selectbox.show = function(type) {
+  light.selectbox.show = function(type, selected) {
+
+    var defaults = selected && selected.length > 0 ? selected.split(",") : undefined;
 
     light.selectbox.selected = {};
     switch (type) {
       case light.selectbox.user:
-        getUserList();
+        getUserList(defaults);
         break;
       case light.selectbox.user:
         break;
       case light.selectbox.group:
-        getGroupList();
+        getGroupList(defaults);
         break;
       case light.selectbox.category:
-        getCategoryList();
+        getCategoryList(defaults);
         break;
       case light.selectbox.role:
-        getRoleList();
+        getRoleList(defaults);
         break;
       case light.selectbox.tag:
-        getTagList();
+        getTagList(defaults);
         break;
       case light.selectbox.file:
-        getFileList();
+        getFileList(defaults);
         break;
     }
 
@@ -96,7 +98,8 @@ $(function () {
             icon: "user",
             name: item.id,
             option1: item.name,
-            option2: ""
+            option2: "",
+            checked: undefined
           }));
         });
       }
@@ -122,7 +125,8 @@ $(function () {
             icon: "tag",
             name: item.name,
             option1: "",
-            option2: ""
+            option2: "",
+            checked: undefined
           }));
         });
       }
@@ -149,7 +153,8 @@ $(function () {
             icon: "group",
             name: item.name,
             option1: "",
-            option2: ""
+            option2: "",
+            checked: undefined
           }));
         });
       }
@@ -182,7 +187,8 @@ $(function () {
             icon: "file",
             name: item.name,
             option1: Math.ceil(item.length / 1024) + " KB",
-            option2: ""
+            option2: "",
+            checked: undefined
           }));
         });
       }
@@ -192,7 +198,7 @@ $(function () {
   /**
    * 获取角色一览
    */
-  var getRoleList = function() {
+  var getRoleList = function(selected) {
     light.doget("/role/list", function(err, result) {
       if (err) {
         light.error(err, result.message, false);
@@ -202,14 +208,24 @@ $(function () {
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
+
+          var checked = _.indexOf(selected, item.name) >= 0;
           dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
             index: index + 1,
             id: item._id,
             icon: "lock",
             name: item.name,
             option1: item.description,
-            option2: ""
+            option2: "",
+            checked: checked
           }));
+
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: item.description
+            };
+          }
         });
       }
     });
@@ -222,23 +238,7 @@ $(function () {
 
     // 选择行
     $("#dlgSelectBoxBody").on("click", "tr", function(event) {
-      var target = $(event.currentTarget)
-        , key = target.attr("key")
-        , check = target.children(":last")
-        , tmplCheck = $("#tmplCheck").html();
-
-      if (check.prop("checked")) {
-        check.removeProp("checked");
-        check.html("");
-        delete light.selectbox.selected[key];
-      } else {
-        check.prop("checked", "checked");
-        check.html(tmplCheck);
-        light.selectbox.selected[key] = {
-          name: target.attr("value"),
-          option: target.attr("option1")
-        };
-      }
+      selectRow($(event.currentTarget));
     });
 
     // 点击确定按钮
@@ -256,6 +256,30 @@ $(function () {
 
       // TODO: 加选择字符及清楚选择的功能
     });
+  };
+
+  /**
+   * 选择行
+   * @param target
+   */
+  var selectRow = function(target) {
+    var key = target.attr("key")
+      , check = target.children(":last")
+      , tmplCheck = $("#tmplCheck").html()
+      , tmplUnCheck = $("#tmplUnCheck").html();
+
+    if (check.attr("checked")) {
+      check.removeAttr("checked");
+      check.html(tmplUnCheck);
+      delete light.selectbox.selected[key];
+    } else {
+      check.attr("checked", "checked");
+      check.html(tmplCheck);
+      light.selectbox.selected[key] = {
+        name: target.attr("value"),
+        option: target.attr("option1")
+      };
+    }
   };
 
   /**

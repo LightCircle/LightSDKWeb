@@ -10,7 +10,7 @@
           <div class="col-md-12">
 
             <!-- search box & paging -->
-            <div class="row pad">
+            <div class="row" style="padding: 10px;">
               <div class="col-md-4 pull-right">
                 <div class="input-group">
                   <input type="text" class="form-control input-sm" placeholder="Search">
@@ -51,8 +51,8 @@
 </div>
 
 <script type="text/template" id="tmplDlgSelectBoxBody">
-  <tr key="{{id}}" value="{{name}}">
-    <td style="width: 10px;"><i class="fa fa-user"></i></td>
+  <tr key="{{id}}" value="{{name}}" option1="{{option1}}" option2="{{option2}}">
+    <td style="width: 10px;"><i class="fa fa-{{icon}}"></i></td>
     <td>{{name}}</td>
     <td>{{option1}}</td>
     <td>{{option2}}</td>

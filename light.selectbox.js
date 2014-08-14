@@ -265,6 +265,10 @@ $(function () {
     var btnAlphabet = $("#btnAlphabet")
       , tmplAlphabet = $("#tmplAlphabet").html();
 
+    if (!tmplAlphabet) {
+      return;
+    }
+
     for (var cc = 65; cc < 90; cc++) {
       btnAlphabet.append(_.template(tmplAlphabet, {code: String.fromCharCode(cc)}));
     }

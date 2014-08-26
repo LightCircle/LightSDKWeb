@@ -1,0 +1,40 @@
+.file-container ol {
+  display: inline;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.file-container li {
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 6px 3px 0px 0px;
+  white-space: nowrap;
+  border-radius: 3px;
+  border: 1px solid #CCC;
+  padding: 0;
+}
+
+.file-container li span {
+  display: inline-block;
+  border-right: 1px solid #ccc;
+  color: #39c;
+  padding: 6px 4px 6px 6px;
+  line-height: 10px;
+  vertical-align: middle;
+  margin: 0;
+  font-size: 12px;
+}
+
+.file-container li a {
+  line-height: 1px;
+  margin: 0 6px 0 6px;
+  color: #0088cc;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.file-container i {
+  cursor: pointer;
+}

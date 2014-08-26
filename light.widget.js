@@ -9,7 +9,7 @@ light.widget.SELECT = "Select";
 light.widget.TEXT   = "Text";
 light.widget.FILE   = "File";
 light.widget.GRID   = "Grid";
-light.widget.SPLIT  = "Split";
+light.widget.Label  = "Label";
 
 /**
  * 加载模板，在画面显示模板控件
@@ -17,7 +17,7 @@ light.widget.SPLIT  = "Split";
  * @param container
  * @param canEdit
  */
-function loadTemplate(templates, container, canEdit) {
+light.widget.loadTemplate = function(templates, container, canEdit) {
 
   container.html("");
 
@@ -27,18 +27,46 @@ function loadTemplate(templates, container, canEdit) {
     item.canEdit = canEdit;
     container.append(_.template($("#tmpl" + item.type).html(), item));
 
-    // 选择框
+    if (item.type === light.widget.TEXT) {
+      if (item.textType === "2") {// 日期
+        $("#_" + item.key).datepicker({}, $.datepicker.regional[ "zh-CN" ]);
+      }
+    }
+
     if (item.type === light.widget.SELECT) {
       new ButtonGroup("_" + item.key, item.default).init();
     }
 
-    // 文件
     if (item.type === light.widget.FILE) {
-      $("#_" + item.key + "_file").on("click", "button", function() {
-        $("#_uploadfile").attr("src", item.key);
-        $("#_uploadfile").trigger("click");
-        return false;
-      });
+      console.log(item);
+
+      // 图片
+      if (item.fileType === "1") {
+        light.initFileUploadWithImage(
+            "_" + item.key + "_filename"
+          , "_" + item.key + "_file"
+          , {
+            accept: light.file.TYPE_IMAGE,
+            multiple: true,
+            success: function(data) {
+              return false;
+            }
+          });
+      }
+
+      // 普通文件
+      if (item.fileType === "2") {
+        light.initFileUploadWithContainer(
+            "_" + item.key + "_filename"
+          , "_" + item.key + "_file"
+          , {
+            accept: light.file.TYPE_IMAGE,
+            multiple: true,
+            success: function(data) {
+              return false;
+            }
+          });
+      }
     }
   });
 
@@ -65,7 +93,7 @@ function loadTemplate(templates, container, canEdit) {
  * @param templates
  * @returns {Array}
  */
-function saveTemplateData(templates) {
+light.widget.saveTemplateData = function(templates) {
 
   var result = [];
 
@@ -84,10 +112,24 @@ function saveTemplateData(templates) {
 
     // select
     if (template.type === light.widget.SELECT) {
-      item.value = $("#_" + template.key).attr("value");
 
+      if (template.selectType === "1") {
+        item.value = $("#_" + template.key).attr("value");
+        item.name = template.selectOption[parseInt(item.value)];
+      }
+      if (template.selectType === "2") {
+        item.value = $("input[name*='_" + template.key + "']:checked").val();
+        item.name = template.selectOption[parseInt(item.value)];
+      }
+      if (template.selectType === "3") {
+        item.value = [];
+        item.name = [];
+        $("input[name*='_" + template.key + "']:checked").each(function(){
+          item.value.push($(this).val());
+          item.name.push(template.selectOption[parseInt($(this).val())]);
+        });
+      }
 
-      item.name = template.selectOption[parseInt(item.value)];
       result.push(item);
     }
 

@@ -9,7 +9,7 @@
 .file-container li {
   display: inline-block;
   vertical-align: baseline;
-  margin: 6px 3px 0px 0px;
+  margin: 0px 3px 0px 0px;
   white-space: nowrap;
   border-radius: 3px;
   border: 1px solid #CCC;

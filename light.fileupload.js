@@ -163,10 +163,14 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
       var name = file.name || file.fileName
         , id = file._id || file.fileId;
 
+      var div = $("<div class='thumbnail'></div>");
+      div.css("width", (options.width || "200") + "px");
+
       // 名称标签
-      var img = $("<img src='' alt='...' class='img-thumbnail'>");
+      var img = $("<img src=''>");
       img.attr("src", "/file/download/" + id);
-      container.append(img);
+      div.append(img)
+      container.append(div);
     });
   }
 

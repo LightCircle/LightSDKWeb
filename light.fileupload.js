@@ -165,6 +165,8 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
 
       var div = $("<div class='thumbnail'></div>");
       div.css("width", (options.width || "200") + "px");
+      div.attr("fid", id);
+      div.attr("fname", name);
 
       // 名称标签
       var img = $("<img src=''>");

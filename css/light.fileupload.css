@@ -38,3 +38,7 @@
 .file-container i {
   cursor: pointer;
 }
+
+.file-container div {
+  margin-bottom: 5px;
+}

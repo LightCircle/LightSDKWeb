@@ -69,23 +69,6 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
       }
     }
   });
-
-  // 绑定上传文件事件
-  $("#_uploadfile").bind("change", function(event){
-    uploadFiles(event.target.files, "/file/add", function(err, result) {
-
-      var ids = [], names = [];
-      _.each(result.data, function(data) {
-        ids.push(data._id);
-        names.push(data.name);
-      });
-
-      // 将文件id和名字设定到指定控件
-      var src = $(event.target).attr("src");
-      $("#_" + src).val(ids.join(","));
-      $("#_" + src + "_filename").html(names.join(","));
-    });
-  });
 }
 
 /**
@@ -135,9 +118,28 @@ light.widget.saveTemplateData = function(templates) {
 
     // file
     if (template.type === light.widget.FILE) {
-      item.value = $("#_" + template.key).val();
-      item.name = $("#_" + template.key + "_filename").html();
-      result.push(item);
+
+      // 图片
+      if (template.fileType === "1") {
+        item.value = [];
+        item.name = [];
+        $("#_" + template.key + "_filename>div").each(function() {
+          item.value.push($(this).attr("fid"));
+          item.name.push($(this).attr("fname"));
+          result.push(item);
+        });
+      }
+
+      // 文件
+      if (template.fileType === "2") {
+        item.value = [];
+        item.name = [];
+        $("#_" + template.key + "_filename span").each(function() {
+          item.value.push($(this).attr("fid"));
+          item.name.push($(this).html());
+          result.push(item);
+        });
+      }
     }
 
     // grid

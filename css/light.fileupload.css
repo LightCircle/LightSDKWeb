@@ -42,3 +42,10 @@
 .file-container div {
   margin-bottom: 5px;
 }
+
+.file-container div>span {
+  font-size: 9px;
+  border-right: 1px solid #ccc;
+  margin-right: 5px;
+  padding-right: 5px;
+}

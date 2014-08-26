@@ -168,11 +168,24 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
       div.attr("fid", id);
       div.attr("fname", name);
 
-      // 名称标签
+      // 图片
       var img = $("<img src=''>");
       img.attr("src", "/file/download/" + id);
       div.append(img)
+
+      // 名称标签
+      var title = $("<span/>").html(name);
+      div.append(title);
+
+      // 删除按钮
+      var xBtn = $("<a/>").attr("fid", id).attr("fname", name).append("<i class='fa fa-times'></i>");
+      xBtn.bind("click", function () {
+        $(this).parent().remove();
+      });
+      div.append(xBtn);
+
       container.append(div);
+
     });
   }
 

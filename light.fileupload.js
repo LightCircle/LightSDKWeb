@@ -156,36 +156,29 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
   item.addClass("file-container");
 
   // 文件标签容器
-  var container = item.empty();
   function initFileLabel(files) {
 
+    var template = "\
+      <div class='thumbnail' style='width: {{width}}' fid='{{id}}' fname='{{name}}'>\
+        <img src='{{url}}'>                                                         \
+        <span>{{name}}</span>                                                       \
+        <a href='#' fid='{{id}}' fname='{{name}}'                                   \
+            onclick='javascript: $(this).parent().remove(); return false;'>         \
+          <i class='fa fa-times'></i>                                               \
+        </a>                                                                        \
+      </div>                                                                        \
+      ";
+
+    var container = item.empty();
     _.each(files, function (file) {
-      var name = file.name || file.fileName
-        , id = file._id || file.fileId;
 
-      var div = $("<div class='thumbnail'></div>");
-      div.css("width", (options.width || "200") + "px");
-      div.attr("fid", id);
-      div.attr("fname", name);
-
-      // 图片
-      var img = $("<img src=''>");
-      img.attr("src", "/file/download/" + id);
-      div.append(img)
-
-      // 名称标签
-      var title = $("<span/>").html(name);
-      div.append(title);
-
-      // 删除按钮
-      var xBtn = $("<a/>").attr("fid", id).attr("fname", name).append("<i class='fa fa-times'></i>");
-      xBtn.bind("click", function () {
-        $(this).parent().remove();
-      });
-      div.append(xBtn);
-
-      container.append(div);
-
+      var id = file._id || file.fileId;
+      container.append(_.template(template, {
+        url: "/file/download/" + id,
+        id: id,
+        name: file.name || file.fileName,
+        width: (options.width || "200") + "px"
+      }));
     });
   }
 

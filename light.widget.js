@@ -38,8 +38,6 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
     }
 
     if (item.type === light.widget.FILE) {
-      console.log(item);
-
       // 图片
       if (item.fileType === "1") {
         light.initFileUploadWithImage(
@@ -69,7 +67,23 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
       }
     }
   });
-}
+};
+
+/**
+ * 加载模板，在画面显示模板控件
+ * @param templates
+ * @param container
+ * @param canEdit
+ */
+light.widget.loadTemplateView = function(templates, container) {
+
+  container.html("");
+console.log(templates);
+  _.each(templates, function(item) {
+    container.append(_.template($("#tmpl" + item.type).html(), item));
+  });
+
+};
 
 /**
  * 保存模板数据
@@ -162,45 +176,44 @@ light.widget.saveTemplateData = function(templates) {
     }
   });
 
-  console.log(result);
   return result;
-}
+};
 
 ///////////////////////////////////////////////////////////
 
-/**
- * 上传文件
- * @param files
- * @param url
- * @param callback
- * @returns {boolean}
- */
-function uploadFiles(files, url, callback) {
-
-  if (!files || files.length <= 0) {
-    return false;
-  }
-
-  var fd = new FormData();
-  for (var i = 0; i < files.length; i++) {
-    fd.append("files", files[i]);
-  }
-
-  // 显示进度条
-  $("#upload_progress_dlg").modal("show");
-
-  // 发送文件
-  light.dopostData(url, fd, function(err, result){
-
-      $("#_upload_progress_dlg").modal("hide");
-      if (callback) {
-        callback(err, result);
-      }
-    }, function(progress){
-      $("#_upload_progress_bar").css("width", progress + "%");
-    }
-  );
-}
+///**
+// * 上传文件
+// * @param files
+// * @param url
+// * @param callback
+// * @returns {boolean}
+// */
+//function uploadFiles(files, url, callback) {
+//
+//  if (!files || files.length <= 0) {
+//    return false;
+//  }
+//
+//  var fd = new FormData();
+//  for (var i = 0; i < files.length; i++) {
+//    fd.append("files", files[i]);
+//  }
+//
+//  // 显示进度条
+//  $("#upload_progress_dlg").modal("show");
+//
+//  // 发送文件
+//  light.dopostData(url, fd, function(err, result){
+//
+//      $("#_upload_progress_dlg").modal("hide");
+//      if (callback) {
+//        callback(err, result);
+//      }
+//    }, function(progress){
+//      $("#_upload_progress_bar").css("width", progress + "%");
+//    }
+//  );
+//}
 
 ///////////////////////////////////////////////////////////
 

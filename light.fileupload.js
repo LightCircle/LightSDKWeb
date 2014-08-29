@@ -1,6 +1,8 @@
 
 light.file = light.file || {};
 
+// TODO: 添加进度条，添加大小限制
+
 /**
  * 允许选择的文件类型, 可以指定多个
  * 个别的，可以使用.xxx的形式指定。如：.xml, .css
@@ -15,6 +17,12 @@ light.file.TYPE_TEXT  = "text/plain";
 light.file.TYPE_EXCEL = "application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
 
 /**
+ * 扩展属性
+ * @type {{}}
+ */
+light.file.extend = {};
+
+/**
  *
  * @param fileButton
  * @param options
@@ -27,7 +35,7 @@ light.file.TYPE_EXCEL = "application/vnd.ms-excel, application/vnd.openxmlformat
  *  progress: {Function}
  * @param data
  */
-light.initFileUpload = function (fileButton, options, data) {
+light.initFileUpload = function (fileButton, options) {
 
   var button   = $("#" + fileButton)
     , id       = options.id || "_fileupload"
@@ -60,7 +68,7 @@ light.initFileUpload = function (fileButton, options, data) {
     }
 
     // upload
-    light.dopostData(options.url || "/file/upload", data || {}, fd, function (err, result) {
+    light.dopostData(options.url || "/file/upload", light.file.extend, fd, function (err, result) {
         if (err) {
           if (options.error) {
             options.error.call(button, err);

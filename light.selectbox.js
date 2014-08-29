@@ -81,7 +81,7 @@ $(function () {
   /**
    * 获取用户一览
    */
-  var getUserList = function() {
+  var getUserList = function(selected) {
 
     light.doget("/user/list", light.selectbox.condition, function(err, result) {
       if (err) {
@@ -92,6 +92,14 @@ $(function () {
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
+          var checked = _.indexOf(selected, item.id) >= 0;
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.id,
+              option: item.name
+            };
+          }
+
           dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
             index: index + 1,
             id: item._id,
@@ -99,7 +107,7 @@ $(function () {
             name: item.id,
             option1: item.name,
             option2: "",
-            checked: undefined
+            checked: checked
           }));
         });
       }
@@ -109,7 +117,7 @@ $(function () {
   /**
    * 获取标签一览
    */
-  var getTagList = function() {
+  var getTagList = function(selected) {
     light.doget("/tag/list", light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
@@ -119,6 +127,14 @@ $(function () {
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
+          var checked = _.indexOf(selected, item.name) >= 0;
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: ""
+            };
+          }
+
           dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
             index: index + 1,
             id: item._id,
@@ -126,7 +142,7 @@ $(function () {
             name: item.name,
             option1: "",
             option2: "",
-            checked: undefined
+            checked: checked
           }));
         });
       }
@@ -136,7 +152,7 @@ $(function () {
   /**
    * 获取组一览
    */
-  var getGroupList = function() {
+  var getGroupList = function(selected) {
     light.doget("/group/list", light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
@@ -146,6 +162,13 @@ $(function () {
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
+          var checked = _.indexOf(selected, item.name) >= 0;
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: ""
+            };
+          }
 
           dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
             index: index + 1,
@@ -154,7 +177,7 @@ $(function () {
             name: item.name,
             option1: "",
             option2: "",
-            checked: undefined
+            checked: checked
           }));
         });
       }
@@ -170,7 +193,7 @@ $(function () {
   /**
    * 获取文件一览
    */
-  var getFileList = function() {
+  var getFileList = function(selected) {
     light.doget("/file/list", light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
@@ -180,7 +203,14 @@ $(function () {
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
-          console.log(item);
+          var checked = _.indexOf(selected, item.name) >= 0;
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: Math.ceil(item.length / 1024) + " KB"
+            };
+          }
+
           dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
             index: index + 1,
             id: item._id,
@@ -188,7 +218,7 @@ $(function () {
             name: item.name,
             option1: Math.ceil(item.length / 1024) + " KB",
             option2: "",
-            checked: undefined
+            checked: (defaults && _.contains(defaults, item._id)) ? "checked" : ""
           }));
         });
       }

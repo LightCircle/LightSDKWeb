@@ -78,7 +78,6 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
 light.widget.loadTemplateView = function(templates, container) {
 
   container.html("");
-console.log(templates);
   _.each(templates, function(item) {
     container.append(_.template($("#tmpl" + item.type).html(), item));
   });
@@ -86,11 +85,68 @@ console.log(templates);
 };
 
 /**
+ * 设定模板数据
+ * @param templates
+ * @param data
+ */
+light.widget.setTemplateData = function(templates, data) {
+
+
+  _.each(templates, function(template) {
+
+    var val = _.find(data, function(d) {return d.key == template.key});
+
+    if (val) {
+      // text
+      if (template.type === light.widget.TEXT) {
+        $("#_" + template.key).val(val.value);
+      }
+
+      // select
+      if (template.type === light.widget.SELECT) {
+
+        if (template.selectType === "1") {
+        }
+        if (template.selectType === "2") {
+        }
+        if (template.selectType === "3") {
+        }
+      }
+
+      // file
+      if (template.type === light.widget.FILE) {
+
+        // 图片
+        if (template.fileType === "1") {
+        }
+
+        // 文件
+        if (template.fileType === "2") {
+        }
+      }
+
+      // grid
+      if (template.type === light.widget.GRID) {
+        var rowCount = template.gridRow
+          , colCount = template.gridTitle.length;
+
+        for (var i = 0; i < rowCount; i++) {
+          var row = [];
+          for (var j = 0; j < colCount; j++) {
+            $("#_" + template.key + "_" + i + "_" + j).val();
+          }
+        }
+      }
+    }
+  });
+};
+
+/**
  * 保存模板数据
  * @param templates
  * @returns {Array}
  */
-light.widget.saveTemplateData = function(templates) {
+light.widget.getTemplateData = function(templates) {
 
   var result = [];
 
@@ -126,6 +182,8 @@ light.widget.saveTemplateData = function(templates) {
           item.name.push(template.selectOption[parseInt($(this).val())]);
         });
       }
+
+      // TODO 下拉框
 
       result.push(item);
     }

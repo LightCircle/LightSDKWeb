@@ -166,18 +166,8 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
   // 文件标签容器
   function initFileLabel(files) {
 
-    var template = "\
-      <div class='thumbnail' style='width: {{width}}' fid='{{id}}' fname='{{name}}'>\
-        <img src='{{url}}'>                                                         \
-        <span>{{name}}</span>                                                       \
-        <a href='#' fid='{{id}}' fname='{{name}}'                                   \
-            onclick='javascript: $(this).parent().remove(); return false;'>         \
-          <i class='fa fa-times'></i>                                               \
-        </a>                                                                        \
-      </div>                                                                        \
-      ";
-
-    var container = item.empty();
+    var template = light.file.imageTemplate()
+      , container = item.empty();
     _.each(files, function (file) {
 
       var id = file._id || file.fileId;
@@ -205,4 +195,17 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
   };
 
   light.initFileUpload(fileButton, copiedOptions, data);
+};
+
+light.file.imageTemplate = function() {
+  return function(){/*
+   <div class='thumbnail' style='width: {{width}}' fid='{{id}}' fname='{{name}}'>
+     <img src='{{url}}'>
+     <span>{{name}}</span>
+     <a href='#' fid='{{id}}' fname='{{name}}'
+         onclick='javascript: $(this).parent().remove(); return false;'>
+       <i class='fa fa-times'></i>
+     </a>
+   </div>
+   */}.toString().split(/\n/).slice(1, -1).join("\n");
 };

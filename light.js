@@ -332,6 +332,100 @@ var light = {
       }
     });
   },
+
+  /* drop down 相关 */
+  initDropdown: function (divSel, data, changeFun) {
+
+    $(divSel).empty();
+
+    if (!data || data.length == 0) {
+      if (changeFun) {
+        changeFun(undefined, undefined, divSel);
+      }
+      $(divSel).trigger('selectionChanged', [undefined, undefined]);
+      return;
+    }
+    var sel = _.first(_.filter(data, function (item) {
+      return item.default;
+    }));
+    sel = sel || _.first(data);
+
+    $(divSel).each(function () {
+      var div = $("<a></a>")
+        .attr("class", "btn btn-default btn-sm btn-flat dropdown-toggle")
+        .attr("data-toggle", "dropdown");
+      if ($(divSel).attr('dropdown-disabled') == 1) {
+        div.attr('disabled', 'disabled');
+      }
+      div.append($("<span></span>").attr("class", "dropdown-display").html(sel.title));
+      div.append($("<span></span>").attr("class", "collapse dropdown-result").html(sel.value));
+      div.append($("<b class=\"caret\" style='margin-left: 5px;'></b>"));
+
+      var ul = $("<ul class=\"dropdown-menu\"></ul>");
+      _.each(data, function (item) {
+        ul.append($("<li data-type='" + item.value + "'></li>").append($('<a href="javascript:;">' + item.title + '</a>')))
+      });
+
+      $(this).append(div, ul);
+    });
+    if (changeFun) {
+      changeFun(undefined, sel.value, divSel);
+    }
+//    $(divSel).trigger('selectionChanged', [undefined, sel.value]);
+    $(divSel).each(function (idx) {
+      var panel = $(this);
+      $(this).find('li').click(function () {
+        var resultE = panel.find(".dropdown-result");
+        var oldV = resultE.html();
+        var newV = $(this).attr('data-type');
+        resultE.html($(this).attr('data-type'));
+        panel.find(".dropdown-display").html($(this).find('a').html());
+        if (changeFun && oldV !== newV) {
+          changeFun(oldV, newV, divSel);
+        }
+        if (oldV !== newV) {
+          $(divSel).trigger('selectionChanged', [oldV, newV]);
+        }
+      });
+    });
+  },
+  getDropdownValue: function (divSel) {
+    return $(divSel).find(".dropdown-result").html();
+  },
+  disableDropdown: function (divSel) {
+    var sels;
+    if (_.isArray(divSel)) {
+      sels = divSel;
+    } else {
+      sels = [divSel];
+    }
+    _.each(sels, function (item) {
+      $(item).find('a.dropdown-toggle').attr('disabled', 'disabled');
+      if ($(item).hasClass('.dropdown')) {
+        $(item).attr('dropdown-disabled', '1');
+      } else {
+        $(item).find('.dropdown').attr('dropdown-disabled', '1');
+      }
+    });
+  },
+
+  enableDropdown: function (divSel) {
+    var sels;
+    if (_.isArray(divSel)) {
+      sels = divSel;
+    } else {
+      sels = [divSel];
+    }
+    _.each(sels, function (item) {
+      $(item).find('a.dropdown-toggle').attr('disabled', false);
+      if ($(item).hasClass('.dropdown')) {
+        $(item).attr('dropdown-disabled', '0');
+      } else {
+        $(item).find('.dropdown').attr('dropdown-disabled', '0');
+      }
+    });
+  },
+
 //  /* 文件上传 */
 //  initFileupload: function (sel, option, success, error, progress) {
 //    var self = this;

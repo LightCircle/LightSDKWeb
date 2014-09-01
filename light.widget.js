@@ -57,7 +57,6 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
             "_" + item.key + "_filename"
           , "_" + item.key + "_file"
           , {
-            accept: light.file.TYPE_IMAGE,
             multiple: true,
             success: function(data) {
               return false;
@@ -111,7 +110,6 @@ light.widget.setTemplateData = function(templates, data) {
   _.each(templates, function(template) {
 
     var val = _.find(data, function(d) {return d.key == template.key});
-
     if (val) {
       // text
       if (template.type === light.widget.TEXT) {
@@ -121,11 +119,19 @@ light.widget.setTemplateData = function(templates, data) {
       // select
       if (template.type === light.widget.SELECT) {
 
+        // button group
         if (template.selectType === "1") {
+          light.buttongroup.set("_" + template.key, val.value);
         }
+
+        // radio
         if (template.selectType === "2") {
+          $("input:radio[name='_" + template.key + "']").val([val.value]);
         }
+
+        // checkbox
         if (template.selectType === "3") {
+          $("input:checkbox[name='_" + template.key + "']").val(val.value);
         }
       }
 
@@ -134,10 +140,20 @@ light.widget.setTemplateData = function(templates, data) {
 
         // 图片
         if (template.fileType === "1") {
+          var images = [];
+          _.each(val.value, function(id, index) {
+            images.push({ id: id, name: val.name[index], width: val.width });
+          });
+          light.file.setImage("_" + template.key + "_filename", images);
         }
 
         // 文件
         if (template.fileType === "2") {
+          var files = [];
+          _.each(val.value, function(id, index) {
+            files.push({ id: id, name: val.name[index] });
+          });
+          light.file.setFile("_" + template.key + "_filename", files);
         }
       }
 
@@ -146,12 +162,11 @@ light.widget.setTemplateData = function(templates, data) {
         var rowCount = template.gridRow
           , colCount = template.gridTitle.length;
 
-        for (var i = 0; i < rowCount; i++) {
-          var row = [];
-          for (var j = 0; j < colCount; j++) {
-            $("#_" + template.key + "_" + i + "_" + j).val();
-          }
-        }
+        _.each(val.value, function(cols, i) {
+          _.each(cols, function(col, j) {
+            $("#_" + template.key + "_" + i + "_" + j).val(col);
+          });
+        });
       }
     }
   });
@@ -211,10 +226,12 @@ light.widget.getTemplateData = function(templates) {
       if (template.fileType === "1") {
         item.value = [];
         item.name = [];
+        item.widht = [];
         item.fileType = template.fileType;
         $("#_" + template.key + "_filename>div").each(function() {
           item.value.push($(this).attr("fid"));
           item.name.push($(this).attr("fname"));
+          item.widht.push($(this).css("width"));
           result.push(item);
         });
       }
@@ -255,6 +272,8 @@ light.widget.getTemplateData = function(templates) {
   return result;
 };
 
+///////////////////////////////////////////////////////////
+// 模板
 ///////////////////////////////////////////////////////////
 
 light.widget.TEMPLATE_TABLE_VIEW = function() {
@@ -336,61 +355,3 @@ light.widget.TEMPLATE_GRID_VIEW = function() {
   return tmpl;
 };
 
-///////////////////////////////////////////////////////////
-
-/**
- * 代替Radio的按钮组合
- * @param id 字符串
- * @param value
- * @param clickCallback
- * @constructor
- */
-var ButtonGroup = function(id, value, clickCallback) {
-  this.id = $("#" + id);
-  this.value = value;
-
-  // append event
-  var self = this;
-  this.id.on("click", "button", function(){
-    self.value = $(this).attr("value");
-    self.init();
-
-    if (clickCallback) {
-      clickCallback(self.value);
-    }
-  });
-};
-
-ButtonGroup.prototype.init = function(initCallback) {
-
-  // set default value
-  this.id.attr("value", this.value);
-
-  var child = this.id.children()
-    , self = this;
-
-  _.each(child, function(item){
-    if (self.value == $(item).attr("value")) {
-      $(item).addClass("btn-info");
-//      $(item).removeClass("btn-white"); //TODO 检讨必要
-      $(item).attr("active", "on");
-    } else {
-      $(item).removeClass("btn-info");
-//      $(item).addClass("btn-white");  //TODO 检讨必要
-      $(item).removeAttr("active");
-    }
-  });
-
-  if (initCallback) {
-    initCallback(self.value);
-  }
-
-  return this;
-};
-
-ButtonGroup.prototype.set = function(value) {
-  this.value = value;
-  this.init();
-};
-
-///////////////////////////////////////////////////////////

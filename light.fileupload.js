@@ -110,42 +110,12 @@ light.initFileUpload = function (fileButton, options) {
  */
 light.initFileUploadWithContainer = function (containerItem, fileButton, options, data) {
 
-  // 添加css
-  var item = $("#" + containerItem);
-  item.addClass("file-container");
-
-  // 文件标签容器
-  var container = item.empty().append("<ol></ol>");
-  function initFileLabel(files) {
-
-    var ol = container.children("ol");
-    _.each(files, function (file) {
-
-      var name = file.name || file.fileName
-        , id = file._id || file.fileId;
-
-      // 删除按钮
-      var xBtn = $("<a/>").attr("fid", id).attr("fname", name).append("<i class='fa fa-times'></i>");
-      xBtn.bind("click", function () {
-        $(this).parent().remove();
-      });
-
-      // 名称标签
-      var title = $("<span/>").html(name).attr("fid", id);
-      title.bind("click", function () {
-        window.location = options.download || "/file/download/" + $(this).attr("fid");
-      });
-
-      ol.append($("<li/>").append(title).append(xBtn));
-    });
-  }
-
   // clone参数，替换success方法
   var copiedOptions = _.clone(options);
   copiedOptions.success = function(files) {
 
     // 添加文件标签
-    initFileLabel(files);
+    light.file.setFile(containerItem, files);
 
     // 调用原生success方法
     if (options.success) {
@@ -159,33 +129,33 @@ light.initFileUploadWithContainer = function (containerItem, fileButton, options
 
 light.initFileUploadWithImage = function (containerItem, fileButton, options, data) {
 
-  // 添加css
-  var item = $("#" + containerItem);
-  item.addClass("file-container");
-
-  // 文件标签容器
-  function initFileLabel(files) {
-
-    var template = light.file.imageTemplate()
-      , container = item.empty();
-    _.each(files, function (file) {
-
-      var id = file._id || file.fileId;
-      container.append(_.template(template, {
-        url: "/file/download/" + id,
-        id: id,
-        name: file.name || file.fileName,
-        width: (options.width || "200") + "px"
-      }));
-    });
-  }
+//  // 添加css
+//  var item = $("#" + containerItem);
+//  item.addClass("file-container");
+//
+//  // 文件标签容器
+//  function initFileLabel(files) {
+//
+//    var template = light.file.TEMPLATE_IMAGE()
+//      , container = item.empty();
+//    _.each(files, function (file) {
+//
+//      var id = file._id || file.fileId;
+//      container.append(_.template(template, {
+//        url: "/file/download/" + id,
+//        id: id,
+//        name: file.name || file.fileName,
+//        width: (options.width || "200") + "px"
+//      }));
+//    });
+//  }
 
   // clone参数，替换success方法
   var copiedOptions = _.clone(options);
   copiedOptions.success = function(files) {
 
     // 添加文件标签
-    initFileLabel(files);
+    light.file.setImage(containerItem, files);
 
     // 调用原生success方法
     if (options.success) {
@@ -197,7 +167,58 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
   light.initFileUpload(fileButton, copiedOptions, data);
 };
 
-light.file.imageTemplate = function() {
+/**
+ * 设定图片显示
+ * @param containerItem
+ * @param files
+ */
+light.file.setImage = function(containerItem, files) {
+
+  var template = light.file.TEMPLATE_IMAGE()
+    , item = $("#" + containerItem)
+    , container = item.empty();
+
+  item.addClass("file-container");
+  _.each(files, function (file) {
+    container.append(_.template(template, {
+      url: "/file/download/" + (file.id || file._id),
+      id: file.id || file._id,
+      name: file.name,
+      width: (file.width || "200") + "px"
+    }));
+  });
+};
+
+light.file.setFile = function(containerItem, files) {
+
+  var template = light.file.TEMPLATE_FILE()
+    , item = $("#" + containerItem);
+
+  item.empty().append("<ol></ol>");
+  item.addClass("file-container");
+
+  var container = item.children("ol");
+  _.each(files, function (file) {
+    container.append(_.template(template, {
+      url: "/file/download/" + (file.id || file._id),
+      id: file.id || file._id,
+      name: file.name
+    }));
+  });
+};
+
+light.file.TEMPLATE_FILE = function() {
+  return function(){/*
+  <li>
+    <span fid='{{id}}' onclick='javascript: window.location="{{url}}"'>{{name}}</span>
+    <a fid='{{id}}' fname='{{name}}' onclick='javascript: $(this).parent().remove(); return false;'>
+      <i class='fa fa-times'></i>
+    </a>
+  </li>
+  */}.toString().split(/\n/).slice(1, -1).join("\n");
+};
+
+light.file.TEMPLATE_IMAGE = function() {
   return function(){/*
    <div class='thumbnail' style='width: {{width}}' fid='{{id}}' fname='{{name}}'>
      <img src='{{url}}'>

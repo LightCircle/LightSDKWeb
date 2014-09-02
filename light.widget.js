@@ -226,12 +226,12 @@ light.widget.getTemplateData = function(templates) {
       if (template.fileType === "1") {
         item.value = [];
         item.name = [];
-        item.widht = [];
+        item.width = [];
         item.fileType = template.fileType;
         $("#_" + template.key + "_filename>div").each(function() {
           item.value.push($(this).attr("fid"));
           item.name.push($(this).attr("fname"));
-          item.widht.push($(this).css("width"));
+          item.width.push($(this).css("width"));
           result.push(item);
         });
       }
@@ -305,8 +305,8 @@ light.widget.TEMPLATE_IMAGE_VIEW = function() {
    <tr>
    <td>{{title}}</td>
    <td>
-    <$ _.each(value, function(f) { $>
-    <img src="/file/download/{{value}}">
+    <$ _.each(value, function(f, index) { $>
+    <img src="/file/download/{{value}}" style="width: {{width[index]}}">
     <$ }); $>
    </td>
    </tr>

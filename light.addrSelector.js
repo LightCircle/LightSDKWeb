@@ -38,7 +38,7 @@ light.initAddressSelector = function (url, div, values, selectionChanged) {
   }
 
   var loadPlace = function (parent, callback) {
-    self.doget(url, {parent: parent}, function (err, result) {
+    self.doget(url, {condition: {parent: parent, valid: 1}, order: "sort"}, function (err, result) {
       if (err) {
         alertify.error("地区信息加载失败。");
       } else {

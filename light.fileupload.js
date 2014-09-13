@@ -68,6 +68,7 @@ light.initFileUpload = function (fileButton, options) {
     }
 
     // upload
+    if (options.progress) { options.progress.call(button, 1); }
     light.dopostData(options.url || "/file/upload", light.file.extend, fd, function (err, result) {
         if (err) {
           if (options.error) {

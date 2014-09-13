@@ -283,7 +283,7 @@ light.widget.TEMPLATE_TABLE_VIEW = function() {
 light.widget.TEMPLATE_TEXT_VIEW = function() {
   var tmpl = function () {/*
    <tr>
-   <td>{{title}}</td>
+   <td class="title">{{title}}</td>
    <td>{{value}}</td>
    </tr>
    */}.toString().split(/\n/).slice(1, -1).join("\n");
@@ -293,7 +293,7 @@ light.widget.TEMPLATE_TEXT_VIEW = function() {
 light.widget.TEMPLATE_SELECT_VIEW = function() {
   var tmpl = function(){/*
    <tr>
-   <td>{{title}}</td>
+   <td class="title">{{title}}</td>
    <td>{{name}}</td>
    </tr>
    */}.toString().split(/\n/).slice(1, -1).join("\n");
@@ -303,7 +303,7 @@ light.widget.TEMPLATE_SELECT_VIEW = function() {
 light.widget.TEMPLATE_IMAGE_VIEW = function() {
   var tmpl = function(){/*
    <tr>
-   <td>{{title}}</td>
+   <td class="title">{{title}}</td>
    <td>
     <$ _.each(value, function(f, index) { $>
     <img src="/file/download/{{value}}" style="width: {{width[index]}}">
@@ -317,7 +317,7 @@ light.widget.TEMPLATE_IMAGE_VIEW = function() {
 light.widget.TEMPLATE_ATTACH_VIEW = function() {
   var tmpl = function(){/*
    <tr>
-   <td>{{title}}</td>
+   <td class="title">{{title}}</td>
    <td>
      <$ _.each(value, function(f, index) { $>
      <a href="/file/download/{{value}}">{{name[index]}}</a>
@@ -331,7 +331,7 @@ light.widget.TEMPLATE_ATTACH_VIEW = function() {
 light.widget.TEMPLATE_GRID_VIEW = function() {
   var tmpl = function(){/*
    <tr>
-   <td>{{title}}</td>
+   <td class="title">{{title}}</td>
    <td>
     <table class="table table-striped">
      <tbody>

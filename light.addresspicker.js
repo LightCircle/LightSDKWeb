@@ -88,7 +88,7 @@
         $(this).empty();
         for (var i = 0; i < opts.level; i++) {
 
-          var sel = $('<select>').hide();
+          var sel = $('<select>').hide().prop('disabled',$(this).attr('aria-disabled') == 'true');
           var sel_cls = _.isArray(opts.class) ? opts.class[i] : opts.class;
           sel.addClass(sel_cls);
 

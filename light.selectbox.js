@@ -187,7 +187,36 @@ $(function () {
   /**
    * 获取分类一览
    */
-  var getCategoryList = function() {
+  var getCategoryList = function(selected) {
+    light.doget("/category/list", light.selectbox.condition, function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {console.log(item);
+          var checked = _.indexOf(selected, item.name) >= 0;
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: ""
+            };
+          }
+
+          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+            index: index + 1,
+            id: item._id,
+            icon: "bookmark",
+            name: item.name,
+            option1: item.categoryId,
+            option2: item.parent,
+            checked: checked
+          }));
+        });
+      }
+    });
   };
 
   /**

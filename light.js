@@ -672,6 +672,22 @@ var light = {
 
   randomGUID4: function() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  },
+
+  initNotice: function(uri, tag, param, callback) {
+    if (!uri) {
+      return;
+    }
+
+    param = param || {};
+    param.uid = this.uid();
+    var socket = io(uri, {query: $.param(param), reconnection: false});
+
+    socket.on(tag, function(data) {
+      if (callback) {
+        callback(data);
+      }
+    });
   }
 };
 

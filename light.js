@@ -333,6 +333,10 @@ var light = {
     });
   },
 
+  download: function(url, param) {
+    window.location = param ? url + "?" + $.param(param) : url;
+  },
+
   /* drop down 相关 */
   initDropdown: function (divSel, data, changeFun) {
 

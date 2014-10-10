@@ -537,23 +537,22 @@ var light = {
   /**
    * 翻页
    */
-  paginationInitalized: false,
   paginationScrollTop: true,
   pagination: function (container, totalItems, rowCount, callback) {
 
     // 初始化一次
-    if (this.paginationInitalized) {
+    if (container.attr('paginationInitalized') == 1) {
       return;
     }
-    this.paginationInitalized = true;
+    container.attr('paginationInitalized', '1');
 
     var startPage = 1, pageCount = 5
       , limit = Math.ceil(totalItems / rowCount) > pageCount ? pageCount : Math.ceil(totalItems / rowCount)
       , tmpl = $("#tmpl_pagination").html();
 
-    container.unbind("click").on("click", "a", function (event) {
+    container.unbind("click").on("click", "a", function () {
 
-      var activePage = $(event.target).attr("activePage");
+      var activePage = $(this).attr("activePage");
 
       if (activePage == "prev") {
         if (startPage == 1) {

@@ -26,22 +26,23 @@ light.file.extend = {};
  *
  * @param fileButton
  * @param options
- *  accept: 允许的文件种类
+ *  accept  : 允许的文件种类
  *  multiple: 是否支持多个文件
- *  url: 上传URL
- *  check: {Function}
- *  error: {Function}
- *  success: {Function}
+ *  url     : 上传URL
+ *  nometa  : 是否创建META信息，缺省为创建
+ *  check   : {Function}
+ *  error   : {Function}
+ *  success : {Function}
  *  progress: {Function}
  * @param data
  */
 light.initFileUpload = function (fileButton, options) {
 
-  var button   = $("#" + fileButton)
-    , id       = options.id || "_fileupload"
-    , accept   = options.accept || "*"
-    , multiple = options.multiple ? "multiple" : ""
-    , check    = options.check || function() {return true};
+  var button    = $("#" + fileButton)
+    , id        = options.id || "_fileupload"
+    , accept    = options.accept || "*"
+    , multiple  = options.multiple ? "multiple" : ""
+    , check     = options.check || function() {return true};
 
   // add file item
   var input = $(_.str.sprintf("<input type='file' id='%s' style='display: none;' accept='%s' %s />"
@@ -57,7 +58,7 @@ light.initFileUpload = function (fileButton, options) {
     }
 
     // do check
-    if (options.check && !options.check.call(button, files)) {
+    if (!check.call(button, files)) {
       return false;
     }
 
@@ -67,9 +68,13 @@ light.initFileUpload = function (fileButton, options) {
       fd.append("files", files[i]);
     }
 
+    if (options.progress) {
+      options.progress.call(button, 1);
+    }
+
     // upload
-    if (options.progress) { options.progress.call(button, 1); }
-    light.dopostData(options.url || "/file/upload", {extend: light.file.extend}, fd, function (err, result) {
+    var url = options.url || (options.nometa ? "/file/upload" : "/file/create")
+    light.dopostData(url, {extend: light.file.extend}, fd, function (err, result) {
         if (err) {
           if (options.error) {
             options.error.call(button, err);
@@ -85,7 +90,6 @@ light.initFileUpload = function (fileButton, options) {
         }
       }
     );
-
   });
 
   button.bind("click", function () {
@@ -104,6 +108,7 @@ light.initFileUpload = function (fileButton, options) {
  *  multiple: 是否支持多个文件
  *  url: 上传URL
  *  download: 下载URL
+ *  nometa  : 是否创建META信息，缺省为创建
  *  check: {Function}
  *  error: {Function}
  *  success: {Function}
@@ -129,27 +134,6 @@ light.initFileUploadWithContainer = function (containerItem, fileButton, options
 };
 
 light.initFileUploadWithImage = function (containerItem, fileButton, options, data) {
-
-//  // 添加css
-//  var item = $("#" + containerItem);
-//  item.addClass("file-container");
-//
-//  // 文件标签容器
-//  function initFileLabel(files) {
-//
-//    var template = light.file.TEMPLATE_IMAGE()
-//      , container = item.empty();
-//    _.each(files, function (file) {
-//
-//      var id = file._id || file.fileId;
-//      container.append(_.template(template, {
-//        url: "/file/download/" + id,
-//        id: id,
-//        name: file.name || file.fileName,
-//        width: (options.width || "200") + "px"
-//      }));
-//    });
-//  }
 
   // clone参数，替换success方法
   var copiedOptions = _.clone(options);
@@ -188,6 +172,10 @@ light.file.setImage = function(containerItem, files) {
       width: (file.width || "200") + "px"
     }));
   });
+};
+
+light.file.clearFile = function(containerItem) {
+  $("#" + containerItem).empty();
 };
 
 light.file.setFile = function(containerItem, files) {

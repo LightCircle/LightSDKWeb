@@ -232,8 +232,8 @@ light.widget.getTemplateData = function(templates) {
           item.value.push($(this).attr("fid"));
           item.name.push($(this).attr("fname"));
           item.width.push($(this).css("width"));
-          result.push(item);
         });
+        result.push(item);
       }
 
       // 文件
@@ -244,8 +244,8 @@ light.widget.getTemplateData = function(templates) {
         $("#_" + template.key + "_filename span").each(function() {
           item.value.push($(this).attr("fid"));
           item.name.push($(this).html());
-          result.push(item);
         });
+        result.push(item);
       }
     }
 
@@ -284,7 +284,7 @@ light.widget.TEMPLATE_TEXT_VIEW = function() {
   var tmpl = function () {/*
    <tr>
    <td class="title">{{title}}</td>
-   <td>{{value}}</td>
+   <td>{{-_.escape(value).split('\n').join('<br>')}}</td>
    </tr>
    */}.toString().split(/\n/).slice(1, -1).join("\n");
   return tmpl;
@@ -305,9 +305,9 @@ light.widget.TEMPLATE_IMAGE_VIEW = function() {
    <tr>
    <td class="title">{{title}}</td>
    <td>
-    <$ _.each(value, function(f, index) { $>
-    <img src="/file/download/{{value}}" style="width: {{width[index]}}">
-    <$ }); $>
+   <$ _.each(value, function(f, index) { $>
+   <img src="/file/download/{{f}}" style="width: {{width[index]}}">
+   <$ }); $>
    </td>
    </tr>
    */}.toString().split(/\n/).slice(1, -1).join("\n");
@@ -319,9 +319,9 @@ light.widget.TEMPLATE_ATTACH_VIEW = function() {
    <tr>
    <td class="title">{{title}}</td>
    <td>
-     <$ _.each(value, function(f, index) { $>
-     <a href="/file/download/{{value}}">{{name[index]}}</a>
-     <$ }); $>
+   <$ _.each(value, function(f, index) { $>
+   <a href="/file/download/{{f}}">{{name[index]}}</a>
+   <$ }); $>
    </td>
    </tr>
    */}.toString().split(/\n/).slice(1, -1).join("\n");

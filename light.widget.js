@@ -96,7 +96,9 @@ light.widget.loadTemplateView = function(templates, container) {
       tmpl = light.widget.TEMPLATE_GRID_VIEW();
     };
 
-    container.append(_.template(tmpl, item));
+    if (!_.isEmpty(tmpl)) {
+      container.append(_.template(tmpl, item));
+    }
   });
 };
 

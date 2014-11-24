@@ -23,6 +23,7 @@ light.selectbox.callback = undefined;
  * @type {string}
  */
 light.selectbox.user      = "user";
+light.selectbox.user      = "authority";
 light.selectbox.group     = "group";
 light.selectbox.category  = "category";
 light.selectbox.role      = "role";
@@ -52,7 +53,8 @@ $(function () {
       case light.selectbox.user:
         getUserList(defaults);
         break;
-      case light.selectbox.user:
+      case light.selectbox.authority:
+        getAuthorityList(defaults);
         break;
       case light.selectbox.group:
         getGroupList(defaults);
@@ -259,6 +261,42 @@ $(function () {
    */
   var getRoleList = function(selected) {
     light.doget("/role/list", function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {
+
+          var checked = _.indexOf(selected, item.name) >= 0;
+          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+            index: index + 1,
+            id: item._id,
+            icon: "lock",
+            name: item.name,
+            option1: item.description,
+            option2: "",
+            checked: checked
+          }));
+
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: item.description
+            };
+          }
+        });
+      }
+    });
+  };
+
+  /**
+   * 获取权限一览
+   */
+  var getAuthorityList = function(selected) {
+    light.doget("/authority/list", function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {

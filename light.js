@@ -255,7 +255,14 @@ var light = {
     url_ += '?' + $.param(urlData_);
 
     $.ajax({
-      url: url_, type: "POST", async: true, data: data_, dataType: "json", contentType: false, processData: false, xhr: function () {
+      url: url_,
+      type: "POST",
+      async: true,
+      data: data_,
+      dataType: "json",
+      contentType: false,
+      processData: false,
+      xhr: function () {
         XHR = $.ajaxSettings.xhr();
         if (XHR.upload) {
           XHR.upload.addEventListener('progress', function (e) {
@@ -265,13 +272,15 @@ var light = {
           }, false);
         }
         return XHR;
-      }, success: function (result) {
+      },
+      success: function (result) {
         if (result.error) {
           callback_(1, result.error);
         } else {
           callback_(0, result);
         }
-      }, error: function (err) {
+      },
+      error: function (err) {
         callback_(err);
       }
     });
@@ -281,14 +290,22 @@ var light = {
     obj_["uid"] = this.uid();
     var self = this;
     $.ajax({
-      url: url_ + "?_csrf=" + self.csrf(), type: "POST", async: false, data: JSON.stringify(obj_), dataType: "json", contentType: "application/json", processData: false, success: function (result) {
+      url: url_ + "?_csrf=" + self.csrf(),
+      type: "POST",
+      async: true,
+      data: JSON.stringify(obj_),
+      dataType: "json",
+      contentType: "application/json",
+      processData: false,
+      success: function (result) {
         console.log("do ajax " + url_ + "  success");
         if (result.error) {
           callback_(1, result.error);
         } else {
           callback_(0, result);
         }
-      }, error: function (err) {
+      },
+      error: function (err) {
         console.log("do ajax " + url_ + "   error");
         callback_(err);
       }
@@ -298,7 +315,7 @@ var light = {
   doput: function (url_, data_, callback_) {
     var self = this;
     $.ajax({
-      url: url_ + "?_csrf=" + self.csrf(), type: "PUT", async: false
+      url: url_ + "?_csrf=" + self.csrf(), type: "PUT", async: true
 //      , data: data_
       , data: JSON.stringify(data_), dataType: "json", contentType: "application/json", success: function (result) {
         callback_(result.error, result.data);
@@ -311,9 +328,17 @@ var light = {
   dodelete: function (url_, data_, callback_) {
     var self = this;
     $.ajax({
-      url: url_ + "?_csrf=" + self.csrf(), type: "DELETE", async: false, data: JSON.stringify(data_), dataType: "json", contentType: "application/json", processData: false, success: function (result) {
+      url: url_ + "?_csrf=" + self.csrf(),
+      type: "DELETE",
+      async: true,
+      data: JSON.stringify(data_),
+      dataType: "json",
+      contentType: "application/json",
+      processData: false,
+      success: function (result) {
         callback_(result.error, result.data);
-      }, error: function (err) {
+      },
+      error: function (err) {
         callback_(err);
       }
     });
@@ -333,7 +358,7 @@ var light = {
     });
   },
 
-  download: function(url, param) {
+  download: function (url, param) {
     window.location = param ? url + "?" + $.param(param) : url;
   },
 
@@ -578,7 +603,11 @@ var light = {
         , limit = remainder > pageCount ? pageCount : remainder;
       container.html("");
       container.append(_.template(tmpl, {
-        "start": startPage, "limit": limit, "active": activePage, "canPrev": startPage > 1, "canNext": (startPage + limit - 1 < Math.ceil(totalItems / rowCount)) && (limit >= pageCount)
+        "start": startPage,
+        "limit": limit,
+        "active": activePage,
+        "canPrev": startPage > 1,
+        "canNext": (startPage + limit - 1 < Math.ceil(totalItems / rowCount)) && (limit >= pageCount)
       }));
       if (light.paginationScrollTop) {
         return;
@@ -592,7 +621,11 @@ var light = {
     // 初始化
     container.html("");
     container.append(_.template(tmpl, {
-      "start": 1, "limit": limit, "active": 1, "canPrev": false, "canNext": limit < Math.ceil(totalItems / rowCount) && (limit >= pageCount)
+      "start": 1,
+      "limit": limit,
+      "active": 1,
+      "canPrev": false,
+      "canNext": limit < Math.ceil(totalItems / rowCount) && (limit >= pageCount)
     }));
   },
 
@@ -662,7 +695,7 @@ var light = {
       sSearch: "查找:",
       sLengthMenu: "显示 _MENU_ 条记录",
       sInfo: "共 _TOTAL_ 条记录,显示 _START_ 到 _END_ 条",
-      sInfoEmpty:"共 0 条记录",
+      sInfoEmpty: "共 0 条记录",
       sEmptyTable: "没有找到记录",
       oPaginate: {
         sPrevious: "上一页",
@@ -673,11 +706,11 @@ var light = {
     };
   },
 
-  randomGUID4: function() {
+  randomGUID4: function () {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   },
 
-  initNotice: function(uri, tag, param, callback) {
+  initNotice: function (uri, tag, param, callback) {
     if (!uri) {
       return;
     }
@@ -686,7 +719,7 @@ var light = {
     param.uid = this.uid();
     var socket = io(uri, {query: $.param(param), reconnection: false});
 
-    socket.on(tag, function(data) {
+    socket.on(tag, function (data) {
       if (callback) {
         callback(data);
       }

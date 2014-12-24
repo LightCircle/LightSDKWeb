@@ -73,8 +73,9 @@ light.initFileUpload = function (fileButton, options) {
     }
 
     // upload
-    var url = options.url || (options.nometa ? "/file/upload" : "/file/create")
-    light.dopostData(url, {extend: light.file.extend}, fd, function (err, result) {
+    var url = options.url || (options.nometa ? "/file/upload" : "/file/create");
+    var extend = options.extend ? options.extend : light.file.extend;
+    light.dopostData(url, {extend: extend}, fd, function (err, result) {
         if (err) {
           if (options.error) {
             options.error.call(button, err);

@@ -23,12 +23,17 @@ light.selectbox.callback = undefined;
  * @type {string}
  */
 light.selectbox.user      = "user";
-light.selectbox.user      = "authority";
+light.selectbox.authority = "authority";
 light.selectbox.group     = "group";
 light.selectbox.category  = "category";
 light.selectbox.role      = "role";
 light.selectbox.tag       = "tag";
 light.selectbox.file      = "file";
+
+/**
+ * 选择数据对象
+ */
+light.selectbox.dataType = "";
 
 /**
  * 依赖的API
@@ -45,7 +50,7 @@ $(function () {
    * @param type
    */
   light.selectbox.show = function(type, selected) {
-
+    light.selectbox.dataType = type;
     var defaults = selected && selected.length > 0 ? selected.split(",") : undefined;
 
     light.selectbox.selected = {};
@@ -73,6 +78,7 @@ $(function () {
         break;
     }
 
+    $("#searchKeyword").val("");
     $("#dlgSelectBox").modal("show");
   };
 
@@ -83,9 +89,9 @@ $(function () {
   /**
    * 获取用户一览
    */
-  var getUserList = function(selected) {
-
-    light.doget("/user/list", light.selectbox.condition, function(err, result) {
+  var getUserList = function(selected, url) {
+    url = url || "/user/list";
+    light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -119,8 +125,9 @@ $(function () {
   /**
    * 获取标签一览
    */
-  var getTagList = function(selected) {
-    light.doget("/tag/list", light.selectbox.condition, function(err, result) {
+  var getTagList = function(selected, url) {
+    url = url || "/tag/list";
+    light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -154,8 +161,9 @@ $(function () {
   /**
    * 获取组一览
    */
-  var getGroupList = function(selected) {
-    light.doget("/group/list", light.selectbox.condition, function(err, result) {
+  var getGroupList = function(selected, url) {
+    url = url || "/group/list";
+    light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -189,8 +197,9 @@ $(function () {
   /**
    * 获取分类一览
    */
-  var getCategoryList = function(selected) {
-    light.doget("/category/list", light.selectbox.condition, function(err, result) {
+  var getCategoryList = function(selected, url) {
+    url = url || "/category/list";
+    light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -198,7 +207,7 @@ $(function () {
         var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        _.each(result.items, function(item, index) {console.log(item);
+        _.each(result.items, function(item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
             light.selectbox.selected[item._id] = {
@@ -224,8 +233,9 @@ $(function () {
   /**
    * 获取文件一览
    */
-  var getFileList = function(selected) {
-    light.doget("/file/list", light.selectbox.condition, function(err, result) {
+  var getFileList = function(selected, url) {
+    url = url || "/file/list";
+    light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -259,8 +269,9 @@ $(function () {
   /**
    * 获取角色一览
    */
-  var getRoleList = function(selected) {
-    light.doget("/role/list", function(err, result) {
+  var getRoleList = function(selected, url) {
+    url = url || "/role/list";
+    light.doget(url, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -295,8 +306,9 @@ $(function () {
   /**
    * 获取权限一览
    */
-  var getAuthorityList = function(selected) {
-    light.doget("/authority/list", function(err, result) {
+  var getAuthorityList = function(selected, url) {
+    url = url || "/authority/list";
+    light.doget(url, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
@@ -346,6 +358,14 @@ $(function () {
       light.selectbox.hide();
     });
 
+    // 点击检索
+    $("#btnDoSearch").bind("click", function(){
+      searchData($("#searchKeyword").val());
+    });
+    $("#searchKeyword").keyup(function(){
+      searchData($("#searchKeyword").val());
+    });
+
     // 选择过滤字符
     $("#btnAlphabet").on("click", "a", function() {
       // TODO: 加用户过滤
@@ -353,6 +373,40 @@ $(function () {
 
       // TODO: 加选择字符及清楚选择的功能
     });
+  };
+
+  /**
+   * 检索方法
+   */
+  var searchData = function(keyword) {
+    var selected = [];
+    _.each(light.selectbox.selected, function(val, key){
+      selected.push(val.name);
+    });
+
+    switch (light.selectbox.dataType) {
+      case light.selectbox.user:
+        getUserList(selected, "/user/search?keyword="+keyword);
+        break;
+      case light.selectbox.authority:
+        getAuthorityList(selected, "/authority/search?keyword="+keyword);
+        break;
+      case light.selectbox.group:
+        getGroupList(selected, "/group/search?keyword="+keyword);
+        break;
+      case light.selectbox.category:
+        getCategoryList(selected, "/category/search?keyword="+keyword);
+        break;
+      case light.selectbox.role:
+        getRoleList(selected, "/role/search?keyword="+keyword);
+        break;
+      case light.selectbox.tag:
+        getTagList(selected, "/tag/search?keyword="+keyword);
+        break;
+      case light.selectbox.file:
+        getFileList(light.selectbox.selected, "/file/search?keyword="+keyword);
+        break;
+    }
   };
 
   /**
@@ -399,7 +453,7 @@ $(function () {
    * 初始化对话框，并执行
    */
   var init = function() {
-    setAlphabet();
+    //setAlphabet();
     events();
   }();
 });

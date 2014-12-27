@@ -379,6 +379,8 @@ $(function () {
    * 检索方法
    */
   var searchData = function(keyword) {
+    // IE下汉字需要手动encode
+    keyword = encodeURI(keyword);
     var selected = [];
     _.each(light.selectbox.selected, function(val, key){
       selected.push(val.name);

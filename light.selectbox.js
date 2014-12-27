@@ -360,10 +360,12 @@ $(function () {
 
     // 点击检索
     $("#btnDoSearch").bind("click", function(){
-      searchData($("#searchKeyword").val());
+      searchData();
     });
     $("#searchKeyword").keyup(function(){
-      searchData($("#searchKeyword").val());
+      if (!_.str.isBlank($(this).val())) {
+        searchData();
+      }
     });
 
     // 选择过滤字符
@@ -378,9 +380,9 @@ $(function () {
   /**
    * 检索方法
    */
-  var searchData = function(keyword) {
+  var searchData = function() {
     // IE下汉字需要手动encode
-    keyword = encodeURI(keyword);
+    var keyword = encodeURI($("#searchKeyword").val());
     var selected = [];
     _.each(light.selectbox.selected, function(val, key){
       selected.push(val.name);

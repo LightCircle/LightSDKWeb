@@ -122,7 +122,7 @@ light.initFileUploadWithContainer = function (containerItem, fileButton, options
   copiedOptions.success = function(files) {
 
     // 添加文件标签
-    light.file.setFile(containerItem, files);
+    light.file.setFile(containerItem, files, copiedOptions);
 
     // 调用原生success方法
     if (options.success) {
@@ -141,7 +141,7 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
   copiedOptions.success = function(files) {
 
     // 添加文件标签
-    light.file.setImage(containerItem, files);
+    light.file.setImage(containerItem, files, copiedOptions);
 
     // 调用原生success方法
     if (options.success) {
@@ -158,18 +158,22 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
  * @param containerItem
  * @param files
  */
-light.file.setImage = function(containerItem, files) {
+light.file.setImage = function (containerItem, files, options) {
 
   var template = light.file.TEMPLATE_IMAGE()
     , item = $("#" + containerItem)
-    , container = item.empty();
+    , container = item;
+
+  if (!options.multiple) {
+    container.empty();
+  }
 
   item.addClass("file-container");
   _.each(files, function (file) {
     container.append(_.template(template, {
-      url: "/file/download/" + (file.id || file._id),
-      id: file.id || file._id,
-      name: file.name,
+      url  : "/file/download/" + (file.id || file._id),
+      id   : file.id || file._id,
+      name : file.name,
       width: (file.width || "200") + "px"
     }));
   });
@@ -179,19 +183,22 @@ light.file.clearFile = function(containerItem) {
   $("#" + containerItem).empty();
 };
 
-light.file.setFile = function(containerItem, files) {
+light.file.setFile = function (containerItem, files, options) {
 
   var template = light.file.TEMPLATE_FILE()
     , item = $("#" + containerItem);
+  
+  if (!options.multiple || !item.children('ol').length) {
+    item.empty().append("<ol></ol>");
+  }
 
-  item.empty().append("<ol></ol>");
   item.addClass("file-container");
 
   var container = item.children("ol");
   _.each(files, function (file) {
     container.append(_.template(template, {
-      url: "/file/download/" + (file.id || file._id),
-      id: file.id || file._id,
+      url : "/file/download/" + (file.id || file._id),
+      id  : file.id || file._id,
       name: file.name
     }));
   });

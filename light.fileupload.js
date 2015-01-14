@@ -82,7 +82,7 @@ light.initFileUpload = function (fileButton, options) {
           }
         } else {
           if (options.success) {
-            options.success.call(button, result.data.items);
+            options.success.call(button, result.data.items || result.data);
           }
         }
       }, function (progressValue) {

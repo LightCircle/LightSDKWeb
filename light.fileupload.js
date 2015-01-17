@@ -204,6 +204,21 @@ light.file.setFile = function (containerItem, files, options) {
   });
 };
 
+// 显示文件链接
+light.file.setFileLink = function (containerItem, files) {
+
+  var template = light.file.TEMPLATE_LINK()
+    , item = $("#" + containerItem);
+
+  _.each(files, function (file) {
+    item.append(_.template(template, {
+      url : "/file/download/" + (file.id || file._id),
+      id  : file.id || file._id,
+      name: file.name
+    }));
+  });
+};
+
 light.file.TEMPLATE_FILE = function() {
   return function(){/*
   <li>
@@ -226,4 +241,10 @@ light.file.TEMPLATE_IMAGE = function() {
      </a>
    </div>
    */}.toString().split(/\n/).slice(1, -1).join("\n");
+};
+
+light.file.TEMPLATE_LINK = function() {
+   return function(){/*
+     <a href="{{url}}">{{name}}</a>
+     */}.toString().split(/\n/).slice(1, -1).join("\n");
 };

@@ -171,7 +171,7 @@ light.file.setImage = function (containerItem, files, options) {
   item.addClass("file-container");
   _.each(files, function (file) {
     container.append(_.template(template, {
-      url  : "/file/download/" + (file.id || file._id),
+      url  : "/file/image/" + (file.id || file._id),
       id   : file.id || file._id,
       name : file.name,
       width: (file.width || "200") + "px"

@@ -308,7 +308,7 @@ light.widget.TEMPLATE_IMAGE_VIEW = function() {
    <td class="title">{{title}}</td>
    <td>
    <$ _.each(value, function(f, index) { $>
-   <img src="/file/download/{{f}}" style="width: {{width[index]}}">
+   <img src="/file/image/{{f}}" style="width: {{width[index]}}">
    <$ }); $>
    </td>
    </tr>

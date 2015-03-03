@@ -47,6 +47,14 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
             multiple: true,
             success: function(data) {
               return false;
+            }, check: function(files){
+              for (var i = 0; i < files.length; i++) {
+                if(files[i].size > 50*1024*1024){
+                  alert("图片大小不能超过50MB");
+                  return false;
+                }
+              }
+              return true;
             }
           });
       }
@@ -60,6 +68,14 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
             multiple: true,
             success: function(data) {
               return false;
+            }, check: function(files){
+              for (var i = 0; i < files.length; i++) {
+                if(files[i].size > 50*1024*1024){
+                  alert("文件大小不能超过50MB");
+                  return false;
+                }
+              }
+              return true;
             }
           });
       }

@@ -50,7 +50,7 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
             }, check: function(files){
               for (var i = 0; i < files.length; i++) {
                 if(files[i].size > 50*1024*1024){
-                  alert("图片大小不能超过50MB");
+                  alertify.error("图片大小不能超过50MB");
                   return false;
                 }
               }
@@ -71,7 +71,7 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
             }, check: function(files){
               for (var i = 0; i < files.length; i++) {
                 if(files[i].size > 50*1024*1024){
-                  alert("文件大小不能超过50MB");
+                  alertify.error("文件大小不能超过50MB");
                   return false;
                 }
               }

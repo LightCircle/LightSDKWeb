@@ -151,6 +151,11 @@ light.widget.setTemplateData = function(templates, data) {
         if (template.selectType === "3") {
           $("input:checkbox[name='_" + template.key + "']").val(val.value);
         }
+
+        // pulldown
+        if (template.selectType === "4") {
+          $("select[name*='_" + template.key + "']").find("option[value='" + val.value + "']").attr("selected", true);
+        }
       }
 
       // file
@@ -231,8 +236,11 @@ light.widget.getTemplateData = function(templates) {
           item.name.push(template.selectOption[parseInt($(this).val())]);
         });
       }
-
-      // TODO 下拉框
+      if (template.selectType === "4") {
+        var optionNode = $("select[name*='_" + template.key + "']").find("option:selected");
+        item.value = $(optionNode).val();
+        item.name = template.selectOption[parseInt(item.value)];
+      }
 
       result.push(item);
     }

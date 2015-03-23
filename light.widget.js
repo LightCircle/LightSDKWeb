@@ -115,6 +115,13 @@ light.widget.loadTemplateView = function(templates, container) {
     if (!_.isEmpty(tmpl)) {
       container.append(_.template(tmpl, item));
     }
+
+    $(".fancybox").fancybox({
+      openEffect  : "fade",
+      closeEffect : "fade",
+      type : "image"
+    });
+
   });
 };
 
@@ -332,7 +339,9 @@ light.widget.TEMPLATE_IMAGE_VIEW = function() {
    <td class="title">{{title}}</td>
    <td>
    <$ _.each(value, function(f, index) { $>
+   <a class="fancybox" rel="group" href="/file/image/{{f}}">
    <img src="/file/image/{{f}}" style="width: {{width[index]}}">
+   </a>
    <$ }); $>
    </td>
    </tr>

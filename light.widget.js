@@ -24,6 +24,7 @@ light.widget.loadTemplate = function(templates, container, canEdit) {
   _.each(templates, function(item) {
 
     item.canEdit = canEdit;
+    item.defaultValue = item.default || "";
     container.append(_.template($("#tmpl" + item.type).html(), item));
 
     if (item.type === light.widget.TEXT) {

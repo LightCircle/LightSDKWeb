@@ -222,7 +222,7 @@ light.file.setFileLink = function (containerItem, files) {
 light.file.TEMPLATE_FILE = function() {
   return function(){/*
   <li>
-    <span fid='{{id}}' onclick='javascript: window.location="{{url}}"'>{{name}}</span>
+    <span fid='{{id}}'>{{name}}</span>
     <a fid='{{id}}' fname='{{name}}' onclick='javascript: $(this).parent().remove(); return false;'>
       <i class='fa fa-times'></i>
     </a>

@@ -77,3 +77,13 @@ ButtonGroup.prototype.set = function(value) {
   this.init();
 };
 
+ButtonGroup.prototype.disable = function(disable) {
+  var child = this.id.children();
+  _.each(child, function(item){
+    if (disable) {
+      $(item).attr("disabled", true);
+    } else {
+      $(item).removeAttr("disabled");
+    }
+  });
+};

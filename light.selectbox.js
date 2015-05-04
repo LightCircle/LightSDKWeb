@@ -37,11 +37,11 @@ light.selectbox.dataType = "";
 
 /**
  * 依赖的API
- *  /user/list
- *  /group/list
- *  /category/list
- *  /role/list
- *  /tag/list
+ *  /api/user/list
+ *  /api/group/list
+ *  /api/category/list
+ *  /api/role/list
+ *  /api/tag/list
  */
 $(function () {
 
@@ -90,13 +90,13 @@ $(function () {
    * 获取用户一览
    */
   var getUserList = function(selected, url) {
-    url = url || "/user/list";
+    url = url || "/api/user/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
@@ -108,7 +108,7 @@ $(function () {
             };
           }
 
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "user",
@@ -126,13 +126,13 @@ $(function () {
    * 获取标签一览
    */
   var getTagList = function(selected, url) {
-    url = url || "/tag/list";
+    url = url || "/api/tag/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
@@ -144,7 +144,7 @@ $(function () {
             };
           }
 
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "tag",
@@ -162,13 +162,13 @@ $(function () {
    * 获取组一览
    */
   var getGroupList = function(selected, url) {
-    url = url || "/group/list";
+    url = url || "/api/group/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
@@ -180,7 +180,7 @@ $(function () {
             };
           }
 
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "group",
@@ -198,13 +198,13 @@ $(function () {
    * 获取分类一览
    */
   var getCategoryList = function(selected, url) {
-    url = url || "/category/list";
+    url = url || "/api/category/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
@@ -216,7 +216,7 @@ $(function () {
             };
           }
 
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "bookmark",
@@ -234,13 +234,13 @@ $(function () {
    * 获取文件一览
    */
   var getFileList = function(selected, url) {
-    url = url || "/file/list";
+    url = url || "/api/file/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
@@ -252,7 +252,7 @@ $(function () {
             };
           }
 
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "file",
@@ -270,19 +270,19 @@ $(function () {
    * 获取角色一览
    */
   var getRoleList = function(selected, url) {
-    url = url || "/role/list";
+    url = url || "/api/role/list";
     light.doget(url, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
 
           var checked = _.indexOf(selected, item.name) >= 0;
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "lock",
@@ -307,19 +307,19 @@ $(function () {
    * 获取权限一览
    */
   var getAuthorityList = function(selected, url) {
-    url = url || "/authority/list";
+    url = url || "/api/authority/list";
     light.doget(url, function(err, result) {
       if (err) {
         light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = $("#tmplDlgSelectBoxBody").html()
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function(item, index) {
 
           var checked = _.indexOf(selected, item.name) >= 0;
-          dlgSelectBoxBody.append(_.template(tmplDlgSelectBoxBody, {
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
             icon: "lock",
@@ -390,25 +390,25 @@ $(function () {
 
     switch (light.selectbox.dataType) {
       case light.selectbox.user:
-        getUserList(selected, "/user/search?keyword="+keyword);
+        getUserList(selected, "/api/user/search?keyword="+keyword);
         break;
       case light.selectbox.authority:
-        getAuthorityList(selected, "/authority/search?keyword="+keyword);
+        getAuthorityList(selected, "/api/authority/search?keyword="+keyword);
         break;
       case light.selectbox.group:
-        getGroupList(selected, "/group/search?keyword="+keyword);
+        getGroupList(selected, "/api/group/search?keyword="+keyword);
         break;
       case light.selectbox.category:
-        getCategoryList(selected, "/category/search?keyword="+keyword);
+        getCategoryList(selected, "/api/category/search?keyword="+keyword);
         break;
       case light.selectbox.role:
-        getRoleList(selected, "/role/search?keyword="+keyword);
+        getRoleList(selected, "/api/role/search?keyword="+keyword);
         break;
       case light.selectbox.tag:
-        getTagList(selected, "/tag/search?keyword="+keyword);
+        getTagList(selected, "/api/tag/search?keyword="+keyword);
         break;
       case light.selectbox.file:
-        getFileList(light.selectbox.selected, "/file/search?keyword="+keyword);
+        getFileList(light.selectbox.selected, "/api/file/search?keyword="+keyword);
         break;
     }
   };
@@ -442,14 +442,14 @@ $(function () {
    */
   var setAlphabet = function() {
     var btnAlphabet = $("#btnAlphabet")
-      , tmplAlphabet = $("#tmplAlphabet").html();
+      , tmplAlphabet = _.template($("#tmplAlphabet").html());
 
     if (!tmplAlphabet) {
       return;
     }
 
     for (var cc = 65; cc < 90; cc++) {
-      btnAlphabet.append(_.template(tmplAlphabet, {code: String.fromCharCode(cc)}));
+      btnAlphabet.append(tmplAlphabet({code: String.fromCharCode(cc)}));
     }
   };
 

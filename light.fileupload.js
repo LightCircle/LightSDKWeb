@@ -34,6 +34,11 @@ light.file.extend = {};
  *  error   : {Function}
  *  success : {Function}
  *  progress: {Function}
+ *
+ *  extend      : 附加信息
+ *  type        : 文件类型
+ *  description : 文件描述
+ *  path        : 文件路径
  * @param data
  */
 light.initFileUpload = function (fileButton, options) {
@@ -73,9 +78,13 @@ light.initFileUpload = function (fileButton, options) {
     }
 
     // upload
-    var url = options.url || (options.nometa ? "/file/upload" : "/file/create");
-    var extend = options.extend ? options.extend : light.file.extend;
-    light.dopostData(url, {extend: extend}, fd, function (err, result) {
+    var data = {}, url = options.url || (options.nometa ? "/api/file/upload" : "/api/file/add");
+    data.extend = _.extend(light.file.extend, options.extend);
+    data.type = light.file.type;
+    data.description = light.file.description;
+    data.path = light.file.path;
+
+    light.dopostData(url, {data: data}, fd, function (err, result) {
         if (err) {
           if (options.error) {
             options.error.call(button, err);
@@ -171,7 +180,7 @@ light.file.setImage = function (containerItem, files, options) {
   item.addClass("file-container");
   _.each(files, function (file) {
     container.append(_.template(template, {
-      url  : "/file/image/" + (file.id || file._id),
+      url  : "/api/file/image/" + (file.id || file._id),
       id   : file.id || file._id,
       name : file.name,
       width: (file.width || "200") + "px"
@@ -197,7 +206,7 @@ light.file.setFile = function (containerItem, files, options) {
   var container = item.children("ol");
   _.each(files, function (file) {
     container.append(_.template(template, {
-      url : "/file/download/" + (file.id || file._id),
+      url : "/api/file/download/" + (file.id || file._id),
       id  : file.id || file._id,
       name: file.name
     }));
@@ -212,7 +221,7 @@ light.file.setFileLink = function (containerItem, files) {
 
   _.each(files, function (file) {
     item.append(_.template(template, {
-      url : "/file/download/" + (file.id || file._id),
+      url : "/api/file/download/" + (file.id || file._id),
       id  : file.id || file._id,
       name: file.name
     }));

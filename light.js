@@ -738,6 +738,12 @@ var light = {
         e.preventDefault();
       }
     });
+  },
+
+  shiftLang: function(lang) {
+    document.cookie = "light.lang=" + encodeURIComponent(lang) + ";path=/";
+
+    console.log(document.cookie);
   }
 
 };

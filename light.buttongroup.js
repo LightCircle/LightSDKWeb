@@ -42,7 +42,17 @@ var ButtonGroup = function(id, value, clickCallback) {
     self.init();
 
     if (clickCallback) {
-      clickCallback(self.value);
+
+      // find button options
+      var option = {};
+      $(this).parent().each(function () {
+        $.each(this.attributes, function () {
+          if (this.specified) {
+            option[this.name] = this.value;
+          }
+        });
+      });
+      clickCallback(self.value, option);
     }
   });
 };

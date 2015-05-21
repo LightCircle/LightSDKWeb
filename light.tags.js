@@ -6,11 +6,13 @@ var Tags = function(id, callback) {
   var self = this;
   this.id = $("#" + id);
 
+  this.id.unbind("click");
   this.id.on("click", "a", function(){
     self.setSelected($(this), !$(this).attr("selected"));
     if (callback) {
       callback($(this).attr("name"), $(this).attr("selected"));
     }
+    return false;
   });
 };
 

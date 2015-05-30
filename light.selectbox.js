@@ -29,6 +29,8 @@ light.selectbox.category  = "category";
 light.selectbox.role      = "role";
 light.selectbox.tag       = "tag";
 light.selectbox.file      = "file";
+light.selectbox.route     = "route";
+light.selectbox.board     = "board";
 
 /**
  * 选择数据对象
@@ -75,6 +77,12 @@ $(function () {
         break;
       case light.selectbox.file:
         getFileList(defaults);
+        break;
+      case light.selectbox.route:
+        getRouteList(defaults);
+        break;
+      case light.selectbox.board:
+        getBoardList(defaults);
         break;
     }
 
@@ -341,6 +349,80 @@ $(function () {
   };
 
   /**
+   * 获取路径一览
+   */
+  var getRouteList = function(selected, url) {
+    url = url || "/api/route/list";
+    light.doget(url, function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {
+
+          var checked = _.indexOf(selected, item.name) >= 0;
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
+            index: index + 1,
+            id: item._id,
+            icon: "load",
+            name: item.url,
+            option1: item.description,
+            option2: "",
+            checked: checked
+          }));
+
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.url,
+              option: item.description
+            };
+          }
+        });
+      }
+    });
+  };
+
+  /**
+   * 获取路径一览
+   */
+  var getBoardList = function(selected, url) {
+    url = url || "/api/board/list";
+    light.doget(url, function(err, result) {
+      if (err) {
+        light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
+          , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function(item, index) {
+
+          var checked = _.indexOf(selected, item.api) >= 0;
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
+            index: index + 1,
+            id: item._id,
+            icon: "bars",
+            name: item.api,
+            option1: item.description,
+            option2: "",
+            checked: checked
+          }));
+
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.api,
+              option: item.description
+            };
+          }
+        });
+      }
+    });
+  };
+
+  /**
    * 事件绑定
    */
   var events = function() {
@@ -409,6 +491,12 @@ $(function () {
         break;
       case light.selectbox.file:
         getFileList(light.selectbox.selected, "/api/file/search?keyword="+keyword);
+        break;
+      case light.selectbox.route:
+        getRouteList(light.selectbox.selected, "/api/route/search?keyword="+keyword);
+        break;
+      case light.selectbox.board:
+        getBoardList(light.selectbox.selected, "/api/board/search?keyword="+keyword);
         break;
     }
   };

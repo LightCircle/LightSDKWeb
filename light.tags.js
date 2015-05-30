@@ -6,11 +6,19 @@ var Tags = function(id, callback) {
   var self = this;
   this.id = $("#" + id);
 
+  this.id.unbind("click");
   this.id.on("click", "a", function(){
+    if (self.singleMode) {
+      self.id.find("a[selected='selected']").each(function () {
+        self.setSelected($(this), false);
+      });
+    }
+
     self.setSelected($(this), !$(this).attr("selected"));
     if (callback) {
       callback($(this).attr("name"), $(this).attr("selected"));
     }
+    return false;
   });
 };
 
@@ -61,6 +69,14 @@ Tags.prototype.setSelected = function(item, selected) {
     item.css("color", "");
     item.removeAttr("selected");
   }
+};
+
+Tags.prototype.setSingleMode = function() {
+  this.singleMode = true;
+};
+
+Tags.prototype.setMultiMode = function() {
+  this.singleMode = false;
 };
 
 light.tags.TEMPLATE_ITEM = function() {

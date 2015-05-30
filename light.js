@@ -744,6 +744,31 @@ var light = {
     document.cookie = "light.lang=" + encodeURIComponent(lang) + ";path=/";
 
     console.log(document.cookie);
+  },
+
+  save: function (scope, key, val) {
+    if (!window.localStorage) {
+      return;
+    }
+
+    var storage = window.localStorage.getItem(scope);
+    storage = storage ? JSON.parse(storage) : {};
+
+    storage[key] = val;
+    window.localStorage.setItem(scope, JSON.stringify(storage));
+  },
+
+  load: function (scope, key) {
+    if (!window.localStorage) {
+      return undefined;
+    }
+
+    var storage = window.localStorage.getItem(scope);
+    if (storage) {
+      return JSON.parse(storage)[key];
+    }
+
+    return undefined;
   }
 
 };

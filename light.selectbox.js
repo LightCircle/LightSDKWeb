@@ -14,6 +14,12 @@ light.selectbox.selected = {};
 light.selectbox.condition = {};
 
 /**
+ * 显示对象的请求API
+ * @type String
+ */
+light.selectbox.url = "";
+
+/**
  * 选择用户的回调函数
  */
 light.selectbox.callback = undefined;
@@ -69,36 +75,38 @@ $(function () {
     light.selectbox.selected = {};
     light.selectbox.condition= {};
 
+    light.selectbox.url = url;
+
     switch (type) {
       case light.selectbox.user:
-        getUserList(defaults, url);
+        getUserList(defaults);
         break;
       case light.selectbox.authority:
-        getAuthorityList(defaults, url);
+        getAuthorityList(defaults);
         break;
       case light.selectbox.group:
-        getGroupList(defaults, url);
+        getGroupList(defaults);
         break;
       case light.selectbox.category:
-        getCategoryList(defaults, url);
+        getCategoryList(defaults);
         break;
       case light.selectbox.role:
-        getRoleList(defaults, url);
+        getRoleList(defaults);
         break;
       case light.selectbox.tag:
-        getTagList(defaults, url);
+        getTagList(defaults);
         break;
       case light.selectbox.file:
-        getFileList(defaults, url);
+        getFileList(defaults);
         break;
       case light.selectbox.route:
-        getRouteList(defaults, url);
+        getRouteList(defaults);
         break;
       case light.selectbox.function:
-        getFunctionList(defaults, url);
+        getFunctionList(defaults);
         break;
       case light.selectbox.board:
-        getBoardList(defaults, url);
+        getBoardList(defaults);
         break;
       case light.selectbox.custom:
         getCustomList(defaults, all);
@@ -116,8 +124,8 @@ $(function () {
   /**
    * 获取用户一览
    */
-  var getUserList = function(selected, url) {
-    url = url || "/api/user/list";
+  var getUserList = function(selected) {
+    var url = light.selectbox.url || "/api/user/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -153,8 +161,8 @@ $(function () {
   /**
    * 获取标签一览
    */
-  var getTagList = function(selected, url) {
-    url = url || "/api/tag/list";
+  var getTagList = function(selected) {
+    var url = light.selectbox.url || "/api/tag/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -190,8 +198,8 @@ $(function () {
   /**
    * 获取组一览
    */
-  var getGroupList = function(selected, url) {
-    url = url || "/api/group/list";
+  var getGroupList = function(selected) {
+    var url = light.selectbox.url || "/api/group/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -227,8 +235,8 @@ $(function () {
   /**
    * 获取分类一览
    */
-  var getCategoryList = function(selected, url) {
-    url = url || "/api/category/list";
+  var getCategoryList = function(selected) {
+    var url = light.selectbox.url || "/api/category/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -264,8 +272,8 @@ $(function () {
   /**
    * 获取文件一览
    */
-  var getFileList = function(selected, url) {
-    url = url || "/api/file/list";
+  var getFileList = function(selected) {
+    var url = light.selectbox.url || "/api/file/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         // light.error(err, result.message, false);
@@ -302,8 +310,8 @@ $(function () {
   /**
    * 获取角色一览
    */
-  var getRoleList = function(selected, url) {
-    url = url || "/api/role/list";
+  var getRoleList = function(selected) {
+    var url = light.selectbox.url || "/api/role/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -340,8 +348,8 @@ $(function () {
   /**
    * 获取权限一览
    */
-  var getAuthorityList = function(selected, url) {
-    url = url || "/api/authority/list";
+  var getAuthorityList = function(selected) {
+    var url = light.selectbox.url || "/api/authority/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -378,8 +386,8 @@ $(function () {
   /**
    * 获取路径一览
    */
-  var getRouteList = function(selected, url) {
-    url = url || "/api/route/list";
+  var getRouteList = function(selected) {
+    var url = light.selectbox.url || "/api/route/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -416,8 +424,8 @@ $(function () {
   /**
    * 获取菜单一览
    */
-  var getFunctionList = function(selected, url) {
-    url = url || "/api/function/list";
+  var getFunctionList = function(selected) {
+    var url = light.selectbox.url || "/api/function/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");
@@ -454,8 +462,8 @@ $(function () {
   /**
    * 获取路径一览
    */
-  var getBoardList = function(selected, url) {
-    url = url || "/api/board/list";
+  var getBoardList = function(selected) {
+    var url = light.selectbox.url || "/api/board/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
         alertify.error("加载错误");

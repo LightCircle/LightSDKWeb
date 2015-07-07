@@ -22,7 +22,7 @@ var Tags = function(id, callback) {
   });
 };
 
-Tags.prototype.init = function(values) {
+Tags.prototype.init = function(values, selectedValue) {
 
   var self = this
     , template = _.template(light.tags.TEMPLATE_ITEM());
@@ -36,6 +36,12 @@ Tags.prototype.init = function(values) {
   _.each(values, function (val) {
     self.id.append(template({value: val}));
   });
+
+  if (!_.isUndefined(selectedValue)) {
+    self.id.find("a[name='" + selectedValue + "']").each(function () {
+      self.setSelected($(this), true);
+    });
+  }
 
   return this;
 };

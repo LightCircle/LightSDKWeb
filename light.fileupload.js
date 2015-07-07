@@ -86,6 +86,7 @@ light.initFileUpload = function (fileButton, options) {
 
     light.dopostData(url, {data: data}, fd, function (err, result) {
         if (err) {
+          alertify.error("上传错误");
           if (options.error) {
             options.error.call(button, err);
           }
@@ -169,7 +170,7 @@ light.initFileUploadWithImage = function (containerItem, fileButton, options, da
  */
 light.file.setImage = function (containerItem, files, options) {
 
-  var template = light.file.TEMPLATE_IMAGE()
+  var template = _.template(light.file.TEMPLATE_IMAGE())
     , item = $("#" + containerItem)
     , container = item;
 
@@ -179,8 +180,8 @@ light.file.setImage = function (containerItem, files, options) {
 
   item.addClass("file-container");
   _.each(files, function (file) {
-    container.append(_.template(template, {
-      url  : "/api/file/image/" + (file.id || file._id),
+    container.append(template({
+      url  : "/api/file/image?id=" + (file.id || file._id),
       id   : file.id || file._id,
       name : file.name,
       width: (file.width || "200") + "px"
@@ -194,7 +195,7 @@ light.file.clearFile = function(containerItem) {
 
 light.file.setFile = function (containerItem, files, options) {
 
-  var template = light.file.TEMPLATE_FILE()
+  var template = _.template(light.file.TEMPLATE_FILE())
     , item = $("#" + containerItem);
   
   if (!options.multiple || !item.children('ol').length) {
@@ -205,7 +206,7 @@ light.file.setFile = function (containerItem, files, options) {
 
   var container = item.children("ol");
   _.each(files, function (file) {
-    container.append(_.template(template, {
+    container.append(template({
       url : "/api/file/download/" + (file.id || file._id),
       id  : file.id || file._id,
       name: file.name
@@ -216,11 +217,11 @@ light.file.setFile = function (containerItem, files, options) {
 // 显示文件链接
 light.file.setFileLink = function (containerItem, files) {
 
-  var template = light.file.TEMPLATE_LINK()
+  var template = _.template(light.file.TEMPLATE_LINK())
     , item = $("#" + containerItem);
 
   _.each(files, function (file) {
-    item.append(_.template(template, {
+    item.append(template({
       url : "/api/file/download/" + (file.id || file._id),
       id  : file.id || file._id,
       name: file.name

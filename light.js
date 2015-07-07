@@ -567,6 +567,24 @@ var light = {
   },
 
   /**
+   * More 翻页
+   */
+  paginationMore: {
+    showBtn: function () {
+      $('#pagination-btn').removeClass("hide");
+    },
+
+    hideBtn: function () {
+      $('#pagination-btn').addClass("hide");
+    },
+
+    displayTotalCount: function (count) {
+      $('#totalCount').html(count);
+    },
+
+  },
+
+  /**
    * 翻页
    */
   paginationScrollTop: true,

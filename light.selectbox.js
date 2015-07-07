@@ -437,7 +437,7 @@ $(function () {
     var url = light.selectbox.url || "/api/function/list";
     light.doget(url, light.selectbox.condition, function(err, result) {
       if (err) {
-          alertify.error("加载错误");
+        alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 

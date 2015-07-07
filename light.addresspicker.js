@@ -168,6 +168,7 @@
       light.doget(opt.url, {condition: {parent: parent, valid: 1}, order: "sort"}, function (err, result) {
 
         if (err) {
+          alertify.error("加载错误");
           if (opt.error) {
             opt.error(err);
           }

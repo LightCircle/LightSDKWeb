@@ -68,7 +68,7 @@ $(function () {
    * @param selected 选中的项目一览
    * @param url 可以自定URL，如果指定，则使用该URL获取后台数据
    */
-  light.selectbox.show = function(type, selected, url, filter) {
+  light.selectbox.show = function(type, selected, url) {
     light.selectbox.dataType = type;
     var defaults = selected && selected.length > 0 ? selected.split(",") : undefined;
 
@@ -76,7 +76,6 @@ $(function () {
     light.selectbox.condition= {};
 
     light.selectbox.url = url;
-    light.selectbox.filter = filter;
 
     switch (type) {
       case light.selectbox.user:
@@ -136,7 +135,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
           var checked = _.indexOf(selected, item.id) >= 0;
           if (checked) {
@@ -174,7 +172,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
@@ -212,7 +209,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
@@ -250,7 +246,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
@@ -288,7 +283,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
@@ -327,7 +321,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
 
           var checked = _.indexOf(selected, item.name) >= 0;
@@ -366,7 +359,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
 
           var checked = _.indexOf(selected, item.name) >= 0;
@@ -405,10 +397,9 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
 
-          var checked = _.indexOf(selected, item.name) >= 0;
+          var checked = _.indexOf(selected, item.url) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
@@ -444,9 +435,8 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
-          var checked = _.indexOf(selected, item.name) >= 0;
+          var checked = _.indexOf(selected, item.url) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index: index + 1,
             id: item._id,
@@ -482,7 +472,6 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
           , dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-        result.items = filterResult(result.items);
         _.each(result.items, function(item, index) {
 
           var checked = _.indexOf(selected, item.api) >= 0;
@@ -536,16 +525,7 @@ $(function () {
       }
     });
   };
-/**
-   * 获取菜单一览
-   */
-  var filterResult = function(items) {
-    var filter = light.selectbox.filter;
-    if (filter) {
-      return _.filter(items, function(item){ return eval(filter);});
-    }
-    return items;
-  }
+
   /**
    * 事件绑定
    */

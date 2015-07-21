@@ -727,6 +727,16 @@ var light = {
     };
   },
 
+  showLoadingMask: function () {
+    $('.loading-mask').show();
+    $('.loading-container').fadeIn(200);
+  },
+
+  hideLoadingMask: function () {
+    $('.loading-mask').fadeOut();
+    $('.loading-container').fadeOut(200);
+  },
+
   randomGUID4: function () {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   },

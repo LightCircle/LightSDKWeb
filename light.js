@@ -821,3 +821,5 @@ Date.prototype.Format = function (fmt) { //author: meizz
 
   return fmt;
 };
+_.str = s;
+

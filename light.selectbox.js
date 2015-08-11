@@ -13,12 +13,6 @@ light.selectbox.selected = {};
 light.selectbox.condition = {};
 
 /**
- * 检索条件
- * @type {{}}
- */
-light.selectbox.searchCondition = {};
-
-/**
  * 显示对象的请求API
  * @type String
  */
@@ -78,53 +72,48 @@ $(function () {
     var defaults = selected && selected.length > 0 ? selected.split(",") : undefined;
 
     light.selectbox.selected = {};
-    //light.selectbox.condition= {};
+    light.selectbox.condition = {};
 
     light.selectbox.url = url;
 
     switch (type) {
-      case light.selectbox.user:
-        getUserList(defaults);
-        break;
-      case light.selectbox.authority:
-        getAuthorityList(defaults);
-        break;
-      case light.selectbox.group:
-        getGroupList(defaults);
-        break;
-      case light.selectbox.category:
-        getCategoryList(defaults);
-        break;
-      case light.selectbox.role:
-        getRoleList(defaults);
-        break;
-      case light.selectbox.tag:
-        getTagList(defaults);
-        break;
-      case light.selectbox.file:
-        getFileList(defaults);
-        break;
-      case light.selectbox.route:
-        getRouteList(defaults);
-        break;
-      case light.selectbox.function:
-        getFunctionList(defaults);
-        break;
-      case light.selectbox.board:
-        getBoardList(defaults);
-        break;
-      case light.selectbox.custom:
-        getCustomList(defaults, all);
-        break;
+    case light.selectbox.user:
+      getUserList(defaults);
+      break;
+    case light.selectbox.authority:
+      getAuthorityList(defaults);
+      break;
+    case light.selectbox.group:
+      getGroupList(defaults);
+      break;
+    case light.selectbox.category:
+      getCategoryList(defaults);
+      break;
+    case light.selectbox.role:
+      getRoleList(defaults);
+      break;
+    case light.selectbox.tag:
+      getTagList(defaults);
+      break;
+    case light.selectbox.file:
+      getFileList(defaults);
+      break;
+    case light.selectbox.route:
+      getRouteList(defaults);
+      break;
+    case light.selectbox.function:
+      getFunctionList(defaults);
+      break;
+    case light.selectbox.board:
+      getBoardList(defaults);
+      break;
+    case light.selectbox.custom:
+      getCustomList(defaults);
+      break;
     }
 
     $("#searchKeyword").val("");
-    $("#dlgSelectBox").off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
-      light.selectbox.condition = {};
-      light.selectbox.searchCondition = {};
-    });
     $("#dlgSelectBox").modal("show");
-
   };
 
   light.selectbox.hide = function () {
@@ -136,31 +125,29 @@ $(function () {
    */
   var getUserList = function (selected) {
     var url = light.selectbox.url || "/api/user/list";
-
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
           var checked = _.indexOf(selected, item.id) >= 0;
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.id,
+              name: item.id,
               option: item.name
             };
           }
 
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "user",
-            name   : item.id,
+            index: index + 1,
+            id: item._id,
+            icon: "user",
+            name: item.id,
             option1: item.name,
             option2: "",
             checked: checked
@@ -175,30 +162,29 @@ $(function () {
    */
   var getTagList = function (selected) {
     var url = light.selectbox.url || "/api/tag/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.name,
+              name: item.name,
               option: ""
             };
           }
 
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "tag",
-            name   : item.name,
+            index: index + 1,
+            id: item._id,
+            icon: "tag",
+            name: item.name,
             option1: "",
             option2: "",
             checked: checked
@@ -219,23 +205,23 @@ $(function () {
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.name,
+              name: item.name,
               option: ""
             };
           }
 
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "group",
-            name   : item.name,
+            index: index + 1,
+            id: item._id,
+            icon: "group",
+            name: item.name,
             option1: "",
             option2: "",
             checked: checked
@@ -250,30 +236,29 @@ $(function () {
    */
   var getCategoryList = function (selected) {
     var url = light.selectbox.url || "/api/category/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.name,
+              name: item.name,
               option: ""
             };
           }
 
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "bookmark",
-            name   : item.name,
+            index: index + 1,
+            id: item._id,
+            icon: "bookmark",
+            name: item.name,
             option1: item.categoryId,
             option2: item.parent,
             checked: checked
@@ -288,34 +273,33 @@ $(function () {
    */
   var getFileList = function (selected) {
     var url = light.selectbox.url || "/api/file/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         // light.error(err, result.message, false);
         alertify.error("加载错误");
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
           var checked = _.indexOf(selected, item.name) >= 0;
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.name,
+              name: item.name,
               option: Math.ceil(item.length / 1024) + " KB"
             };
           }
 
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "file",
-            name   : item.name,
+            index: index + 1,
+            id: item._id,
+            icon: "file",
+            name: item.name,
             option1: Math.ceil(item.length / 1024) + " KB",
             option2: "",
             checked: checked
-            // checked: (defaults && _.contains(defaults, item._id)) ? "checked" : ""
+              // checked: (defaults && _.contains(defaults, item._id)) ? "checked" : ""
           }));
         });
       }
@@ -327,24 +311,23 @@ $(function () {
    */
   var getRoleList = function (selected) {
     var url = light.selectbox.url || "/api/role/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
 
           var checked = _.indexOf(selected, item.name) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "lock",
-            name   : item.name,
+            index: index + 1,
+            id: item._id,
+            icon: "lock",
+            name: item.name,
             option1: item.description,
             option2: "",
             checked: checked
@@ -352,7 +335,7 @@ $(function () {
 
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.name,
+              name: item.name,
               option: item.description
             };
           }
@@ -366,24 +349,23 @@ $(function () {
    */
   var getAuthorityList = function (selected) {
     var url = light.selectbox.url || "/api/authority/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
 
           var checked = _.indexOf(selected, item.name) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "lock",
-            name   : item.name,
+            index: index + 1,
+            id: item._id,
+            icon: "lock",
+            name: item.name,
             option1: item.description,
             option2: "",
             checked: checked
@@ -391,7 +373,7 @@ $(function () {
 
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.name,
+              name: item.name,
               option: item.description
             };
           }
@@ -405,24 +387,23 @@ $(function () {
    */
   var getRouteList = function (selected) {
     var url = light.selectbox.url || "/api/route/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
 
           var checked = _.indexOf(selected, item.url) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "load",
-            name   : item.url,
+            index: index + 1,
+            id: item._id,
+            icon: "load",
+            name: item.url,
             option1: item.description,
             option2: "",
             checked: checked
@@ -430,7 +411,7 @@ $(function () {
 
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.url,
+              name: item.url,
               option: item.description
             };
           }
@@ -444,23 +425,22 @@ $(function () {
    */
   var getFunctionList = function (selected) {
     var url = light.selectbox.url || "/api/function/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
           var checked = _.indexOf(selected, item.url) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : item.icon,
-            name   : item.url,
+            index: index + 1,
+            id: item._id,
+            icon: item.icon,
+            name: item.url,
             option1: item.description,
             option2: "",
             checked: checked
@@ -468,7 +448,7 @@ $(function () {
 
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.url,
+              name: item.url,
               option: item.description
             };
           }
@@ -482,24 +462,23 @@ $(function () {
    */
   var getBoardList = function (selected) {
     var url = light.selectbox.url || "/api/board/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
+    light.doget(url, light.selectbox.condition, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);
       } else {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
 
           var checked = _.indexOf(selected, item.api) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "bars",
-            name   : item.api,
+            index: index + 1,
+            id: item._id,
+            icon: "bars",
+            name: item.api,
             option1: item.description,
             option2: "",
             checked: checked
@@ -507,7 +486,7 @@ $(function () {
 
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name  : item.api,
+              name: item.api,
               option: item.description
             };
           }
@@ -519,29 +498,35 @@ $(function () {
   /**
    * 显示自定义一览 TODO: 确认可用
    */
-  var getCustomList = function (selected, all) {
+  var getCustomList = function (selected) {
+    light.doget(light.selectbox.url, light.selectbox.condition, function (err, result) {
+      if (err) {
+        alertify.error("加载错误");
+        // light.error(err, result.message, false);
+      } else {
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
+          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
 
-    var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-      , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    _.each(all, params, function (item, index) {
+        _.each(result.items, function (item, index) {
 
-      var checked = _.indexOf(selected, item._id) >= 0;
-      dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-        index  : index + 1,
-        id     : item._id,
-        icon   : "bookmark-o",
-        name   : item.name,
-        option1: item.option1,
-        option2: item.option1,
-        checked: checked
-      }));
+          var checked = _.indexOf(selected, item._id) >= 0;
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
+            index: index + 1,
+            id: item._id,
+            icon: "bookmark-o",
+            name: item.name,
+            option1: item.description,
+            option2: "",
+            checked: checked
+          }));
 
-      if (checked) {
-        light.selectbox.selected[item._id] = {
-          name  : item.name,
-          option: item.option1
-        };
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name: item.name,
+              option: item.description
+            };
+          }
+        });
       }
     });
   };
@@ -569,9 +554,9 @@ $(function () {
       searchData();
     });
     $("#searchKeyword").keyup(function () {
-      //if (!_.str.isBlank($(this).val())) {
-      searchData();
-      //}
+      if (!_.str.isBlank($(this).val())) {
+        searchData();
+      }
     });
 
     // 选择过滤字符
@@ -589,17 +574,11 @@ $(function () {
   var searchData = function () {
     // IE下汉字需要手动encode
     // var keyword = encodeURI($("#searchKeyword").val());
-    if ($("#searchKeyword").val()) {
-
-      light.selectbox.searchCondition = {
-        condition: {
-          keyword: $("#searchKeyword").val()
-        }
-      };
-    } else {
-
-      light.selectbox.searchCondition = {};
-    }
+    light.selectbox.condition = {
+      condition: {
+        keyword: $("#searchKeyword").val()
+      }
+    };
 
     var selected = [];
     _.each(light.selectbox.selected, function (val, key) {
@@ -607,36 +586,36 @@ $(function () {
     });
 
     switch (light.selectbox.dataType) {
-      case light.selectbox.user:
-        getUserList(selected);
-        break;
-      case light.selectbox.authority:
-        getAuthorityList(selected);
-        break;
-      case light.selectbox.group:
-        getGroupList(selected);
-        break;
-      case light.selectbox.category:
-        getCategoryList(selected);
-        break;
-      case light.selectbox.role:
-        getRoleList(selected);
-        break;
-      case light.selectbox.tag:
-        getTagList(selected);
-        break;
-      case light.selectbox.file:
-        getFileList(light.selectbox.selected);
-        break;
-      case light.selectbox.route:
-        getRouteList(light.selectbox.selected);
-        break;
-      case light.selectbox.function:
-        getFunctionList(light.selectbox.selected);
-        break;
-      case light.selectbox.board:
-        getBoardList(light.selectbox.selected);
-        break;
+    case light.selectbox.user:
+      getUserList(selected);
+      break;
+    case light.selectbox.authority:
+      getAuthorityList(selected);
+      break;
+    case light.selectbox.group:
+      getGroupList(selected);
+      break;
+    case light.selectbox.category:
+      getCategoryList(selected);
+      break;
+    case light.selectbox.role:
+      getRoleList(selected);
+      break;
+    case light.selectbox.tag:
+      getTagList(selected);
+      break;
+    case light.selectbox.file:
+      getFileList(light.selectbox.selected);
+      break;
+    case light.selectbox.route:
+      getRouteList(light.selectbox.selected);
+      break;
+    case light.selectbox.function:
+      getFunctionList(light.selectbox.selected);
+      break;
+    case light.selectbox.board:
+      getBoardList(light.selectbox.selected);
+      break;
     }
   };
 
@@ -645,10 +624,10 @@ $(function () {
    * @param target
    */
   var selectRow = function (target) {
-    var key         = target.attr("key")
-      , check       = target.children(":last")
-      , tmplCheck   = $("#tmplCheck").html()
-      , tmplUnCheck = $("#tmplUnCheck").html();
+    var key = target.attr("key"),
+      check = target.children(":last"),
+      tmplCheck = $("#tmplCheck").html(),
+      tmplUnCheck = $("#tmplUnCheck").html();
 
     // 单选，则清除前面的选择
     if (light.selectbox.single) {
@@ -661,7 +640,7 @@ $(function () {
       check.html(tmplCheck);
       light.selectbox.selected = {};
       light.selectbox.selected[key] = {
-        name  : target.attr("value"),
+        name: target.attr("value"),
         option: target.attr("option1")
       };
 
@@ -677,7 +656,7 @@ $(function () {
       check.attr("checked", "checked");
       check.html(tmplCheck);
       light.selectbox.selected[key] = {
-        name  : target.attr("value"),
+        name: target.attr("value"),
         option: target.attr("option1")
       };
     }
@@ -688,15 +667,17 @@ $(function () {
    * 显示字母过滤标题
    */
   var setAlphabet = function () {
-    var btnAlphabet  = $("#btnAlphabet")
-      , tmplAlphabet = _.template($("#tmplAlphabet").html());
+    var btnAlphabet = $("#btnAlphabet"),
+      tmplAlphabet = _.template($("#tmplAlphabet").html());
 
     if (!tmplAlphabet) {
       return;
     }
 
     for (var cc = 65; cc < 90; cc++) {
-      btnAlphabet.append(tmplAlphabet({code: String.fromCharCode(cc)}));
+      btnAlphabet.append(tmplAlphabet({
+        code: String.fromCharCode(cc)
+      }));
     }
   };
 

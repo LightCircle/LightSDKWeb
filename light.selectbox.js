@@ -530,26 +530,15 @@ $(function () {
         // light.error(err, result.message, false);
       } else {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
-          dlgSelectBoxBody = $("#dlgSelectBoxBody").html("");
+          dlgSelectBoxBody       = $("#dlgSelectBoxBody").html("");
 
         _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item._id) >= 0;
+          var checked = _.indexOf(selected, item.name) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index  : index + 1,
             id     : item._id,
             icon   : "bookmark-o",
             name   : item.name,
-            option1: item.option1,
-            option2: item.option1,
-            checked: checked
-          }));
-
-          var checked = _.indexOf(selected, item._id) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index: index + 1,
-            id: item._id,
-            icon: "bookmark-o",
-            name: item.name,
             option1: item.description,
             option2: "",
             checked: checked

@@ -43,6 +43,7 @@ light.selectbox.file = "file";
 light.selectbox.route = "route";
 light.selectbox.function = "function";
 light.selectbox.board = "board";
+light.selectbox.structure = "structure";
 light.selectbox.custom = "custom";
 
 /**
@@ -112,6 +113,9 @@ $(function () {
         break;
       case light.selectbox.board:
         getBoardList(defaults);
+        break;
+      case light.selectbox.structure:
+        getStructureList(defaults);
         break;
       case light.selectbox.custom:
         getCustomList(defaults);
@@ -516,6 +520,46 @@ $(function () {
     });
   };
 
+
+  /**
+   * 获取路径一览
+   */
+  var getStructureList = function (selected) {
+    var url = light.selectbox.url || "/api/structure/list";
+    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
+    light.doget(url, params, function (err, result) {
+      if (err) {
+        alertify.error("加载错误");
+        // light.error(err, result.message, false);
+      } else {
+
+        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
+          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
+
+        _.each(result.items, function (item, index) {
+
+          var checked = _.indexOf(selected, item.schema) >= 0;
+          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
+            index  : index + 1,
+            id     : item._id,
+            icon   : "database",
+            name   : item.schema,
+            option1: item.description,
+            option2: "",
+            checked: checked
+          }));
+
+          if (checked) {
+            light.selectbox.selected[item._id] = {
+              name  : item.schema,
+              option: item.description
+            };
+          }
+        });
+      }
+    });
+  };
+
   /**
    * 显示自定义一览 TODO: 确认可用
    */
@@ -646,6 +690,12 @@ $(function () {
         break;
       case light.selectbox.board:
         getBoardList(light.selectbox.selected);
+        break;
+      case light.selectbox.structure:
+        getStructureList(light.selectbox.selected);
+        break;
+      case light.selectbox.custom:
+        getCustomList(light.selectbox.selected);
         break;
     }
   };

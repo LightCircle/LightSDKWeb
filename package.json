@@ -1,0 +1,18 @@
+{
+  "name": "light-sdk-web",
+  "version": "0.0.1",
+  "description": "LightSDKWeb",
+  "main": "light.addresspicker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.alphabets.cn/root/LightSDKWeb.git"
+  },
+  "keywords": [
+    "light"
+  ],
+  "author": "r2space@gmail.com",
+  "license": "MIT"
+}

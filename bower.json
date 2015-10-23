@@ -1,7 +1,7 @@
 {
   "name": "light-sdk-web",
   "version": "0.1.1",
-  "homepage": "https://github.com/LightCircle/LightSDKWeb",
+  "homepage": "git@github.com:LightCircle/LightSDKWeb.git",
   "authors": [
     "LI LIN <r2space@gmail.com>"
   ],

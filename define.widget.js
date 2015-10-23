@@ -227,15 +227,19 @@ $(function () {
 
     value: function () {
 
-      if (_.isUndefined(this.props.data.value)) {
-        return this.props.data.value;
+      var result = _.isUndefined(this.props.data.value) ? this.props.data.defaults : this.props.data.value;
+
+      // tag组件时要返回对象，在tag组件里进行显示处理
+      if (this.props.data.textType == Widget.Type.TextTag) {
+        return result;
       }
 
-      if (_.isObject(this.props.data.defaults)) {
-        return _.isEmpty(this.props.data.defaults) ? "" : JSON.stringify(this.props.data.defaults);
+      // 其他类型，转换成字符串显示
+      if (_.isObject(result)) {
+        result = _.isEmpty(result) ? "" : JSON.stringify(result);
       }
 
-      return this.props.data.defaults;
+      return result;
     },
 
     widget: function () {

@@ -774,6 +774,13 @@ var light = {
     console.log(document.cookie);
   },
 
+  cookie: function (key) {
+    return decodeURIComponent(
+      document.cookie.replace(new RegExp("(?:^|.*;\\s*)"
+        + encodeURIComponent(key).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1")
+    );
+  },
+
   save: function (scope, key, val) {
     if (!window.localStorage) {
       return;

@@ -808,6 +808,14 @@ var light = {
 
 };
 
+// alias
+light.multipart = light.dopostData;
+light.post = light.dopost;
+light.put = light.doput;
+light.delete = light.dodelete;
+light.fetch = light.doget;
+light.get = light.doget;
+
 Date.prototype.Format = function (fmt) { //author: meizz 
   var o = {
     "M+": this.getMonth() + 1, //月份

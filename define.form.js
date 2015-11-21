@@ -76,11 +76,16 @@ Widget.Section = React.createClass({
       return;
     }
 
-    var node = $(ReactDOM.findDOMNode(this));
+    if (!this.props.option.accept) {
+      return;
+    }
 
+    var node = $(ReactDOM.findDOMNode(this));
     if (!node.droppable("instance")) {
       node.droppable({
-        accept: "#widget button, section", activeClass: "widget-active", hoverClass: "widget-hover",
+        accept: "#" + this.props.option.accept + " button, #" + this.props.option.node + " section",
+        activeClass: "widget-active",
+        hoverClass: "widget-hover",
         drop: function (event, ui) {
 
           var type = $(ui.draggable).attr("name");
@@ -288,12 +293,21 @@ Widget.Footer = React.createClass({
   }
 });
 
+/**
+ * @desc 表单, 可以指定的属性有:
+ * {
+ *   draft: true,               是否是编辑模式, true为编辑模式
+ *   accept: "additionWidget",  接受的组件, 一个画面使用多个form并且每个form允许添加的组件不同时, 可以指定
+ *   h: 4,                      默认的form行数
+ *   button: [],                操作按钮
+ *   node: "addition"           form的id, 多个form时用来区分每个form的事件
+ * }
+ */
 Widget.Form = React.createClass({
   getInitialState: function () {
     return {
       data: [],             // 保存数据
       option: {
-        draft: false,       // 表单模式, Draft为编辑模式
         disabled: false,    // 表单状态, 保存取消操作按钮是否可用
         closed: undefined,  // 表单是否可折叠, undefined为不显示折叠按钮, false为关闭状态
         selected: []        // 表单单元格选中状态, [row, col]
@@ -302,6 +316,11 @@ Widget.Form = React.createClass({
   },
 
   render: function () {
+
+    this.state.option.draft = this.props.draft;
+    this.state.option.accept = this.props.accept;
+    this.state.option.button = this.props.button;
+    this.state.option.node = this.props.node;
 
     return React.DOM.form({className: "sky-form"},
       React.createElement(Widget.Header, {
@@ -315,34 +334,25 @@ Widget.Form = React.createClass({
         option: this.state.option,
         emit: this.emit
       }),
-      React.createElement(Widget.Footer, {
-        button: [
-          {
-            key: "cancel",
-            name: light.i18n["common.button.cancel"],
-            onClick: this.onCancel,
-            style: "btn-u-default",
-            disabled: this.state.option.disabled
-          },
-          {
-            key: "save",
-            name: light.i18n["common.button.save"],
-            onClick: this.onOk,
-            disabled: this.state.option.disabled
-          }
-        ]
-      }),
+      React.createElement(Widget.Footer, this.state.option.button || {
+          button: [
+            {
+              key: "cancel",
+              name: light.i18n["common.button.cancel"],
+              onClick: this.onCancel,
+              style: "btn-u-default",
+              disabled: this.state.option.disabled
+            },
+            {
+              key: "save",
+              name: light.i18n["common.button.save"],
+              onClick: this.onOk,
+              disabled: this.state.option.disabled
+            }
+          ]
+        }),
       React.DOM.input({type: "text", style: {display: "none"}}) // 添加一个不可见输入框, 防止只有一个输入框是敲回车提交表单
     );
-  },
-
-  componentDidMount: function () {
-    this.emitter.on(Widget.EVENT.SELECT, this.onSelect);        // 选择组件
-    this.emitter.on(Widget.EVENT.EXPAND, this.onExpand);        // 扩大组件
-    this.emitter.on(Widget.EVENT.ADD, this.onAdd);              // 添加组件
-    this.emitter.on(Widget.EVENT.MOVE, this.onMove);            // 移动组件
-    this.emitter.on(Widget.EVENT.CHANGE, this.onChange);        // 组件值发生变化
-    this.emitter.on(Widget.EVENT.SELECTFORM, this.onSelectForm);// 选择表单
   },
 
   emit: function (type, data, node) {
@@ -462,17 +472,12 @@ Widget.Form = React.createClass({
   },
 
   /**
-   * 事件对象
-   */
-  emitter: $({}),
-
-  /**
    * 返回8x4的空组件
    * @returns {Array}
    */
-  getBlankItems: function () {
+  getBlankItems: function (option) {
 
-    var W = Widget.Config.Width, H = 8;
+    var W = Widget.Config.Width, H = this.props.h || 8;
 
     return _.flatten(_.map(_.range(H), function (row) {
       return _.map(_.range(W), function (col) {
@@ -484,18 +489,20 @@ Widget.Form = React.createClass({
   /**
    * 初始化Form
    * @param data Form定义数据
-   * @param draft 是否为编辑模式
    */
-  init: function (data, draft) {
+  init: function (data) {
     if (!data) {
       data = this.getBlankItems();
     }
 
-    if (!_.isUndefined(draft)) {
-      this.state.option.draft = draft;
-    }
+    this.emitter.on(Widget.EVENT.SELECT, this.onSelect);        // 选择组件
+    this.emitter.on(Widget.EVENT.EXPAND, this.onExpand);        // 扩大组件
+    this.emitter.on(Widget.EVENT.ADD, this.onAdd);              // 添加组件
+    this.emitter.on(Widget.EVENT.MOVE, this.onMove);            // 移动组件
+    this.emitter.on(Widget.EVENT.CHANGE, this.onChange);        // 组件值发生变化
+    this.emitter.on(Widget.EVENT.SELECTFORM, this.onSelectForm);// 选择表单
 
-    this.setState({data: data, option: this.state.option});
+    this.setState({data: data});
   },
 
   addRow: function (data) {
@@ -531,6 +538,18 @@ Widget.Form = React.createClass({
     _.extend(_.find(this.state.data, function (item) {
       return data.col == item.col && data.row == item.row;
     }), data);
+
+    this.setState({data: this.state.data});
+  },
+
+  setOptionItem: function (data) {
+    if (_.isEmpty(this.state.option.selected)) {
+      return;
+    }
+
+    _.extend(_.find(this.state.data, function (item) {
+      return this.state.option.selected[1] == item.col && this.state.option.selected[0] == item.row;
+    }.bind(this)), data);
 
     this.setState({data: this.state.data});
   },
@@ -601,7 +620,8 @@ Widget.Node = React.createClass({
         {name: "File", title: "附件", icon: "file-text-o", color: "dark-blue"},
         {name: "Label", title: "文字", icon: "font", color: "purple"},
         {name: "Grid", title: "表格", icon: "table", color: "purple"},
-        {name: "Line", title: "分割线", icon: "minus", color: "purple"}
+        {name: "Line", title: "分割线", icon: "minus", color: "purple"},
+        {name: "Block", title: "分组", icon: "th-large", color: "purple"}
       ]
     };
   },
@@ -611,19 +631,31 @@ Widget.Node = React.createClass({
   },
 
   render: function () {
-    return React.DOM.div({
-      style: {
-        padding: "5px",
+    return React.DOM.div({style: this.style()}, this.widget());
+  },
+
+  style: function () {
+    if (this.props.fixed) {
+      return {
+        padding: "8px",
         borderRadius: "3px !important",
         background: "rgba(0,0,0,.85)",
-        position: "absolute",
+        position: "relative",
         zIndex: 10
-      }
-    }, this.widget());
+      };
+    }
+
+    return {
+      padding: "5px",
+      borderRadius: "3px !important",
+      background: "rgba(0,0,0,.85)",
+      position: "absolute",
+      zIndex: 10
+    };
   },
 
   widget: function () {
-    return this.props.button.map(function (button) {
+    return this.button().map(function (button) {
       return React.DOM.button({
         className: "tooltips btn-u btn-u-" + button.color,
         name: button.name,
@@ -634,12 +666,25 @@ Widget.Node = React.createClass({
         "data-placement": "right"
       }, React.DOM.i({className: "fa fa-fw fa-" + button.icon}));
     });
+  },
+
+  button: function () {
+    if (!this.props.filter) {
+      return this.props.button;
+    }
+
+    return _.filter(this.props.button, function (item) {
+      return _.contains(this.props.filter, item.name);
+    }.bind(this));
   }
 });
 
-Widget.createForm = function (widget, node) {
-  return ReactDOM.render(
-    React.createElement(widget, null),
+Widget.createForm = function (widget, node, option) {
+  var dom = ReactDOM.render(
+    React.createElement(widget, option),
     document.getElementById(node)
   );
+
+  dom.emitter = $({});
+  return dom;
 };

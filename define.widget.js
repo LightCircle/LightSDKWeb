@@ -1114,3 +1114,37 @@ Widget.Grid = React.createClass({
   }
 });
 
+Widget.Block = React.createClass({
+
+  mixins: [Widget.Base],
+
+  render: function () {
+    return React.DOM.table({style: {width: "100%"}},
+      React.DOM.tbody(null,
+        React.DOM.tr(null,
+          React.DOM.td({style: {width: "50%"}}, React.DOM.hr({
+            style: {
+              borderTop: "1px solid #1ec7da",
+              marginTop: "20px",
+              marginBottom: "20px"
+            }
+          })),
+          React.DOM.td({style: {paddingLeft: "10px", paddingRight: "10px"}},
+            React.DOM.i({className: "fa fa-" + this.className(), style: {color: "#1ec7da"}})
+          ),
+          React.DOM.td({style: {width: "50%"}}, React.DOM.hr({
+            style: {
+              borderTop: "1px solid #1ec7da",
+              marginTop: "20px",
+              marginBottom: "20px"
+            }
+          }))
+        )
+      )
+    );
+  },
+
+  className: function () {
+    return this.props.data.blockIcon || "th-large";
+  }
+});

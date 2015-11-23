@@ -1,4 +1,20 @@
 /**
+ * @file 表单
+ * @module define.form
+ * @author r2space@gmail.com
+ * @version 1.0.0
+ */
+
+"use strict";
+
+var isNode = (typeof module !== "undefined" && module.exports);
+if (isNode) {
+  var React   = require("react")
+    , _       = light.util.underscore
+    , Widget  = require('./define.widget')
+}
+
+/**
  * 放置组件的单元格, 允许拖拽添加, 拖拽移动, 允许横向扩展
  */
 Widget.Section = React.createClass({
@@ -305,26 +321,35 @@ Widget.Footer = React.createClass({
  */
 Widget.Form = React.createClass({
   getInitialState: function () {
+
+    if (this.props.emitter) {
+      this.emitter = this.props.emitter;
+      this.emitter.on(Widget.EVENT.SELECT, this.onSelect);        // 选择组件
+      this.emitter.on(Widget.EVENT.EXPAND, this.onExpand);        // 扩大组件
+      this.emitter.on(Widget.EVENT.ADD, this.onAdd);              // 添加组件
+      this.emitter.on(Widget.EVENT.MOVE, this.onMove);            // 移动组件
+      this.emitter.on(Widget.EVENT.CHANGE, this.onChange);        // 组件值发生变化
+      this.emitter.on(Widget.EVENT.SELECTFORM, this.onSelectForm);// 选择表单
+    }
+
     return {
-      data: [],             // 保存数据
+      data: this.props.data || this.getBlankItems(),             // 保存数据
       option: {
-        disabled: false,    // 表单状态, 保存取消操作按钮是否可用
-        closed: undefined,  // 表单是否可折叠, undefined为不显示折叠按钮, false为关闭状态
-        selected: []        // 表单单元格选中状态, [row, col]
+        disabled: false,            // 表单状态, 保存取消操作按钮是否可用
+        closed: undefined,          // 表单是否可折叠, undefined为不显示折叠按钮, false为关闭状态
+        selected: [],               // 表单单元格选中状态, [row, col]
+        draft: this.props.draft,
+        accept: this.props.accept,
+        button: this.props.button,
+        node: this.props.node
       }
     };
   },
 
   render: function () {
-
-    this.state.option.draft = this.props.draft;
-    this.state.option.accept = this.props.accept;
-    this.state.option.button = this.props.button;
-    this.state.option.node = this.props.node;
-
     return React.DOM.form({className: "sky-form"},
       React.createElement(Widget.Header, {
-        title: light.i18n["body.edit.form"],
+        title: this.props.title,
         onFold: this.onFold,
         closed: this.state.option.closed,
         emit: this.emit
@@ -334,23 +359,7 @@ Widget.Form = React.createClass({
         option: this.state.option,
         emit: this.emit
       }),
-      React.createElement(Widget.Footer, this.state.option.button || {
-          button: [
-            {
-              key: "cancel",
-              name: light.i18n["common.button.cancel"],
-              onClick: this.onCancel,
-              style: "btn-u-default",
-              disabled: this.state.option.disabled
-            },
-            {
-              key: "save",
-              name: light.i18n["common.button.save"],
-              onClick: this.onOk,
-              disabled: this.state.option.disabled
-            }
-          ]
-        }),
+      React.createElement(Widget.Footer, {button: this.state.option.button}),
       React.DOM.input({type: "text", style: {display: "none"}}) // 添加一个不可见输入框, 防止只有一个输入框是敲回车提交表单
     );
   },
@@ -475,7 +484,7 @@ Widget.Form = React.createClass({
    * 返回8x4的空组件
    * @returns {Array}
    */
-  getBlankItems: function (option) {
+  getBlankItems: function () {
 
     var W = Widget.Config.Width, H = this.props.h || 8;
 
@@ -484,25 +493,6 @@ Widget.Form = React.createClass({
         return {row: row, col: col, rowSpan: 1, colSpan: 1};
       });
     }));
-  },
-
-  /**
-   * 初始化Form
-   * @param data Form定义数据
-   */
-  init: function (data) {
-    if (!data) {
-      data = this.getBlankItems();
-    }
-
-    this.emitter.on(Widget.EVENT.SELECT, this.onSelect);        // 选择组件
-    this.emitter.on(Widget.EVENT.EXPAND, this.onExpand);        // 扩大组件
-    this.emitter.on(Widget.EVENT.ADD, this.onAdd);              // 添加组件
-    this.emitter.on(Widget.EVENT.MOVE, this.onMove);            // 移动组件
-    this.emitter.on(Widget.EVENT.CHANGE, this.onChange);        // 组件值发生变化
-    this.emitter.on(Widget.EVENT.SELECTFORM, this.onSelectForm);// 选择表单
-
-    this.setState({data: data});
   },
 
   addRow: function (data) {
@@ -565,6 +555,10 @@ Widget.Form = React.createClass({
 
     this.state.option.selected = [];
     this.setState({data: this.state.data, option: this.state.option});
+  },
+
+  setFormData: function (data) {
+    this.setState({data: data || this.getBlankItems()});
   },
 
   getFormData: function () {
@@ -680,11 +674,12 @@ Widget.Node = React.createClass({
 });
 
 Widget.createForm = function (widget, node, option) {
-  var dom = ReactDOM.render(
+  return ReactDOM.render(
     React.createElement(widget, option),
     document.getElementById(node)
   );
-
-  dom.emitter = $({});
-  return dom;
 };
+
+if (isNode) {
+  module.exports = Widget;
+}

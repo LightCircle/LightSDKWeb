@@ -1,4 +1,18 @@
 /**
+ * @file 表单组件
+ * @module define.widget
+ * @author r2space@gmail.com
+ * @version 1.0.0
+ */
+
+"use strict";
+
+var isNode = (typeof module !== "undefined" && module.exports);
+if (isNode) {
+  var React = require("react"), _ = light.util.underscore;
+}
+
+/**
  * 组件库
  */
 var Widget = {
@@ -17,7 +31,8 @@ var Widget = {
     EXPAND: "expand",         // 组件: 调整宽度
     ADD: "add",               // 组件: 添加
     MOVE: "move",             // 组件: 移动
-    CHANGE: "change"          // 组件: 值变更
+    CHANGE: "change",         // 组件: 值变更
+    MORE: "more"              // 组件: 显示附加项
   },
 
   KEY: {
@@ -674,14 +689,45 @@ Widget.CheckBox = React.createClass({
       React.DOM.input({
         type: "checkbox",
         name: this.props.data.name,
-        checked: _.contains(this.getValue(), option.value),
+        checked: this.checked(option.value),
         disabled: this.disabled(),
         value: option.value,
         onChange: this.onChange
       }),
       React.DOM.i(),
-      option.text
+      option.text,
+      this.getDetail(option.value)
     );
+  },
+
+  getDetail: function (value) {
+    if (this.props.data.valueAddition && this.props.data.valueAddition[value]) {
+      return React.DOM.a({href: "#", style: {color: "#1ec7da"}, onClick: this.onShowDetail},
+        React.DOM.div({className: "fa fa-cog", "data-index": value})
+      );
+    }
+    return null;
+  },
+  
+  onShowDetail: function (event) {
+    event.preventDefault();
+
+    this.props.emit(Widget.EVENT.MORE, {
+      index: $(event.target).attr("data-index"),
+      data: this.props.data
+    }, this.props.data, ReactDOM.findDOMNode(this));
+  },
+
+  checked: function (option) {
+    if (!this.getValue()) {
+      return false;
+    }
+
+    if (_.isArray(this.getValue())) {
+      return _.contains(this.getValue(), option);
+    }
+
+    return this.boolean(this.getValue()[option]);
   },
 
   getValue: function () {
@@ -696,14 +742,29 @@ Widget.CheckBox = React.createClass({
     return this.value().split(",");
   },
 
+  /**
+   * 支持两种格式的数据存储方式
+   *  - hash 选择项目为key 值为true或false
+   *  - array 选择项目的数组(数组里包含改选择项目, 则为选中)
+   * @param event
+   */
   onChange: function (event) {
     var value = this.getValue();
-    if (_.contains(value, event.target.value)) {
-      value = _.reject(value, function (val) {
-        return val == event.target.value;
-      });
-    } else {
-      value = _.union(value, [event.target.value]);
+
+    // 数组方式保持数据
+    if (_.isArray(value)) {
+      if (_.contains(value, event.target.value)) {
+        value = _.reject(value, function (val) {
+          return val == event.target.value;
+        });
+      } else {
+        value = _.union(value, [event.target.value]);
+      }
+    }
+
+    // hash方式保持数据
+    else {
+      value[event.target.value] = !this.boolean(value[event.target.value]);
     }
 
     this.change(value, event.target.name);
@@ -1119,26 +1180,13 @@ Widget.Block = React.createClass({
   mixins: [Widget.Base],
 
   render: function () {
-    return React.DOM.table({style: {width: "100%"}},
+    return React.DOM.table({style: {width: "100%", backgroundColor: "#bfbfbf"}},
       React.DOM.tbody(null,
         React.DOM.tr(null,
-          React.DOM.td({style: {width: "50%"}}, React.DOM.hr({
-            style: {
-              borderTop: "1px solid #1ec7da",
-              marginTop: "20px",
-              marginBottom: "20px"
-            }
-          })),
-          React.DOM.td({style: {paddingLeft: "10px", paddingRight: "10px"}},
-            React.DOM.i({className: "fa fa-" + this.className(), style: {color: "#1ec7da"}})
-          ),
-          React.DOM.td({style: {width: "50%"}}, React.DOM.hr({
-            style: {
-              borderTop: "1px solid #1ec7da",
-              marginTop: "20px",
-              marginBottom: "20px"
-            }
-          }))
+          React.DOM.td({style: {color: "#fff", fontSize: "14px;"}},
+            React.DOM.i({className: "fa fa-" + this.className(), style: {margin: "16px"}}),
+            this.props.data.description
+          )
         )
       )
     );
@@ -1148,3 +1196,7 @@ Widget.Block = React.createClass({
     return this.props.data.blockIcon || "th-large";
   }
 });
+
+if (isNode) {
+  module.exports = Widget;
+}

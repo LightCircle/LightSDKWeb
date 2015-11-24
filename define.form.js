@@ -32,7 +32,7 @@ Widget.Section = React.createClass({
   className: function () {
     var name = "col-sm-" + (3 * this.props.data.colSpan);
 
-    if (this.props.option.draft) {
+    if (this.props.option.model == Widget.MODEL.DESIGN) {
       name = name + " widget";
     }
 
@@ -40,7 +40,7 @@ Widget.Section = React.createClass({
   },
 
   backgroundColor: function () {
-    if (!this.props.option.draft) {
+    if (this.props.option.model != Widget.MODEL.DESIGN) {
       return "#ffffff";
     }
 
@@ -56,7 +56,7 @@ Widget.Section = React.createClass({
    */
   expander: function () {
 
-    if (!this.props.option.draft) {
+    if (this.props.option.model != Widget.MODEL.DESIGN) {
       return null;
     }
 
@@ -88,7 +88,7 @@ Widget.Section = React.createClass({
   },
 
   droppable: function () {
-    if (!this.props.option.draft) {
+    if (this.props.option.model != Widget.MODEL.DESIGN) {
       return;
     }
 
@@ -131,7 +131,7 @@ Widget.Section = React.createClass({
   },
 
   draggable: function () {
-    if (!this.props.option.draft) {
+    if (this.props.option.model != Widget.MODEL.DESIGN) {
       return;
     }
 
@@ -171,7 +171,7 @@ Widget.Section = React.createClass({
   },
 
   onClick: function () {
-    if (!this.props.option.draft) {
+    if (this.props.option.model != Widget.MODEL.DESIGN) {
       return;
     }
 
@@ -312,11 +312,12 @@ Widget.Footer = React.createClass({
 /**
  * @desc 表单, 可以指定的属性有:
  * {
- *   draft: true,               是否是编辑模式, true为编辑模式
+ *   model: 'view'              view 视图模式, readonly 只读模式, input 编辑模式, design 设计模式
  *   accept: "additionWidget",  接受的组件, 一个画面使用多个form并且每个form允许添加的组件不同时, 可以指定
  *   h: 4,                      默认的form行数
  *   button: [],                操作按钮
- *   node: "addition"           form的id, 多个form时用来区分每个form的事件
+ *   node: "addition"           form的id, 多个form时用来区分每个form的js事件
+ *
  * }
  */
 Widget.Form = React.createClass({
@@ -335,10 +336,9 @@ Widget.Form = React.createClass({
     return {
       data: this.props.data || this.getBlankItems(),             // 保存数据
       option: {
-        disabled: false,            // 表单状态, 保存取消操作按钮是否可用
         closed: undefined,          // 表单是否可折叠, undefined为不显示折叠按钮, false为关闭状态
         selected: [],               // 表单单元格选中状态, [row, col]
-        draft: this.props.draft,
+        model: this.props.model || Widget.MODEL.DESIGN,
         accept: this.props.accept,
         button: this.props.button,
         node: this.props.node

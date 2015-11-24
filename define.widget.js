@@ -39,6 +39,13 @@ var Widget = {
     BACKSPACE: 8,
     DELETE: 46,
     ENTER: 13
+  },
+
+  MODEL: {
+    VIEW: "view",             // 视图模式
+    READONLY: "readonly",     // 只读模式
+    INPUT: "input",           // 编辑模式
+    DESIGN: "design"          // 设计模式
   }
 };
 
@@ -85,6 +92,14 @@ Widget.Base = {
   },
 
   disabled: function () {
+    if (this.props.option.model == Widget.MODEL.VIEW) {
+      return "disabled";
+    }
+
+    if (this.props.option.model == Widget.MODEL.READONLY) {
+      return "disabled";
+    }
+
     return this.boolean(this.props.data.disabled) ? "disabled" : "";
   },
 
@@ -368,7 +383,7 @@ Widget.Calendar = React.createClass({
   },
 
   className: function () {
-    return "input" + (this.props.data.disabled == "true" ? " state-disabled" : "");
+    return "input" + (this.disabled() ? " state-disabled" : "");
   },
 
   getValue: function () {
@@ -407,7 +422,7 @@ Widget.Input = React.createClass({
   },
 
   className: function () {
-    return "input" + (this.props.data.disabled == "true" ? " state-disabled" : "");
+    return "input" + (this.disabled() ? " state-disabled" : "");
   },
 
   getValue: function () {
@@ -443,7 +458,7 @@ Widget.TextArea = React.createClass({
   },
 
   className: function () {
-    return "textarea" + (this.props.data.disabled == "true" ? " state-disabled" : "");
+    return "textarea" + (this.disabled() ? " state-disabled" : "");
   },
 
   widget: function () {
@@ -471,7 +486,7 @@ Widget.Number = React.createClass({
   },
 
   className: function () {
-    return "input" + (this.props.data.disabled == "true" ? " state-disabled" : "");
+    return "input" + (this.disabled() ? " state-disabled" : "");
   },
 
   widget: function () {
@@ -558,7 +573,7 @@ Widget.RadioBox = React.createClass({
   },
 
   itemClassName: function () {
-    if (this.props.data.disabled == "true") {
+    if (this.disabled()) {
       return "radio state-disabled";
     }
     return "radio";

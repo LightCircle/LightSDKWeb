@@ -9,7 +9,7 @@
 
 var isNode = (typeof module !== "undefined" && module.exports);
 if (isNode) {
-  var React = require("react"), _ = light.util.underscore;
+  var React = require("react"), _ = light.util.underscore, moment = light.util.moment;
 }
 
 /**

@@ -299,11 +299,7 @@ var light = {
       processData: false,
       success: function (result) {
         console.log("do ajax " + url_ + "  success");
-        if (result.error) {
-          callback_(1, result.error);
-        } else {
-          callback_(0, result);
-        }
+        callback_(result.error, result.data);
       },
       error: function (err) {
         console.log("do ajax " + url_ + "   error");
@@ -598,7 +594,7 @@ var light = {
 
     var startPage = 1, pageCount = 5
       , limit = Math.ceil(totalItems / rowCount) > pageCount ? pageCount : Math.ceil(totalItems / rowCount)
-      , tmpl = $("#tmpl_pagination").html();
+      , tmpl = _.template($("#tmpl_pagination").html());
 
     container.unbind("click").on("click", "a", function () {
 
@@ -623,7 +619,7 @@ var light = {
       var remainder = Math.ceil((totalItems - (startPage - 1) * rowCount) / rowCount)
         , limit = remainder > pageCount ? pageCount : remainder;
       container.html("");
-      container.append(_.template(tmpl, {
+      container.append(tmpl({
         "start": startPage,
         "limit": limit,
         "active": activePage,
@@ -641,7 +637,7 @@ var light = {
 
     // 初始化
     container.html("");
-    container.append(_.template(tmpl, {
+    container.append(tmpl({
       "start": 1,
       "limit": limit,
       "active": 1,

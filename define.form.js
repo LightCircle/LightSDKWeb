@@ -30,7 +30,7 @@ Widget.Section = React.createClass({
   },
 
   className: function () {
-    var name = "col-sm-" + (3 * this.props.data.colSpan);
+    var name = "col-sm-" + (12 / this.props.option.w * this.props.data.colSpan);
 
     if (this.props.option.model == Widget.MODEL.DESIGN) {
       name = name + " widget";
@@ -41,13 +41,13 @@ Widget.Section = React.createClass({
 
   backgroundColor: function () {
     if (this.props.option.model != Widget.MODEL.DESIGN) {
-      return "#ffffff";
+      return "#FFFFFF";
     }
 
     var isRow = this.props.data.row == this.props.option.selected[0]
       , isCol = this.props.data.col == this.props.option.selected[1];
 
-    return isRow && isCol ? "#edf9ff" : "#fafcfd";
+    return isRow && isCol ? "#F5F5F5" : "#FAFCFD";
   },
 
   /**
@@ -64,7 +64,11 @@ Widget.Section = React.createClass({
       return null;
     }
 
-    if (!this.sibling() || this.sibling().type) {
+    if ((this.props.data.col + this.props.data.colSpan) >= this.props.option.w) {
+      return null;
+    }
+
+    if (this.sibling()) {
       return null;
     }
 
@@ -166,7 +170,7 @@ Widget.Section = React.createClass({
 
   sibling: function () {
     return _.find(this.props.option.parents, function (item) {
-      return item.col > this.props.data.col;
+      return item.col == this.props.data.col + 1;
     }.bind(this));
   },
 
@@ -194,13 +198,20 @@ Widget.Row = React.createClass({
     // 一个组件可以通过parents, 查看所有兄弟组件的状态, 来控制是否可以扩展, 是否可以移动等
     this.props.option.parents = this.props.data;
 
-    return React.DOM.div({className: "row"}, this.props.data.map(function (col) {
-      return React.createElement(Widget.Section, {
-        data: col,
-        option: this.props.option,
-        emit: this.props.emit
-      });
-    }.bind(this)));
+    var items = [], col = 0;
+    for (var index = 0; index < this.props.option.w; index++) {
+
+      var item = _.findWhere(this.props.data, {col: col});
+      item = item || {row: this.props.row, col: col, rowSpan: 1, colSpan: 1};
+      col++;
+
+      items.push(React.createElement(Widget.Section, {data: item, option: this.props.option, emit: this.props.emit}));
+      if (item.colSpan > 1) {
+        index = index + item.colSpan - 1;
+      }
+    }
+
+    return React.DOM.div({className: "row"}, items);
   }
 });
 
@@ -212,13 +223,17 @@ Widget.FieldSet = React.createClass({
         return item.row;
       }).row + 1;
 
-    return React.DOM.fieldset({style: this.style()}, _.map(_.range(totalRow), function (row) {
+    // 设计模式时, 最小行数为7
+    if (this.props.option.model == Widget.MODEL.DESIGN) {
+      totalRow = (_.isNaN(totalRow) || totalRow < Widget.Config.Height) ? Widget.Config.Height : totalRow;
+    }
+
+    return React.DOM.fieldset({style: this.style()}, _.map(_.range(totalRow), function (row, index) {
 
       // 获取行数据, 并以col字段排序显示
-      var rowData = _.sortBy(_.where(this.props.data, {row: row}), "col");
-
       return React.createElement(Widget.Row, {
-        data: rowData,
+        data: _.where(this.props.data, {row: row}),
+        row: index,
         option: this.props.option,
         emit: this.props.emit
       });
@@ -334,14 +349,15 @@ Widget.Form = React.createClass({
     }
 
     return {
-      data: this.props.data || this.getBlankItems(),             // 保存数据
+      data: this.props.data || [],                                // 保存数据
       option: {
-        closed: undefined,          // 表单是否可折叠, undefined为不显示折叠按钮, false为关闭状态
-        selected: [],               // 表单单元格选中状态, [row, col]
+        closed: undefined,                                        // 表单是否可折叠, undefined为不显示折叠按钮, false为关闭状态
+        selected: [],                                             // 表单单元格选中状态, [row, col]
         model: this.props.model || Widget.MODEL.DESIGN,
         accept: this.props.accept,
         button: this.props.button,
-        node: this.props.node
+        node: this.props.node,
+        w: this.props.w || Widget.Config.Width
       }
     };
   },
@@ -410,6 +426,11 @@ Widget.Form = React.createClass({
       return item.col == data.col && item.row == data.row;
     });
 
+    if (!component) {
+      component = {col: data.col, row: data.row, colSpan: 1, rowSpan: 1};
+      this.state.data.push(component);
+    }
+
     _.extend(component, {type: data.type, title: data.type});
     component.name = light.randomGUID4();
 
@@ -419,80 +440,69 @@ Widget.Form = React.createClass({
 
   onMove: function (event, data) {
 
-    // 删除 组件本身，并设定新位置
-    var self = null, object = _.reject(this.state.data, function (item) {
-      if (item.col == data.source.col && item.row == data.source.row) {
-        self = _.extend(item, {
-          col: data.col, row: data.row,
-          rowSpan: data.source.rowSpan,
-          colSpan: data.source.colSpan
-        });
-        return true;
+    // 被移走了组件的行, 后续组件位置加1
+    _.each(this.state.data, function (item) {
+      if (item.row == data.source.row && item.col > data.source.col) {
+        item.col = item.col + data.source.colSpan - 1;
       }
     });
 
-    // 在原来位置上，填上空组件
-    for (var i = data.source.col; i < data.source.col + data.source.colSpan; i++) {
-      object.push({row: data.source.row, col: i, rowSpan: 1, colSpan: 1});
+    var node = _.find(this.state.data, function (item) {
+      return item.col == data.source.col && item.row == data.source.row;
+    });
+
+    node.row = data.row;
+    node.col = data.col;
+    node.rowSpan = data.source.rowSpan;
+    node.colSpan = data.source.colSpan;
+
+    // 移动位置上有组件在，则缩小组件的宽度
+    for (var index = data.col + 1; index < data.col + data.source.colSpan; index++) {
+      var blocker = _.find(this.state.data, function (item) {
+        return item.col == index && item.row == data.row;
+      });
+
+      if (blocker && blocker.type) {
+        node.colSpan = index - data.col;
+        break;
+      }
     }
 
-    // 删除 将要移动到的位置上的组件，移动位置上有组件在，则不删除，并缩小组件的宽度
-    var isStopReject = false;
-    object = _.reject(_.sortBy(object, "col"), function (item) {
-      if (item.row != data.row || isStopReject) {
-        return false;
-      }
+    // 如果超出了表单宽度, 则缩小组件宽度
+    if (node.col + node.colSpan > this.state.option.w) {
+      node.colSpan = this.state.option.w - node.col;
+    }
 
-      if (item.col >= data.col && item.col < data.col + data.source.colSpan) {
-        if (item.type) {
-          self.colSpan = item.col - self.col;
-          isStopReject = true;
-          return false;
+    // 如果设定了span, 所以后续组件位置减1
+    if (node.colSpan > 1) {
+      _.each(this.state.data, function (item) {
+        if (item.row == data.row && item.col > data.col) {
+          item.col = item.col - node.colSpan + 1;
         }
-        return true;
-      }
-      return false;
-    });
-
-    // 如果组件宽度超过了编辑框的宽度，则缩小组件的宽度
-    self.colSpan = self.col + self.colSpan > Widget.Config.Width ? Widget.Config.Width - self.col : self.colSpan;
-
-    // 设定自己的位置
-    object.push(self);
+      });
+    }
 
     this.state.option.selected = [];
-    this.setState({data: object, option: this.state.option});
+    this.setState({data: this.state.data, option: this.state.option});
   },
 
   onExpand: function (event, data) {
 
-    // 删除 扩展需要占用的位置上的组件
-    var object = _.reject(this.state.data, function (item) {
-      return item.col == data.col + data.colSpan && item.row == data.row;
-    });
-
     // 修改组件的宽度
-    var node = _.find(object, function (item) {
+    var node = _.find(this.state.data, function (item) {
       return item.col == data.col && item.row == data.row;
     });
 
     node.colSpan = node.colSpan + 1;
-    this.setState({data: object});
-  },
 
-  /**
-   * 返回8x4的空组件
-   * @returns {Array}
-   */
-  getBlankItems: function () {
+    // 设定了span, 所以后续组件位置减1
+    _.each(this.state.data, function (item) {
+      if (item.row == data.row && item.col > data.col) {
+        item.col = item.col - 1;
+      }
+    });
 
-    var W = Widget.Config.Width, H = this.props.h || 8;
-
-    return _.flatten(_.map(_.range(H), function (row) {
-      return _.map(_.range(W), function (col) {
-        return {row: row, col: col, rowSpan: 1, colSpan: 1};
-      });
-    }));
+    this.setState({data: this.state.data});
   },
 
   addRow: function (data) {
@@ -502,7 +512,7 @@ Widget.Form = React.createClass({
       }
     });
 
-    var row = _.map(_.range(Widget.Config.Width), function (col) {
+    var row = _.map(_.range(this.props.w || 1), function (col) {
       return {row: data.row + 1, col: col, rowSpan: 1, colSpan: 1};
     });
 
@@ -522,6 +532,24 @@ Widget.Form = React.createClass({
 
     this.state.option.selected = [];
     this.setState({data: this.state.data, option: this.state.option});
+  },
+
+  setWidth: function (width) {
+
+    // 删除宽度以外都组件
+    this.state.data = _.reject(this.state.data, function (item) {
+      return item.col >= width;
+    });
+
+    // span超过宽度, 则缩小组件
+    _.each(this.state.data, function (item) {
+      if (item.col + item.colSpan > width) {
+        item.colSpan = width - item.col;
+      }
+    }.bind(this));
+
+    this.state.option.w = width;
+    this.setState({option: this.state.option});
   },
 
   setOption: function (data) {
@@ -558,7 +586,7 @@ Widget.Form = React.createClass({
   },
 
   setFormData: function (data) {
-    this.setState({data: data || this.getBlankItems()});
+    this.setState({data: data || []});
   },
 
   getFormData: function () {
@@ -632,7 +660,6 @@ Widget.Node = React.createClass({
     if (this.props.fixed) {
       return {
         padding: "8px",
-        borderRadius: "3px !important",
         background: "rgba(0,0,0,.85)",
         position: "relative",
         zIndex: 10
@@ -641,7 +668,6 @@ Widget.Node = React.createClass({
 
     return {
       padding: "5px",
-      borderRadius: "3px !important",
       background: "rgba(0,0,0,.85)",
       position: "absolute",
       zIndex: 10
@@ -655,7 +681,7 @@ Widget.Node = React.createClass({
         name: button.name,
         title: button.title,
         type: "button",
-        style: {padding: "5px"},
+        style: {padding: "5px", backgroundColor: "#333"},
         "data-toggle": "tooltip",
         "data-placement": "right"
       }, React.DOM.i({className: "fa fa-fw fa-" + button.icon}));

@@ -398,13 +398,13 @@
 }
 
 .widget-active {
-  border-bottom: 1px solid #9af7bf;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .widget-hover {
-  border-top: 1px dotted #9af7bf;
-  border-left: 1px dotted #9af7bf;
-  border-right: 1px dotted #9af7bf;
+  border-top: 1px dotted #acacac;
+  border-left: 1px dotted #acacac;
+  border-right: 1px dotted #acacac;
 }
 
 /* ******* light: using by bootstrap-tagsinput */

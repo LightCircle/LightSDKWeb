@@ -22,7 +22,8 @@ var Widget = {
     SampleImage: "/static/images/empty-image.png",
     FileUploadAPI: "/api/file/add",
     FileImageAPI: "/api/file/image?id=",
-    Width: 4
+    Width: 1,
+    Height: 7
   },
 
   EVENT: {
@@ -383,7 +384,7 @@ Widget.Calendar = React.createClass({
   },
 
   className: function () {
-    return "input" + (this.disabled() ? " state-disabled" : "");
+    return "input" + (this.props.data.disabled == "true" ? " state-disabled" : "");
   },
 
   getValue: function () {
@@ -422,7 +423,7 @@ Widget.Input = React.createClass({
   },
 
   className: function () {
-    return "input" + (this.disabled() ? " state-disabled" : "");
+    return "input" + (this.props.data.disabled == "true" ? " state-disabled" : "");
   },
 
   getValue: function () {
@@ -458,7 +459,7 @@ Widget.TextArea = React.createClass({
   },
 
   className: function () {
-    return "textarea" + (this.disabled() ? " state-disabled" : "");
+    return "textarea" + (this.props.data.disabled == "true" ? " state-disabled" : "");
   },
 
   widget: function () {
@@ -486,7 +487,7 @@ Widget.Number = React.createClass({
   },
 
   className: function () {
-    return "input" + (this.disabled() ? " state-disabled" : "");
+    return "input" + (this.props.data.disabled == "true" ? " state-disabled" : "");
   },
 
   widget: function () {
@@ -573,7 +574,7 @@ Widget.RadioBox = React.createClass({
   },
 
   itemClassName: function () {
-    if (this.disabled()) {
+    if (this.props.data.disabled == "true") {
       return "radio state-disabled";
     }
     return "radio";
@@ -1198,7 +1199,7 @@ Widget.Block = React.createClass({
     return React.DOM.table({style: {width: "100%", backgroundColor: "#bfbfbf"}},
       React.DOM.tbody(null,
         React.DOM.tr(null,
-          React.DOM.td({style: {color: "#fff", fontSize: "14px;"}},
+          React.DOM.td({style: {color: "#fff", fontSize: "14px"}},
             React.DOM.i({className: "fa fa-" + this.className(), style: {margin: "16px"}}),
             this.props.data.description
           )

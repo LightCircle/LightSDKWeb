@@ -39,11 +39,10 @@ light.file.extend = {};
  *  type        : 文件类型
  *  description : 文件描述
  *  path        : 文件路径
- * @param data
  */
 light.initFileUpload = function (fileButton, options) {
 
-  var button    = $("#" + fileButton)
+  var button    = _.isString(fileButton) ? $("#" + fileButton) : fileButton
     , id        = options.id || "_fileupload"
     , accept    = options.accept || "*"
     , multiple  = options.multiple ? "multiple" : ""

@@ -316,7 +316,8 @@ Widget.Tag = React.createClass({
    * @param event
    */
   onRemove: function (event) {
-    var result = this.getValue().splice($(event.target).attr("data-index"), 1);
+    var result = this.getValue();
+    result.splice($(event.target).attr("data-index"), 1);
     this.change(_.compact(result), this.props.data.name);
   }
 });

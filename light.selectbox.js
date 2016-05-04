@@ -217,7 +217,8 @@ $(function () {
    */
   var getGroupList = function (selected) {
     var url = light.selectbox.url || "/api/group/list";
-    light.doget(url, light.selectbox.condition, function (err, result) {
+    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
+    light.doget(url, params, function (err, result) {
       if (err) {
         alertify.error("加载错误");
         // light.error(err, result.message, false);

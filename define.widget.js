@@ -192,7 +192,13 @@ Widget.Tag = React.createClass({
   mixins: [Widget.Base],
 
   getInitialState: function () {
-    return {size: 1};
+    return {size: 1, editor: -1};
+  },
+
+  componentDidUpdate: function () {
+    if (this.state.editor > -1) {
+      this.current.children("input").focus();
+    }
   },
 
   render: function () {
@@ -250,7 +256,7 @@ Widget.Tag = React.createClass({
 
     return this.getValue().map(function (value, index) {
 
-      var remove = null, style = null;
+      var remove = null, style = null, text = null;
 
       // 只读状态下，去除删除按钮的宽度
       if (this.disabled()) {
@@ -259,8 +265,48 @@ Widget.Tag = React.createClass({
         remove = React.DOM.span({"data-role": "remove", "data-index": index, onClick: this.onRemove});
       }
 
-      return React.DOM.span({className: "tag label label-info", style: style}, value, remove);
+      // 编辑模式时, 显示输入框
+      if (!this.disabled() && index == this.state.editor) {
+        text = React.DOM.input({style: {backgroundColor: "#18568C"}, value: value,
+          onChange: this.onEditorChange, onBlur: this.onEditorDone
+        });
+      } else {
+        text = value;
+      }
+
+      return React.DOM.span({
+          className: "tag label label-info", style: style, onClick: this.onEdit, "data-index": index
+        }, text, remove);
     }.bind(this));
+  },
+
+  /**
+   * 点击tag的某个项目, 进入编辑模式
+   * @param event
+   */
+  onEdit: function (event) {
+    this.current = $(event.target).parent();
+    this.setState({editor: Number($(event.target).parent().attr("data-index"))});
+  },
+
+  /**
+   * 编辑模式下, 修改文本框的内容
+   * @param event
+   */
+  onEditorChange: function (event) {
+
+    var index = Number($(event.target).parent().attr("data-index"))
+      , result = this.getValue();
+
+    result[index] = $(event.target).val();
+    this.change(_.compact(result), this.props.data.name);
+  },
+
+  /**
+   * 编辑模式结束
+   */
+  onEditorDone: function () {
+    this.setState({editor: -1});
   },
 
   onFocus: function (event) {
@@ -316,7 +362,8 @@ Widget.Tag = React.createClass({
    * @param event
    */
   onRemove: function (event) {
-    var result = this.getValue().splice($(event.target).attr("data-index"), 1);
+    var result = this.getValue();
+    result.splice($(event.target).attr("data-index"), 1);
     this.change(_.compact(result), this.props.data.name);
   }
 });

@@ -30,6 +30,12 @@ light.selectbox.url = "";
 light.selectbox.callback = undefined;
 
 /**
+ * 展示的字段, 最多两项
+ * @type {Array}
+ */
+light.selectbox.fields = [];
+
+/**
  * 常量
  * @type {string}
  */
@@ -577,22 +583,25 @@ $(function () {
         var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
           dlgSelectBoxBody       = $("#dlgSelectBoxBody").html("");
 
+        var fields = light.selectbox.fields
+          , field0 = fields.length > 0 ? fields[0] : "name"
+          , field1 = fields.length > 1 ? fields[1] : "description";
         _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.name) >= 0;
+          var checked = _.indexOf(selected, item[field0]) >= 0;
           dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
             index  : index + 1,
             id     : item._id,
             icon   : "bookmark-o",
-            name   : item.name,
-            option1: item.description,
+            name   : item[field0],
+            option1: item[field1],
             option2: "",
             checked: checked
           }));
 
           if (checked) {
             light.selectbox.selected[item._id] = {
-              name: item.name,
-              option: item.description
+              name: item[field0],
+              option: item[field1]
             };
           }
         });

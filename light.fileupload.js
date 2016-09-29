@@ -102,7 +102,7 @@ light.initFileUpload = function (fileButton, options) {
     );
   });
 
-  button.bind("click", function () {
+  button.unbind().bind("click", function () {
     input.trigger("click");
     return false;
   });
@@ -196,7 +196,7 @@ light.file.setFile = function (containerItem, files, options) {
 
   var template = _.template(light.file.TEMPLATE_FILE())
     , item = $("#" + containerItem);
-  
+
   if (!options.multiple || !item.children('ol').length) {
     item.empty().append("<ol></ol>");
   }

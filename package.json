@@ -1,6 +1,6 @@
 {
   "name": "light-sdk-web",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "LightSDKWeb",
   "main": "light.addresspicker.js",
   "scripts": {

@@ -1,4 +1,4 @@
-// namespace1
+// namespace
 var light = {
 
   // The global setting

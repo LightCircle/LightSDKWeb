@@ -1,92 +1,104 @@
+/**
+ * Tags.
+ *
+ * @param id
+ * @param option
+ * @returns {*}
+ */
 
-light.tags = light.tags || {};
+'use strict';
 
-var Tags = function(id, callback) {
+module.exports = function (id, option) {
+  option = option || {};
+  option.data = option.data || [];
 
-  var self = this;
-  this.id = $("#" + id);
+  return ReactDOM.render(
+    React.createElement(Tags, {data: option.data, value: option.value, disabled: option.disabled}),
+    document.getElementById(id)
+  );
+};
 
-  this.id.unbind("click");
-  this.id.on("click", "a", function(){
-    if (self.singleMode) {
-      self.id.find("a[selected='selected']").each(function () {
-        self.setSelected($(this), false);
+
+var style = {
+  ul: {
+    listStyle: 'none'
+  },
+  li: {
+    display: 'inline-block'
+  },
+  a: {
+    color: '#555',
+    background: '#f7f7f7',
+    fontSize: '13px',
+    padding: '2px 7px',
+    margin: '0 3px 6px 0',
+    display: 'inline-block',
+    textDecoration: 'none',
+    cursor: 'pointer'
+  },
+  a_active: {
+    color: '#fff',
+    background: '#5bc0de',
+    fontSize: '13px',
+    padding: '2px 7px',
+    margin: '0 3px 6px 0',
+    display: 'inline-block',
+    textDecoration: 'none',
+    cursor: 'pointer'
+  }
+};
+
+
+var Tags = React.createClass({
+  getInitialState: function () {
+    return {
+      data: this.props.data,
+      value: this.props.value || [],
+      disabled: this.props.disabled,
+      hover: false
+    }
+  },
+
+  render: function () {
+
+    return React.DOM.ul({className: 'list-unstyled blog-tags', style: style.ul},
+      this.props.data.map(function (item) {
+        return React.DOM.li({style: style.li},
+          React.DOM.a({
+              style: this.state.value.indexOf(item.value) < 0 ? style.a : style.a_active,
+              onClick: this.click,
+              onMouseOver: this.mouseOver,
+              onMouseOut: this.mouseOut,
+              value: item.value
+            },
+            React.DOM.i({className: 'fa fa-tags'}),
+            item.title
+          )
+        )
+      }.bind(this))
+    );
+  },
+
+  click: function () {
+    var current = event.target.getAttribute('value');
+
+    if (this.state.value.indexOf(current) < 0) {
+      this.state.value.push(current);
+    } else {
+      this.state.value = this.state.value.filter(function (val) {
+        return val != current;
       });
     }
 
-    self.setSelected($(this), !$(this).attr("selected"));
-    if (callback) {
-      callback($(this).attr("name"), $(this).attr("selected"));
-    }
-    return false;
-  });
-};
+    this.setState({value: this.state.value});
+    this.onClick(current);
+  },
 
-Tags.prototype.init = function(values, selectedValue) {
+  getValue: function () {
+    return this.state.value;
+  },
 
-  var self = this
-    , template = _.template(light.tags.TEMPLATE_ITEM());
-
-  self.id.html("");
-
-  if (!values || values.length <= 0) {
-    return this;
+  onClick: function (value) {
   }
 
-  _.each(values, function (val) {
-    self.id.append(template({value: val}));
-  });
-
-  if (!_.isUndefined(selectedValue)) {
-    self.id.find("a[name='" + selectedValue + "']").each(function () {
-      self.setSelected($(this), true);
-    });
-  }
-
-  return this;
-};
-
-Tags.prototype.set = function(values) {
-
-  var self = this;
-  values = values || [];
-
-  this.id.find("a").each(function () {
-    self.setSelected($(this), _.contains(values, $(this).attr("name")));
-  });
-};
-
-Tags.prototype.get = function() {
-  var result = [];
-  this.id.find("a[selected='selected']").each(function () {
-    result.push($(this).attr("name"));
-  });
-
-  return result;
-};
-
-Tags.prototype.setSelected = function(item, selected) {
-  if (selected) {
-    item.css("background-color", "#5bc0de");
-    item.css("color", "white");
-    item.attr("selected", "true");
-  } else {
-    item.css("background-color", "");
-    item.css("color", "");
-    item.removeAttr("selected");
-  }
-};
-
-Tags.prototype.setSingleMode = function() {
-  this.singleMode = true;
-};
-
-Tags.prototype.setMultiMode = function() {
-  this.singleMode = false;
-};
-
-light.tags.TEMPLATE_ITEM = function() {
-  return function(){/*
-   <li><a href='#' name='{{ value }}'><i class='fa fa-tags'></i> {{ value }}</a></li>
-   */}.toString().split(/\n/).slice(1, -1).join("\n");
-};
+});

@@ -1,780 +1,519 @@
-light.selectbox = light.selectbox || {};
-
 /**
- * 被选中的项目
- * @type {{}}
+ * Select Box.
+ *
+ * Depend:
+ *  react
+ *  bootstrap
+ *  fontawesome
+ *
+ * React Element Structure:
+ *   modal
+ *    modal-dialog
+ *      modal-content
+ *        modal-header
+ *          title & search
+ *        modal-body
+ *          grid
+ *        modal-footer
+ *          pagination
+ *
+ * @param id
+ * @param option
+ *   type       [string]  预设类型: user group category authority role tag route function board structure
+ *   api        [string]  检索数据用API
+ *   condition  [object]  检索条件
+ *   value      [array]   选中的项目, 如果指定了uk, 那么value应该是uk值列表
+ *   uk         [string]  识别选中用的字段名称 default: _id
+ *   name       [string]  确定按钮时, 可以返回选中项目的name
+ *   field      [array]   显示的列名称 default: ['_id']
+ *   single     [boolean] 只允许选择一个
+ *   icon       [string]  显示的图标
+ *   search     [boolean] 是否显示检索按钮 default: true
+ *   pagination [boolean] 是否显示翻页按钮 default: true
+ *   show       [int]     一页显示的行数 default: 10
+ *   data       [array]   允许不使用api, 直接提供数据显示选择框 - TODO
+ *
+ * @returns {*}
  */
-light.selectbox.selected = {};
 
-/**
- * 显示对象的附加条件
- * @type {{}}
- */
-light.selectbox.condition = {};
+'use strict';
 
-/**
- * 检索条件
- * @type {{}}
- */
-light.selectbox.searchCondition = {};
+var net = require('./light.net');
 
-/**
- * 显示对象的请求API
- * @type String
- */
-light.selectbox.url = "";
+module.exports = function (id, option) {
 
-/**
- * 选择用户的回调函数
- */
-light.selectbox.callback = undefined;
+  option = option || {};
 
-/**
- * 展示的字段, 最多两项
- * @type {Array}
- */
-light.selectbox.fields = [];
+  if (option.type && CONST.RESERVE[option.type]) {
+    var reserve = CONST.RESERVE[option.type];
+    option.api = reserve.api;
+    option.uk = reserve.uk;
+    option.name = reserve.name;
+    option.icon = reserve.icon;
+    option.field = reserve.field;
+    option.title = reserve.title;
+  }
 
-/**
- * 常量
- * @type {string}
- */
-light.selectbox.user = "user";
-light.selectbox.authority = "authority";
-light.selectbox.group = "group";
-light.selectbox.category = "category";
-light.selectbox.role = "role";
-light.selectbox.tag = "tag";
-light.selectbox.file = "file";
-light.selectbox.route = "route";
-light.selectbox.function = "function";
-light.selectbox.board = "board";
-light.selectbox.structure = "structure";
-light.selectbox.custom = "custom";
+  option.value = option.value || [];
+  option.uk = option.uk || '_id';
+  option.field = option.field || ['_id', 'name'];
+  option.title = option.title || 'Select';
+  option.show = option.show || 10;
+  option.emitter = $({});
+  option.search = option.search == undefined ? true : option.search;
+  option.pagination = option.pagination == undefined ? true : option.pagination;
 
-/**
- * 选择数据对象
- */
-light.selectbox.dataType = "";
+  return ReactDOM.render(
+    React.createElement(SelectBox, option),
+    document.getElementById(id)
+  );
+};
 
+var style = {
+  search: {
+    position: 'relative',
+    fontSize: '18px'
+  },
+  searchinput: {
+    paddingLeft: '20px',
+    paddingRight: '20px',
+    borderRadius: '20px',
+    visibility: 'hidden'
+  },
+  searchbutton: {
+    position: 'absolute',
+    right: '10px',
+    top: '5px',
+    fontSize: '15px',
+    cursor: 'pointer'
+  },
+  title: {position: 'absolute', top: '5px'}
+};
 
-/**
- * 是否单选
- * @type {boolean}
- */
-light.selectbox.single = false;
+var SelectBox = React.createClass({
 
-/**
- * 依赖的API
- *  /api/user/list
- *  /api/group/list
- *  /api/category/list
- *  /api/role/list
- *  /api/tag/list
- */
-$(function () {
+  getInitialState: function () {
 
-  /**
-   * 显示选择对话框
-   * @param type
-   * @param selected 选中的项目一览
-   * @param url 可以自定URL，如果指定，则使用该URL获取后台数据
-   */
-  light.selectbox.show = function (type, selected, url) {
-    light.selectbox.dataType = type;
-    var defaults = selected && selected.length > 0 ? selected.split(",") : undefined;
+    this.props.emitter.on(CONST.EVENT.CHANGE, this.change);
+    this.props.emitter.on(CONST.EVENT.SEARCH, this.search);
+    this.props.emitter.on(CONST.EVENT.PREV, this.prev);
+    this.props.emitter.on(CONST.EVENT.NEXT, this.next);
+    this.props.emitter.on(CONST.EVENT.OK, this.ok);
+    this.props.emitter.on(CONST.EVENT.CANCEL, this.cancel);
 
-    light.selectbox.selected = {};
-    //light.selectbox.condition= {};
-
-    light.selectbox.url = url;
-
-    switch (type) {
-      case light.selectbox.user:
-        getUserList(defaults);
-        break;
-      case light.selectbox.authority:
-        getAuthorityList(defaults);
-        break;
-      case light.selectbox.group:
-        getGroupList(defaults);
-        break;
-      case light.selectbox.category:
-        getCategoryList(defaults);
-        break;
-      case light.selectbox.role:
-        getRoleList(defaults);
-        break;
-      case light.selectbox.tag:
-        getTagList(defaults);
-        break;
-      case light.selectbox.file:
-        getFileList(defaults);
-        break;
-      case light.selectbox.route:
-        getRouteList(defaults);
-        break;
-      case light.selectbox.function:
-        getFunctionList(defaults);
-        break;
-      case light.selectbox.board:
-        getBoardList(defaults);
-        break;
-      case light.selectbox.structure:
-        getStructureList(defaults);
-        break;
-      case light.selectbox.custom:
-        getCustomList(defaults);
-        break;
+    return {
+      data: this.props.data,
+      value: this.props.value,
+      uk: this.props.uk,
+      field: this.props.field,
+      title: this.props.title,
+      show: this.props.show,
+      single: this.props.single,
+      search: this.props.search,
+      pagination: this.props.pagination,
+      icon: this.props.icon,
+      emit: this.emit,
+      total: 0,
+      page: 0
     }
+  },
 
-    $("#searchKeyword").val("");
-    $("#dlgSelectBox").off('hidden.bs.modal').on('hidden.bs.modal', function (e) {
-      light.selectbox.condition = {};
-      light.selectbox.searchCondition = {};
-    });
-    $("#dlgSelectBox").modal("show");
+  render: function () {
+    return React.DOM.div({className: 'modal fade'},
+      React.DOM.div({className: 'modal-dialog'},
+        React.DOM.div({className: 'modal-content'},
+          React.createElement(Header, this.state),
+          React.createElement(Body, this.state),
+          React.createElement(Footer, this.state)
+        )
+      )
+    );
+  },
 
-  };
-
-  light.selectbox.hide = function () {
-    $("#dlgSelectBox").modal("hide");
-  };
-
-  /**
-   * 获取用户一览
-   */
-  var getUserList = function (selected) {
-    var url = light.selectbox.url || "/api/user/list";
-
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.id) >= 0;
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.id,
-              option: item.name
-            };
-          }
-
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "user",
-            name   : item.id,
-            option1: item.name,
-            option2: "",
-            checked: checked
-          }));
-        });
-      }
-    });
-  };
+  emit: function (type, data, node) {
+    this.props.emitter.trigger(type, [data, node]);
+  },
 
   /**
-   * 获取标签一览
+   * selection change event
+   * @param event
+   * @param value
    */
-  var getTagList = function (selected) {
-    var url = light.selectbox.url || "/api/tag/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
+  change: function (event, value) {
 
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.name) >= 0;
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.name,
-              option: ""
-            };
-          }
-
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "tag",
-            name   : item.name,
-            option1: "",
-            option2: "",
-            checked: checked
-          }));
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取组一览
-   */
-  var getGroupList = function (selected) {
-    var url = light.selectbox.url || "/api/group/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.name) >= 0;
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.name,
-              option: ""
-            };
-          }
-
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "group",
-            name   : item.name,
-            option1: "",
-            option2: "",
-            checked: checked
-          }));
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取分类一览
-   */
-  var getCategoryList = function (selected) {
-    var url = light.selectbox.url || "/api/category/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.name) >= 0;
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.name,
-              option: ""
-            };
-          }
-
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "bookmark",
-            name   : item.name,
-            option1: item.categoryId,
-            option2: item.parent,
-            checked: checked
-          }));
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取文件一览
-   */
-  var getFileList = function (selected) {
-    var url = light.selectbox.url || "/api/file/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        // light.error(err, result.message, false);
-        alertify.error("加载错误");
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.name) >= 0;
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.name,
-              option: Math.ceil(item.length / 1024) + " KB"
-            };
-          }
-
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "file",
-            name   : item.name,
-            option1: Math.ceil(item.length / 1024) + " KB",
-            option2: "",
-            checked: checked
-            // checked: (defaults && _.contains(defaults, item._id)) ? "checked" : ""
-          }));
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取角色一览
-   */
-  var getRoleList = function (selected) {
-    var url = light.selectbox.url || "/api/role/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-
-          var checked = _.indexOf(selected, item.name) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "lock",
-            name   : item.name,
-            option1: item.description,
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.name,
-              option: item.description
-            };
-          }
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取权限一览
-   */
-  var getAuthorityList = function (selected) {
-    var url = light.selectbox.url || "/api/authority/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-
-          var checked = _.indexOf(selected, item.name) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "lock",
-            name   : item.name,
-            option1: item.description,
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.name,
-              option: item.description
-            };
-          }
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取路径一览
-   */
-  var getRouteList = function (selected) {
-    var url = light.selectbox.url || "/api/route/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-
-          var checked = _.indexOf(selected, item.url) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "load",
-            name   : item.url,
-            option1: item.description,
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.url,
-              option: item.description
-            };
-          }
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取菜单一览
-   */
-  var getFunctionList = function (selected) {
-    var url = light.selectbox.url || "/api/function/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item.url) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : item.icon,
-            name   : item.url,
-            option1: item.description,
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.url,
-              option: item.description
-            };
-          }
-        });
-      }
-    });
-  };
-
-  /**
-   * 获取路径一览
-   */
-  var getBoardList = function (selected) {
-    var url = light.selectbox.url || "/api/board/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-
-          var checked = _.indexOf(selected, item.api) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "bars",
-            name   : item.api,
-            option1: item.description,
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.api,
-              option: item.description
-            };
-          }
-        });
-      }
-    });
-  };
-
-
-  /**
-   * 获取路径一览
-   */
-  var getStructureList = function (selected) {
-    var url = light.selectbox.url || "/api/structure/list";
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-          , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-
-        _.each(result.items, function (item, index) {
-
-          var checked = _.indexOf(selected, item.schema) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "database",
-            name   : item.schema,
-            option1: item.description,
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name  : item.schema,
-              option: item.description
-            };
-          }
-        });
-      }
-    });
-  };
-
-  /**
-   * 显示自定义一览 TODO: 确认可用
-   */
-  var getCustomList = function (selected, all) {
-
-    var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html())
-      , dlgSelectBoxBody     = $("#dlgSelectBoxBody").html("");
-    var params = jQuery.extend(true, {}, light.selectbox.condition, light.selectbox.searchCondition);
-    light.doget(light.selectbox.url, params, function (err, result) {
-      if (err) {
-        alertify.error("加载错误");
-        // light.error(err, result.message, false);
-      } else {
-        var tmplDlgSelectBoxBody = _.template($("#tmplDlgSelectBoxBody").html()),
-          dlgSelectBoxBody       = $("#dlgSelectBoxBody").html("");
-
-        var fields = light.selectbox.fields
-          , field0 = fields.length > 0 ? fields[0] : "name"
-          , field1 = fields.length > 1 ? fields[1] : "description";
-        _.each(result.items, function (item, index) {
-          var checked = _.indexOf(selected, item[field0]) >= 0;
-          dlgSelectBoxBody.append(tmplDlgSelectBoxBody({
-            index  : index + 1,
-            id     : item._id,
-            icon   : "bookmark-o",
-            name   : item[field0],
-            option1: item[field1],
-            option2: "",
-            checked: checked
-          }));
-
-          if (checked) {
-            light.selectbox.selected[item._id] = {
-              name: item[field0],
-              option: item[field1]
-            };
-          }
-        });
-
-      }
-    });
-  };
-
-  /**
-   * 事件绑定
-   */
-  var events = function () {
-
-    // 选择行
-    $("#dlgSelectBoxBody").on("click", "tr", function (event) {
-      selectRow($(event.currentTarget));
-    });
-
-    // 点击确定按钮
-    $("#btnOK").bind("click", function () {
-      if (light.selectbox.callback) {
-        light.selectbox.callback(light.selectbox.selected);
-      }
-      light.selectbox.hide();
-    });
-
-    // 点击检索
-    $("#btnDoSearch").bind("click", function () {
-      searchData();
-    });
-    $("#searchKeyword").keyup(function () {
-      //if (!_.str.isBlank($(this).val())) {
-      searchData();
-      //}
-    });
-
-    // 选择过滤字符
-    $("#btnAlphabet").on("click", "a", function () {
-      // TODO: 加用户过滤
-      console.log($(event.target).html());
-
-      // TODO: 加选择字符及清楚选择的功能
-    });
-  };
-
-  /**
-   * 检索方法
-   */
-  var searchData = function () {
-    // IE下汉字需要手动encode
-    // var keyword = encodeURI($("#searchKeyword").val());
-    if ($("#searchKeyword").val()) {
-
-      light.selectbox.searchCondition = {
-        condition: {
-          keyword: $("#searchKeyword").val()
-        }
-      };
+    if (this.state.value.indexOf(value) < 0) {
+      this.state.value.push(value);
     } else {
-
-      light.selectbox.searchCondition = {};
+      this.state.value = this.state.value.filter(function (val) {
+        return val != value;
+      });
     }
 
-    var selected = [];
-    _.each(light.selectbox.selected, function (val, key) {
-      selected.push(val.name);
-    });
-
-    switch (light.selectbox.dataType) {
-      case light.selectbox.user:
-        getUserList(selected);
-        break;
-      case light.selectbox.authority:
-        getAuthorityList(selected);
-        break;
-      case light.selectbox.group:
-        getGroupList(selected);
-        break;
-      case light.selectbox.category:
-        getCategoryList(selected);
-        break;
-      case light.selectbox.role:
-        getRoleList(selected);
-        break;
-      case light.selectbox.tag:
-        getTagList(selected);
-        break;
-      case light.selectbox.file:
-        getFileList(light.selectbox.selected);
-        break;
-      case light.selectbox.route:
-        getRouteList(light.selectbox.selected);
-        break;
-      case light.selectbox.function:
-        getFunctionList(light.selectbox.selected);
-        break;
-      case light.selectbox.board:
-        getBoardList(light.selectbox.selected);
-        break;
-      case light.selectbox.structure:
-        getStructureList(light.selectbox.selected);
-        break;
-      case light.selectbox.custom:
-        getCustomList(light.selectbox.selected);
-        break;
-    }
-  };
+    this.setState({value: this.state.value});
+  },
 
   /**
-   * 选择行
-   * @param target
+   * search event
+   * @param event
+   * @param keyword
    */
-  var selectRow = function (target) {
-    var key         = target.attr("key")
-      , check       = target.children(":last")
-      , tmplCheck   = $("#tmplCheck").html()
-      , tmplUnCheck = $("#tmplUnCheck").html();
+  search: function (event, keyword) {
+    this.props.condition = this.props.condition || {};
+    this.props.condition.condition = this.props.condition.condition || {};
+    this.props.condition.condition['keyword'] = keyword;
+    this.show();
+  },
 
-    // 单选，则清除前面的选择
-    if (light.selectbox.single) {
-      if (preChecked) {
-        preChecked.removeAttr("checked");
-        preChecked.html(tmplUnCheck);
+  /**
+   * go to the next page
+   */
+  next: function () {
+    this.state.page = this.state.page + 1;
+    this.setState({page: this.state.page});
+    this.show();
+  },
+
+  /**
+   * go to the previous page
+   */
+  prev: function () {
+    this.state.page = this.state.page - 1;
+    this.setState({page: this.state.page});
+    this.show();
+  },
+
+  /**
+   * done event
+   */
+  ok: function () {
+    $(ReactDOM.findDOMNode(this)).modal('hide');
+    if (this.props.ok) {
+      this.props.ok(this);
+    }
+  },
+
+  /**
+   * cancel event
+   */
+  cancel: function () {
+    $(ReactDOM.findDOMNode(this)).modal('hide');
+    if (this.props.cancel) {
+      this.props.cancel(this);
+    }
+  },
+
+  show: function () {
+
+    this.props.condition = this.props.condition || {};
+    var condition = {
+      skip: this.state.page * this.state.show,
+      limit: this.state.show,
+      condition: this.props.condition.condition
+    };
+
+    net.get(this.props.api, condition, function (err, data) {
+      this.setState({data: data.items, total: data.totalItems});
+      $(ReactDOM.findDOMNode(this)).modal('show');
+    }.bind(this));
+
+    return this;
+  },
+
+  getValue: function () {
+    return this.state.value;
+  },
+
+  getName: function () {
+
+    if (!this.props.name) {
+      return this.state.value;
+    }
+
+    var result = [];
+    this.state.data.forEach(function (item) {
+      if (this.state.value.indexOf(item[this.state.uk]) >= 0) {
+        result.push(item[this.props.name]);
       }
+    }.bind(this));
 
-      check.attr("checked", "checked");
-      check.html(tmplCheck);
-      light.selectbox.selected = {};
-      light.selectbox.selected[key] = {
-        name  : target.attr("value"),
-        option: target.attr("option1")
-      };
+    return result;
+  },
 
-      preChecked = check;
-      return;
-    }
+  getData: function () {
+    var result = [];
+    this.state.data.forEach(function (item) {
+      if (this.state.value.indexOf(item[this.state.uk]) >= 0) {
+        result.push(item);
+      }
+    }.bind(this));
 
-    if (check.attr("checked")) {
-      check.removeAttr("checked");
-      check.html(tmplUnCheck);
-      delete light.selectbox.selected[key];
-    } else {
-      check.attr("checked", "checked");
-      check.html(tmplCheck);
-      light.selectbox.selected[key] = {
-        name  : target.attr("value"),
-        option: target.attr("option1")
-      };
-    }
-  };
-  var preChecked = undefined;
+    return result;
+  }
 
-  /**
-   * 显示字母过滤标题
-   */
-  var setAlphabet = function () {
-    var btnAlphabet  = $("#btnAlphabet")
-      , tmplAlphabet = _.template($("#tmplAlphabet").html());
-
-    if (!tmplAlphabet) {
-      return;
-    }
-
-    for (var cc = 65; cc < 90; cc++) {
-      btnAlphabet.append(tmplAlphabet({code: String.fromCharCode(cc)}));
-    }
-  };
-
-  /**
-   * 初始化对话框，并执行
-   */
-  var init = function () {
-    //setAlphabet();
-    events();
-  }();
 });
+
+var Header = React.createClass({
+  getInitialState: function () {
+    return {
+      searching: false, keyword: ''
+    };
+  },
+  render: function () {
+
+    style.searchinput.visibility = this.state.searching ? 'visible' : 'hidden';
+    style.title.visibility = this.state.searching ? 'hidden' : 'visible';
+
+    return React.DOM.div({className: 'modal-header'},
+      React.DOM.section({style: style.search},
+        React.DOM.input({
+          className: 'form-control', ref: 'input',
+          onChange: this.change,
+          onKeyDown: this.keyDown,
+          style: style.searchinput,
+          value: this.state.keyword
+        }),
+        this.search(),
+        React.DOM.h4({className: 'modal-title', style: style.title}, this.props.title)
+      )
+    );
+  },
+
+  search: function () {
+    if (!this.props.search) {
+      return undefined;
+    }
+
+    return React.DOM.a({style: style.searchbutton, onClick: this.click},
+      React.DOM.i({className: this.icon()})
+    );
+  },
+
+  icon: function () {
+    return this.state.searching ? 'fa fa-close' : 'fa fa-search';
+  },
+
+  change: function (event) {
+    this.setState({keyword: event.target.value});
+  },
+
+  keyDown: function (event) {
+    if (event.keyCode == CONST.KEY.ENTER) {
+      event.preventDefault();
+      this.props.emit(CONST.EVENT.SEARCH, this.state.keyword);
+    }
+  },
+
+  click: function () {
+    if (this.state.searching) {
+      this.props.emit(CONST.EVENT.SEARCH);
+      return this.setState({searching: false, keyword: ''});
+    }
+
+    this.setState({searching: true});
+  }
+});
+
+var Body = React.createClass({
+  render: function () {
+    return React.DOM.div({className: 'modal-body'},
+      React.DOM.table({className: 'table table-hover table-striped'},
+        React.DOM.tbody({}, this.row())
+      )
+    );
+  },
+
+  row: function () {
+    if (!this.props.data) {
+      return undefined;
+    }
+
+    return this.props.data.map(function (row) {
+      return React.DOM.tr({}, this.icon(row), this.col(row), this.check(row));
+    }.bind(this))
+  },
+
+  icon: function (row) {
+    if (!this.props.icon) {
+      return undefined;
+    }
+
+    var uk = row[this.props.uk];
+    return React.DOM.td({style: {width: '5%', border: '0'}, value: uk, onClick: this.click},
+      React.DOM.i({className: 'fa fa-' + this.props.icon, value: uk})
+    );
+  },
+
+  col: function (row) {
+    return this.props.field.map(function (col) {
+      return React.DOM.td({style: {border: '0'}, value: row[this.props.uk], onClick: this.click}, row[col])
+    }.bind(this));
+  },
+
+  check: function (row) {
+
+    var uk = row[this.props.uk]
+      , checked = this.props.value.indexOf(uk) >= 0;
+
+    return React.DOM.td({style: {width: '6%', border: '0'}, value: uk, onClick: this.click},
+      React.DOM.i({className: checked ? 'fa fa-check-square-o' : 'fa fa fa-square-o', value: uk})
+    );
+  },
+
+  click: function (event) {
+    this.props.emit(CONST.EVENT.CHANGE, event.target.getAttribute('value'));
+  }
+});
+
+var Footer = React.createClass({
+  render: function () {
+
+    return React.DOM.div({className: 'modal-footer'},
+      this.pagination(),
+      React.DOM.button({className: 'btn btn-default btn-sm', onClick: this.cancel}, '取消'),
+      React.DOM.button({className: 'btn btn-primary btn-sm', onClick: this.ok}, '确定')
+    );
+  },
+
+  pagination: function () {
+    if (!this.props.pagination) {
+      return undefined;
+    }
+
+    var isFirst = this.props.page == 0
+      , isLast = this.props.page == Math.floor(this.props.total / this.props.show);
+
+    return React.DOM.div({style: {float: 'left'}},
+      React.DOM.button({className: 'btn btn-default btn-sm', onClick: this.prev, disabled: isFirst},
+        React.DOM.i({className: 'fa fa-caret-left'})
+      ),
+      React.DOM.button({className: 'btn btn-default btn-sm', onClick: this.next, disabled: isLast},
+        React.DOM.i({className: 'fa fa-caret-right'})
+      ),
+      this.number()
+    );
+  },
+
+  number: function () {
+    var start = this.props.page * this.props.show + 1
+      , end = this.props.page * this.props.show + this.props.show;
+
+    end = end > this.props.total ? this.props.total : end;
+    return React.DOM.span({style: {color: '#ccc', fontSize: '10px'}},
+      '（' + start + ' ~ ' + end + ' / ' + this.props.total + '）'
+    );
+  },
+
+  prev: function () {
+    this.props.emit(CONST.EVENT.PREV);
+  },
+
+  next: function () {
+    this.props.emit(CONST.EVENT.NEXT);
+  },
+
+  ok: function () {
+    this.props.emit(CONST.EVENT.OK);
+  },
+
+  cancel: function () {
+    this.props.emit(CONST.EVENT.CANCEL);
+  }
+});
+
+var CONST = {
+  EVENT: {
+    CHANGE: 'CHANGE',
+    SEARCH: 'SEARCH',
+    PREV: 'PREV',
+    NEXT: 'NEXT',
+    OK: 'OK',
+    CANCEL: 'CANCEL'
+  },
+  KEY: {
+    BACKSPACE: 8,
+    DELETE: 46,
+    ENTER: 13
+  },
+  RESERVE: {
+    user: {
+      api: '/api/user/list',
+      uk: '_id',
+      name: 'name',
+      icon: 'user',
+      field: ['id', 'name'],
+      title: 'User'
+    },
+    group: {
+      api: '/api/group/list',
+      uk: '_id',
+      name: 'name',
+      icon: 'group',
+      field: ['name'],
+      title: 'Group'
+    },
+    category: {
+      api: '/api/category/list',
+      uk: '_id',
+      name: 'name',
+      icon: 'bookmark',
+      field: ['name', 'categoryId'],
+      title: 'Category'
+    },
+    authority: {
+      api: '/api/authority/list',
+      uk: '_id',
+      name: 'name',
+      icon: 'lock',
+      field: ['name', 'description'],
+      title: 'Authority'
+    },
+    role: {
+      api: '/api/role/list',
+      uk: '_id',
+      name: 'name',
+      icon: 'lock',
+      field: ['name', 'description'],
+      title: 'Role'
+    },
+    tag: {
+      api: '/api/tag/list',
+      uk: '_id',
+      name: 'name',
+      icon: 'tag',
+      field: ['name'],
+      title: 'Tag'
+    },
+    route: {
+      api: '/api/route/list',
+      uk: '_id',
+      name: 'url',
+      icon: 'road',
+      field: ['url', 'description'],
+      title: 'Route'
+    },
+    function: {
+      api: '/api/function/list',
+      uk: '_id',
+      name: 'url',
+      icon: 'list-ul',
+      field: ['url', 'description'],
+      title: 'Function'
+    },
+    board: {
+      api: '/api/board/list',
+      uk: '_id',
+      name: 'api',
+      icon: 'bars',
+      field: ['api', 'description'],
+      title: 'Board'
+    },
+    structure: {
+      api: '/api/structure/list',
+      uk: '_id',
+      name: 'schema',
+      icon: 'database',
+      field: ['schema', 'description'],
+      title: 'Structure'
+    }
+  }
+};

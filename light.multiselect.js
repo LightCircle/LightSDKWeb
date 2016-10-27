@@ -24,7 +24,10 @@
  * @returns {*}
  */
 'use strict';
-var net = require('./light.net');
+
+var React = require('react')
+  , ReactDOM = require('react-dom')
+  , net = require('./light.net');
 
 module.exports = function (id, option) {
   option = option || {};

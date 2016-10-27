@@ -16,7 +16,12 @@
  * emitter  [jquery object] use to add event listener
  * @returns {*}
  */
+
 'use strict';
+
+var React = require('react')
+  , ReactDOM = require('react-dom');
+
 module.exports = function (id, option) {
   option = option || {};
   option.displayDetail = option.displayDetail || 'display';

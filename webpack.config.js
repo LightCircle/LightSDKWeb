@@ -1,5 +1,7 @@
 'use strict';
 
+var webpack = require('webpack');
+
 module.exports = {
   entry: {
     buttongroup: './index.js'
@@ -10,5 +12,13 @@ module.exports = {
     filename: 'bundle.js',
     library: 'light',
     libraryTarget: 'umd'
-  }
+  },
+
+  plugins: [
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false
+    //   }
+    // })
+  ]
 };

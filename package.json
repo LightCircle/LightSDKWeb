@@ -14,5 +14,10 @@
     "light"
   ],
   "author": "r2space@gmail.com",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "webpack": "^1.13.3"
+  }
 }

@@ -4,3 +4,6 @@
 
 # WebStorm管理文件
 .idea
+
+# node modules
+node_modules

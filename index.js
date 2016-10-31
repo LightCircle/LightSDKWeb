@@ -19,6 +19,7 @@ var net = require('./light.net')
   , tree = require('./light.tree')
   , placeselect = require('./light.placeselect')
   , editable = require('./light.editable')
+  , pagination = require('./light.pagination')
   ;
 
 module.exports = {
@@ -34,6 +35,7 @@ module.exports = {
   tree: tree,
   placeselect: placeselect,
   editable: editable,
+  pagination: pagination,
 
   const: constant,
   net: net,

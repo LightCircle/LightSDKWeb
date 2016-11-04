@@ -32,9 +32,7 @@ var Pagination = React.createClass({
       limit: totalpages > 5 ? 5 : totalpages,
       totalItems: this.props.totalItems,
       start: 1,
-      canPre: false,
       startPage: 1,
-      canNext: true,
       rowCount: this.props.rowCount,
       activePage: 1,
       skip: 0,
@@ -68,14 +66,10 @@ var Pagination = React.createClass({
   },
 
   page: function () {
-    var loadedItems = (this.state.startPage - 1) * this.state.rowCount;
-    var remainder = Math.ceil((this.state.totalItems - loadedItems) / this.state.rowCount),
-      limit = remainder > 5 ? 5 : remainder;
-    this.setState({limit: limit});
     var pages = [];
     for (var i = this.state.start; i < this.state.start + this.state.limit; i++) {
       if (i == this.state.activePage) {
-        pages.push(React.DOM.li({className: 'active'},
+        pages.push(React.DOM.li({className: 'active', key: i},
           React.DOM.a({
             href: 'javascript:void(0)',
             style: {padding: '4px 9px'},
@@ -83,7 +77,7 @@ var Pagination = React.createClass({
             onClick: this.changePage
           }, i)))
       } else {
-        pages.push(React.DOM.li({},
+        pages.push(React.DOM.li({key: i},
           React.DOM.a({
             href: 'javascript:void(0)',
             style: {padding: '4px 9px'},
@@ -97,7 +91,6 @@ var Pagination = React.createClass({
 
   canPrev: function () {
     if (this.state.startPage > 1) {
-      this.setState({canPre: true});
       return React.DOM.li({},
         React.DOM.a({
             className: 'pre',
@@ -112,14 +105,11 @@ var Pagination = React.createClass({
             onClick: this.changePage
           }))
       )
-    } else {
-      this.setState({canPre: false});
     }
   },
 
   canNext: function () {
     if ((this.state.startPage + this.state.limit - 1 < totalpages) && (this.state.limit >= 5)) {
-      this.setState({canNext: true});
       return React.DOM.li({},
         React.DOM.a({
             className: 'next',
@@ -134,8 +124,6 @@ var Pagination = React.createClass({
             onClick: this.changePage
           }))
       )
-    } else {
-      this.setState({canNext: false});
     }
   },
 
@@ -149,8 +137,8 @@ var Pagination = React.createClass({
     }
   },
 
-  changePage: function () {
-    var activePage = $(event.target).attr('data-activePage');
+  changePage: function (event) {
+    var activePage = event.target.getAttribute('data-activePage');
     if (activePage == 'prev') {
       if (this.state.startPage == 1) {
         return false;
@@ -162,14 +150,18 @@ var Pagination = React.createClass({
         var prevStart = this.state.startPage - 5;
         this.show((prevStart - 1) * this.state.rowCount);
         this.setState({
-          startPage: prevStart, activePage: prevStart, start: prevStart
+          startPage: prevStart, activePage: prevStart, start: prevStart, limit: 5
         });
       }
     } else if (activePage == 'next') {
       var loadedItems = (this.state.startPage - 1) * this.state.rowCount;
-      if (Math.ceil((this.state.totalItems - loadedItems) / this.state.rowCount) > 5) {
+      var remainder = Math.ceil((this.state.totalItems - loadedItems) / this.state.rowCount);
+      if (remainder > 5) {
         var nextStart = this.state.startPage + 5;
         this.show((nextStart - 1) * this.state.rowCount);
+        if (remainder - 5 < 5) {
+          this.setState({startPage: nextStart, activePage: nextStart, start: nextStart, limit: remainder - 5});
+        }
         this.setState({startPage: nextStart, activePage: nextStart, start: nextStart});
       }
       return false;
@@ -183,12 +175,12 @@ var Pagination = React.createClass({
     this.paginationMore();
   },
 
-  onmouseover:function(){
-    $(event.target).css({backgroundColor: '#e67e22'});
+  onmouseover: function (event) {
+    event.target.style.backgroundColor = '#e67e22';
   },
 
-  onmouseout:function(){
-    $(event.target).css({backgroundColor: '#fff'});
+  onmouseout: function (event) {
+    event.target.style.backgroundColor = '#fff';
   },
 
   show: function (skip) {

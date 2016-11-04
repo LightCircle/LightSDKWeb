@@ -329,8 +329,8 @@ var Body = React.createClass({
       return undefined;
     }
 
-    return this.props.data.map(function (row) {
-      return React.DOM.tr({}, this.icon(row), this.col(row), this.check(row));
+    return this.props.data.map(function (row, i) {
+      return React.DOM.tr({key: i}, this.icon(row), this.col(row), this.check(row));
     }.bind(this))
   },
 
@@ -346,8 +346,8 @@ var Body = React.createClass({
   },
 
   col: function (row) {
-    return this.props.field.map(function (col) {
-      return React.DOM.td({style: {border: '0'}, value: row[this.props.uk], onClick: this.click}, row[col])
+    return this.props.field.map(function (col, i) {
+      return React.DOM.td({style: {border: '0'}, value: row[this.props.uk], onClick: this.click, key: i}, row[col])
     }.bind(this));
   },
 

@@ -43,12 +43,13 @@ var ButtonGroup = React.createClass({
   render: function () {
 
     return React.DOM.div({className: 'btn-group'},
-      this.state.data.map(function (item) {
+      this.state.data.map(function (item, i) {
         return React.DOM.button({
           className: this.className(item),
           disabled: this.disabled(),
           onClick: this.click,
-          value: item.value
+          value: item.value,
+          key: i
         }, item.title)
       }.bind(this))
     );

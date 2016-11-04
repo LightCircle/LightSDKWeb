@@ -65,8 +65,8 @@ var Tags = React.createClass({
   render: function () {
 
     return React.DOM.ul({className: 'list-unstyled blog-tags', style: style.ul},
-      this.props.data.map(function (item) {
-        return React.DOM.li({style: style.li},
+      this.props.data.map(function (item,i) {
+        return React.DOM.li({style: style.li, key: i},
           React.DOM.a({
               style: this.state.value.indexOf(item.value) < 0 ? style.a : style.a_active,
               onClick: this.click,
@@ -82,7 +82,7 @@ var Tags = React.createClass({
     );
   },
 
-  click: function () {
+  click: function (event) {
     var current = event.target.getAttribute('value');
 
     if (this.state.value.indexOf(current) < 0) {

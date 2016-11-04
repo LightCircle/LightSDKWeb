@@ -35,6 +35,8 @@ module.exports = function (id, option) {
   option.nonSelectedText = '请选择' + option.nonSelectedText || '';
   option.numberDisplayed = option.numberDisplayed || 3;
   option.multiple = option.multiple || '';
+  option.change = option.change || function () {
+    };
   return ReactDOM.render(
     React.createElement(MultiSelect, option),
     document.getElementById(id)
@@ -57,7 +59,9 @@ var MultiSelect = React.createClass({
       numberDisplayed: this.props.numberDisplayed,
       maxHeight: this.props.maxHeight,
       onChange: function (element) {
-        this.props.change(element.val());
+        if (element) {
+          this.props.change(element.val());
+        }
       }.bind(this)
     });
     this.redraw(this.props);

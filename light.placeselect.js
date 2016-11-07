@@ -65,7 +65,7 @@ var Province = React.createClass({
       id: this.props.id,
       name: this.props.name,
       nonSelectedText: '省',
-      condition: {condition: {parent: 'root'}},
+      condition: {condition: {parent: 'root'}}
     });
   }
 });

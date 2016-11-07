@@ -130,10 +130,12 @@ var Pagination = React.createClass({
   paginationMore: function () {
     if (this.state.totalItems <= this.state.skip + this.state.pageSize) {
       $('.more').addClass('hide');
+      this.setState({skip: this.state.skip += this.state.rowCount},
+        this.showMore(this.state.skip));
     } else {
       $('.more').removeClass('hide');
-      this.setState({skip: this.state.skip += this.state.pageSize},
-        this.showMore(this.state.skip));
+      this.showMore(this.state.skip + this.state.rowCount);
+      this.setState({skip: this.state.skip += this.state.pageSize});
     }
   },
 

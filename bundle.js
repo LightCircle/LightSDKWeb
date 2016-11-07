@@ -23168,7 +23168,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      id: this.props.id,
 	      name: this.props.name,
 	      nonSelectedText: '省',
-	      condition: {condition: {parent: 'root'}},
+	      condition: {condition: {parent: 'root'}}
 	    });
 	  }
 	});
@@ -23484,10 +23484,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  paginationMore: function () {
 	    if (this.state.totalItems <= this.state.skip + this.state.pageSize) {
 	      $('.more').addClass('hide');
+	      this.setState({skip: this.state.skip += this.state.rowCount},
+	        this.showMore(this.state.skip));
 	    } else {
 	      $('.more').removeClass('hide');
-	      this.setState({skip: this.state.skip += this.state.pageSize},
-	        this.showMore(this.state.skip));
+	      this.showMore(this.state.skip + this.state.rowCount);
+	      this.setState({skip: this.state.skip += this.state.pageSize});
 	    }
 	  },
 

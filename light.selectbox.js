@@ -64,6 +64,7 @@ module.exports = function (id, option) {
   option.emitter = $({});
   option.search = option.search == undefined ? true : option.search;
   option.pagination = option.pagination == undefined ? true : option.pagination;
+  option.condition = option.condition || {condition: {}};
 
   return ReactDOM.render(
     React.createElement(SelectBox, option),
@@ -116,7 +117,8 @@ var SelectBox = React.createClass({
       icon: this.props.icon,
       emit: this.emit,
       total: 0,
-      page: 0
+      page: 0,
+      condition: this.props.condition
     }
   },
 
@@ -160,9 +162,7 @@ var SelectBox = React.createClass({
    * @param keyword
    */
   search: function (event, keyword) {
-    this.props.condition = this.props.condition || {};
-    this.props.condition.condition = this.props.condition.condition || {};
-    this.props.condition.condition['keyword'] = keyword;
+    this.state.condition.condition['keyword'] = keyword;
     this.show();
   },
 
@@ -205,12 +205,10 @@ var SelectBox = React.createClass({
   },
 
   show: function () {
-
-    this.props.condition = this.props.condition || {};
     var condition = {
       skip: this.state.page * this.state.show,
       limit: this.state.show,
-      condition: this.props.condition.condition
+      condition: this.state.condition.condition
     };
 
     net.get(this.props.api, condition, function (err, data) {

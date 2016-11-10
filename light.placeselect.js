@@ -1,10 +1,5 @@
 /**
- * Created by lwx on 16/10/21.
- */
-/**
  * Created by lwx on 16/10/19.
- */
-/**
  * PlaceSelect
  * depend:
  * react
@@ -57,16 +52,32 @@ var Province = React.createClass({
   },
 
   componentDidMount: function () {
-    light.multiselect('province', {
-      change: function (selected) {
-        this.props.emitter.trigger('changeProvince', selected);
-      }.bind(this),
-      api: this.props.api,
-      id: this.props.id,
-      name: this.props.name,
-      nonSelectedText: '省',
-      condition: {condition: {parent: 'root'}}
-    });
+    if (this.props.api) {
+      light.multiselect('province', {
+        change: function (selected) {
+          this.props.emitter.trigger('changeProvince', selected);
+        }.bind(this),
+        api: this.props.api,
+        id: this.props.id,
+        name: this.props.name,
+        nonSelectedText: '省',
+        condition: {condition: {parent: 'root'}}
+      });
+    } else {
+      var data = [];
+      this.props.data.map(function (item) {
+        if (item['parent'] == 'root') {
+          data.push(item);
+        }
+      });
+      light.multiselect('province', {
+        data: data,
+        nonSelectedText: '省',
+        change: function (selected) {
+          this.props.emitter.trigger('changeProvince', selected);
+        }.bind(this)
+      });
+    }
   }
 });
 
@@ -83,12 +94,24 @@ var City = React.createClass({
       nonSelectedText: '市'
     });
     this.props.emitter.on('changeProvince', function (event, selected) {
-      this.city.redraw({
-        api: this.props.api,
-        id: this.props.id,
-        name: this.props.name,
-        condition: {condition: {parent: selected}}
-      });
+      if (this.props.api) {
+        this.city.redraw({
+          api: this.props.api,
+          id: this.props.id,
+          name: this.props.name,
+          condition: {condition: {parent: selected}}
+        });
+      } else {
+        var data = [];
+        this.props.data.map(function (item) {
+          if (item['parent'] == selected) {
+            data.push(item);
+          }
+        });
+        this.city.redraw({
+          data: data
+        });
+      }
     }.bind(this));
   }
 });
@@ -104,12 +127,24 @@ var District = React.createClass({
       nonSelectedText: '区'
     });
     this.props.emitter.on('changeCity', function (event, selected) {
-      this.district.redraw({
-        api: this.props.api,
-        id: this.props.id,
-        name: this.props.name,
-        condition: {condition: {parent: selected}}
-      });
+      if (this.props.api) {
+        this.district.redraw({
+          api: this.props.api,
+          id: this.props.id,
+          name: this.props.name,
+          condition: {condition: {parent: selected}}
+        });
+      } else {
+        var data = [];
+        this.props.data.map(function (item) {
+          if (item['parent'] == selected) {
+            data.push(item);
+          }
+        });
+        this.district.redraw({
+          data: data
+        });
+      }
     }.bind(this));
   }
 });

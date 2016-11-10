@@ -9,7 +9,9 @@ exports.csrf = function () {
 };
 
 exports.uid = function () {
-  return document.getElementById('userid').value
+  if (document.getElementById('userid')) {
+    return document.getElementById('userid').value
+  }
 };
 
 exports.param = function (url, key, val) {

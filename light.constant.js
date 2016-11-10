@@ -11,5 +11,6 @@ module.exports = {
   TYPE_PDF: "application/pdf",
   TYPE_CSV: "text/csv",
   TYPE_TEXT: "text/plain",
-  TYPE_EXCEL: "application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+  TYPE_EXCEL: "application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
+  MAX_ROW: 9223372036854775807
 };

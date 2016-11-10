@@ -1,7 +1,5 @@
 /**
  * Created by lwx on 16/10/19.
- */
-/**
  * MultiSelect
  * depend:
  * react
@@ -78,7 +76,9 @@ var MultiSelect = React.createClass({
         node.multiselect('dataprovider', data.items);
       }.bind(this));
     } else {
-      node.multiselect('dataprovider', props.data);
+      if (props.data) {
+        node.multiselect('dataprovider', props.data);
+      }
     }
   }
 });

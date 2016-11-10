@@ -6,6 +6,7 @@
 
 var net = require('./light.net')
   , util = require('./light.util')
+  , init = require('./light.init')
   , tags = require('./light.tags')
   , mask = require('./light.mask')
   , buttongroup = require('./light.buttongroup')

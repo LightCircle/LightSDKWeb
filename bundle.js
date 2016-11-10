@@ -62,6 +62,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var net = __webpack_require__(1)
 	  , util = __webpack_require__(2)
+	  , init = __webpack_require__(188)
 	  , tags = __webpack_require__(3)
 	  , mask = __webpack_require__(175)
 	  , buttongroup = __webpack_require__(176)
@@ -290,7 +291,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	exports.uid = function () {
-	  return document.getElementById('userid').value
+	  if (document.getElementById('userid')) {
+	    return document.getElementById('userid').value
+	  }
 	};
 
 	exports.param = function (url, key, val) {
@@ -22059,6 +22062,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  option.emitter = $({});
 	  option.search = option.search == undefined ? true : option.search;
 	  option.pagination = option.pagination == undefined ? true : option.pagination;
+	  option.condition = option.condition || {condition: {}};
 
 	  return ReactDOM.render(
 	    React.createElement(SelectBox, option),
@@ -22111,7 +22115,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      icon: this.props.icon,
 	      emit: this.emit,
 	      total: 0,
-	      page: 0
+	      page: 0,
+	      condition: this.props.condition
 	    }
 	  },
 
@@ -22155,9 +22160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param keyword
 	   */
 	  search: function (event, keyword) {
-	    this.props.condition = this.props.condition || {};
-	    this.props.condition.condition = this.props.condition.condition || {};
-	    this.props.condition.condition['keyword'] = keyword;
+	    this.state.condition.condition['keyword'] = keyword;
 	    this.show();
 	  },
 
@@ -22200,12 +22203,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  show: function () {
-
-	    this.props.condition = this.props.condition || {};
 	    var condition = {
 	      skip: this.state.page * this.state.show,
 	      limit: this.state.show,
-	      condition: this.props.condition.condition
+	      condition: this.state.condition.condition
 	    };
 
 	    net.get(this.props.api, condition, function (err, data) {
@@ -22819,7 +22820,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  TYPE_PDF: "application/pdf",
 	  TYPE_CSV: "text/csv",
 	  TYPE_TEXT: "text/plain",
-	  TYPE_EXCEL: "application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+	  TYPE_EXCEL: "application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
+	  MAX_ROW: 9223372036854775807
 	};
 
 
@@ -22829,8 +22831,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * Created by lwx on 16/10/19.
-	 */
-	/**
 	 * MultiSelect
 	 * depend:
 	 * react
@@ -22907,7 +22907,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        node.multiselect('dataprovider', data.items);
 	      }.bind(this));
 	    } else {
-	      node.multiselect('dataprovider', props.data);
+	      if (props.data) {
+	        node.multiselect('dataprovider', props.data);
+	      }
 	    }
 	  }
 	});
@@ -23102,12 +23104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Created by lwx on 16/10/21.
-	 */
-	/**
 	 * Created by lwx on 16/10/19.
-	 */
-	/**
 	 * PlaceSelect
 	 * depend:
 	 * react
@@ -23160,16 +23157,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  componentDidMount: function () {
-	    light.multiselect('province', {
-	      change: function (selected) {
-	        this.props.emitter.trigger('changeProvince', selected);
-	      }.bind(this),
-	      api: this.props.api,
-	      id: this.props.id,
-	      name: this.props.name,
-	      nonSelectedText: '省',
-	      condition: {condition: {parent: 'root'}}
-	    });
+	    if (this.props.api) {
+	      light.multiselect('province', {
+	        change: function (selected) {
+	          this.props.emitter.trigger('changeProvince', selected);
+	        }.bind(this),
+	        api: this.props.api,
+	        id: this.props.id,
+	        name: this.props.name,
+	        nonSelectedText: '省',
+	        condition: {condition: {parent: 'root'}}
+	      });
+	    } else {
+	      var data = [];
+	      this.props.data.map(function (item) {
+	        if (item['parent'] == 'root') {
+	          data.push(item);
+	        }
+	      });
+	      light.multiselect('province', {
+	        data: data,
+	        nonSelectedText: '省',
+	        change: function (selected) {
+	          this.props.emitter.trigger('changeProvince', selected);
+	        }.bind(this)
+	      });
+	    }
 	  }
 	});
 
@@ -23186,12 +23199,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nonSelectedText: '市'
 	    });
 	    this.props.emitter.on('changeProvince', function (event, selected) {
-	      this.city.redraw({
-	        api: this.props.api,
-	        id: this.props.id,
-	        name: this.props.name,
-	        condition: {condition: {parent: selected}}
-	      });
+	      if (this.props.api) {
+	        this.city.redraw({
+	          api: this.props.api,
+	          id: this.props.id,
+	          name: this.props.name,
+	          condition: {condition: {parent: selected}}
+	        });
+	      } else {
+	        var data = [];
+	        this.props.data.map(function (item) {
+	          if (item['parent'] == selected) {
+	            data.push(item);
+	          }
+	        });
+	        this.city.redraw({
+	          data: data
+	        });
+	      }
 	    }.bind(this));
 	  }
 	});
@@ -23207,12 +23232,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nonSelectedText: '区'
 	    });
 	    this.props.emitter.on('changeCity', function (event, selected) {
-	      this.district.redraw({
-	        api: this.props.api,
-	        id: this.props.id,
-	        name: this.props.name,
-	        condition: {condition: {parent: selected}}
-	      });
+	      if (this.props.api) {
+	        this.district.redraw({
+	          api: this.props.api,
+	          id: this.props.id,
+	          name: this.props.name,
+	          condition: {condition: {parent: selected}}
+	        });
+	      } else {
+	        var data = [];
+	        this.props.data.map(function (item) {
+	          if (item['parent'] == selected) {
+	            data.push(item);
+	          }
+	        });
+	        this.district.redraw({
+	          data: data
+	        });
+	      }
 	    }.bind(this));
 	  }
 	});
@@ -23224,8 +23261,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * Created by lwx on 16/10/24.
-	 */
-	/**
 	 *   editable.
 	 *
 	 * can be used functions
@@ -23547,6 +23582,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.props.showMore(skip)
 	  }
 	});
+
+/***/ },
+/* 188 */
+/***/ function(module, exports) {
+
+	/**
+	 * init
+	 */
+
+	'use strict';
+
+	exports.init = function () {
+	  _.templateSettings = {
+	    interpolate: /\{\{-(.+?)\}\}/gim,
+	    evaluate: /\<\$(.+?)\$\>/gim,
+	    escape: /\{\{([^-]+?)\}\}/gim
+	  };
+	}();
+
+
 
 /***/ }
 /******/ ])

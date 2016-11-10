@@ -1,7 +1,5 @@
 /**
  * Created by lwx on 16/10/24.
- */
-/**
  *   editable.
  *
  * can be used functions

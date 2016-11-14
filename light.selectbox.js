@@ -255,13 +255,12 @@ var SelectBox = React.createClass({
 var Header = React.createClass({
   getInitialState: function () {
     return {
-      searching: false, keyword: ''
+      searching: false, keyword: '',
+      searchinput: style.searchinput,
+      title: style.title
     };
   },
   render: function () {
-
-    style.searchinput.visibility = this.state.searching ? 'visible' : 'hidden';
-    style.title.visibility = this.state.searching ? 'hidden' : 'visible';
 
     return React.DOM.div({className: 'modal-header'},
       React.DOM.section({style: style.search},
@@ -269,11 +268,11 @@ var Header = React.createClass({
           className: 'form-control', ref: 'input',
           onChange: this.change,
           onKeyDown: this.keyDown,
-          style: style.searchinput,
+          style: this.state.searchinput,
           value: this.state.keyword
         }),
         this.search(),
-        React.DOM.h4({className: 'modal-title', style: style.title}, this.props.title)
+        React.DOM.h4({className: 'modal-title', style: this.state.title}, this.props.title)
       )
     );
   },
@@ -306,10 +305,19 @@ var Header = React.createClass({
   click: function () {
     if (this.state.searching) {
       this.props.emit(CONST.EVENT.SEARCH);
-      return this.setState({searching: false, keyword: ''});
+      return this.setState({
+        searching: false,
+        keyword: '',
+        searchinput: style.searchinput,
+        title: style.title
+      });
     }
 
-    this.setState({searching: true});
+    this.setState({
+      searching: true,
+      searchinput: {visibility: 'visible'},
+      title: {visibility: 'hidden'}
+    });
   }
 });
 

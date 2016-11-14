@@ -19,6 +19,8 @@
  * selectAllJustVisible   [boolean] if true, the select all option does always select only the visible option
  * maxHeight [number]   The maximum height of the dropdown. This is useful when using the plugin with plenty of options.
  * condition  [object]  search condition
+ * enableClickableOptGroups [boolean]  If set to true, optgroup's will be clickable,
+ *                                     allowing to easily select multiple options belonging to the same group.
  * @returns {*}
  */
 'use strict';
@@ -56,6 +58,7 @@ var MultiSelect = React.createClass({
       selectAllText: this.props.selectAllText,
       numberDisplayed: this.props.numberDisplayed,
       maxHeight: this.props.maxHeight,
+      enableClickableOptGroups: this.props.enableClickableOptGroups,
       onChange: function (element) {
         if (element) {
           this.props.change(element.val());

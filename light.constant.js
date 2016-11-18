@@ -1,9 +1,13 @@
 /**
- * Constant.
+ * @module Constant
  */
 
 'use strict';
 
+/**
+ * constant
+ * @type {{TYPE_AUDIO: string, TYPE_IMAGE: string, TYPE_VIDEO: string, TYPE_PDF: string, TYPE_CSV: string, TYPE_TEXT: string, TYPE_EXCEL: string, MAX_ROW: number}}
+ */
 module.exports = {
   TYPE_AUDIO: "audio/*",
   TYPE_IMAGE: "image/*",

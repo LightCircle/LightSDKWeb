@@ -1,10 +1,10 @@
 /**
- * Alertify.
- *
- * Depend:
- *   alertify
- *
- * @returns {object}
+ * @module Alertify
+ * @desc Depend.
+ * <ul>
+ *   <li>alertify</li>
+ * </ul>
+ * @type {{info: Function, error: Function, warn: Function, confirm: Function}}
  */
 
 'use strict';

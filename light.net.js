@@ -1,5 +1,5 @@
 /**
- *
+ * @module Net
  */
 
 'use strict';
@@ -116,8 +116,8 @@ exports.delete = function (url, data, callback) {
 /**
  * POST FormData.
  * @param url
- * @param params QueryParams
- * @param data FormData
+ * @param params - QueryParams
+ * @param data - FormData
  * @param callback
  * @param progress
  */

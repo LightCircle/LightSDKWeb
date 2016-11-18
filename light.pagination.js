@@ -1,11 +1,14 @@
 /**
- * Created by lwx on 16/10/28.
- * rowCount [number]  row counts of every page
- * pageSize [number]  Number of rows per increase
- * totalItems  [number] total items
- * display   [string]   if more button shows
+ * @module Pagination
  * @param id
  * @param option
+ * @param {number} option.rowCount - row counts of every page
+ * @param {number} option.pageSize - Number of rows per increase
+ * @param {number} option.totalItems - total items
+ * @param {string} option.display - if more button shows
+ * @param {boolean} option.pagedisplay - if pages display
+ * @param {function} option.show
+ * @param {function} option.showMore
  * @returns {*}
  */
 'use strict';
@@ -55,7 +58,7 @@ var Pagination = React.createClass({
         },
         React.DOM.i({className: 'fa fa-flickr', style: {marginRight: '8px'}}), '加载更多'
       ),
-      React.DOM.div({className: 'pull-right'},
+      React.DOM.div({className: 'pull-right', style: {display: this.props.pagedisplay}},
         React.DOM.ul({className: 'pagination', style: {marginBottom: '0px', marginTop: '0px'}},
           this.canPrev(),
           this.page(),
@@ -185,10 +188,18 @@ var Pagination = React.createClass({
     event.target.style.backgroundColor = '#fff';
   },
 
+  /**
+   * Show the data on each page
+   * @param skip
+   */
   show: function (skip) {
     this.props.show(skip);
   },
 
+  /**
+   * load more
+   * @param skip
+   */
   showMore: function (skip) {
     this.props.showMore(skip)
   }

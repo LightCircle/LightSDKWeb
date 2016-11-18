@@ -1,20 +1,21 @@
 /**
- * DateTimePicker.
- *
- * Depend:
- *  react
- *  bootstrap
- *  fontawesome
- *  jquery
- *  moment
- *  bootstrap-datetimepicker
- *
+ * @module DateTimePicker
+ * @desc Depend.
+ * <ul>
+ *   <li>react</li>
+ *   <li>bootstrap</li>
+ *   <li>fontawesome</li>
+ *   <li>jquery</li>
+ *   <li>moment</li>
+ *   <li>bootstrap-datetimepicker</li>
+ * </ul>
  * @param id
  * @param option
- *   button  [string] action button ('right' 'left' 'none'). default:right
- *   format  [string] date format. default: YYYY-MM-DD
- *   maxDate [string] The minimum value that can be selected
- *   minDate [string] The maximum value that can be selected
+ * @param {string} option.button - action button ('right' 'left' 'none'). default:right
+ * @param {string} option.format - date format. default: YYYY-MM-DD
+ * @param {string} option.maxDate - The maximum value that can be selected
+ * @param {string} option.minDate - The minimum value that can be selected
+ * @returns {*}
  */
 
 'use strict';

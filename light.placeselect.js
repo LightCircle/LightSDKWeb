@@ -1,14 +1,17 @@
 /**
- * Created by lwx on 16/10/19.
- * PlaceSelect
- * depend:
- * react
- * light.multiselect
- *
+ * @module PlaceSelect
+ * @desc depend.
+ * <ul>
+ *  <li>react</li>
+ *  <li>light.multiselect</li>
+ * </ul>
  * @param id
  * @param option
- * displayDetail  [string]  if display,the detail address input shows
- * emitter  [jquery object] use to add event listener
+ * @param {string} option.displayDetail - if display,the detail address input shows
+ * @param {string} option.api - Provide data interface
+ * @param {string} option.id - correspond to value
+ * @param {string} option.name - correspond to label
+ * @param {object} option.data - Provide data
  * @returns {*}
  */
 

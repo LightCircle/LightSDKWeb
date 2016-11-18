@@ -118,7 +118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 *
+	 * @module Net
 	 */
 
 	'use strict';
@@ -235,8 +235,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * POST FormData.
 	 * @param url
-	 * @param params QueryParams
-	 * @param data FormData
+	 * @param params - QueryParams
+	 * @param data - FormData
 	 * @param callback
 	 * @param progress
 	 */
@@ -281,30 +281,54 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	/**
-	 * Util.
+	 * @module Util
 	 */
 
 	'use strict';
 
+	/**
+	 * get CSRF Token
+	 * @returns {string}
+	 */
 	exports.csrf = function () {
 	  return encodeURIComponent(document.getElementById('_csrf').value);
 	};
 
+	/**
+	 *
+	 * @returns {*}
+	 */
 	exports.uid = function () {
 	  if (document.getElementById('userid')) {
 	    return document.getElementById('userid').value
 	  }
 	};
 
+	/**
+	 *
+	 * @param url
+	 * @param key
+	 * @param val
+	 * @returns {string}
+	 */
 	exports.param = function (url, key, val) {
 	  var separator = (url.indexOf('?') === -1) ? '?' : '&';
 	  return url + separator + key + '=' + val;
 	};
 
+	/**
+	 *
+	 * @returns {string}
+	 */
 	exports.guid4 = function () {
 	  return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 	};
 
+	/**
+	 *
+	 * @param key
+	 * @returns {string}
+	 */
 	exports.cookie = function (key) {
 	  return decodeURIComponent(
 	    document.cookie.replace(new RegExp("(?:^|.*;\\s*)"
@@ -312,10 +336,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	  );
 	};
 
+	/**
+	 *
+	 * @param lang
+	 */
 	exports.shiftLang = function (lang) {
 	  document.cookie = "light.lang=" + encodeURIComponent(lang) + ";path=/";
 	};
 
+	/**
+	 *
+	 * @param scope
+	 * @param key
+	 * @param val
+	 */
 	exports.save = function (scope, key, val) {
 	  if (!window.localStorage) {
 	    return;
@@ -328,6 +362,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  window.localStorage.setItem(scope, JSON.stringify(storage));
 	};
 
+	/**
+	 *
+	 * @param scope
+	 * @param key
+	 * @returns {undefined}
+	 */
 	exports.load = function (scope, key) {
 	  if (!window.localStorage) {
 	    return undefined;
@@ -347,11 +387,14 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	/**
-	 * init
+	 * @module Init
 	 */
 
 	'use strict';
 
+	/**
+	 * init
+	 */
 	exports.init = function () {
 	  _.templateSettings = {
 	    interpolate: /\{\{-(.+?)\}\}/gim,
@@ -367,10 +410,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Tags.
-	 *
+	 * @module Tags
 	 * @param id
 	 * @param option
+	 * @param {array} option.data
+	 * @param {array} option.value
+	 * @param option.disabled
 	 * @returns {*}
 	 */
 
@@ -465,6 +510,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onClick(current);
 	  },
 
+	  /**
+	   * getValue
+	   * @desc get current value
+	   * @returns {*}
+	   */
 	  getValue: function () {
 	    return this.state.value;
 	  },
@@ -21846,11 +21896,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Mask.
-	 *
+	 * @module Mask
 	 * @param id
 	 * @param option
-	 *   timeout  [number] Mask The maximum time to display (second). default: 60 sec.
+	 * @param {number} option.timeout - Mask The maximum time to display (second). default: 60 sec.
 	 * @returns {*}
 	 */
 
@@ -21900,6 +21949,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return style;
 	  },
 
+	  /**
+	   * show mask
+	   */
 	  show: function () {
 	    this.state.counter = this.state.counter + 1;
 	    this.setState({counter: this.state.counter});
@@ -21910,6 +21962,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }.bind(this), this.props.timeout);
 	  },
 
+	  /**
+	   * hide mask
+	   */
 	  hide: function () {
 	    if (this.state.counter < 1) {
 	      clearTimeout(this.timer);
@@ -21925,22 +21980,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Button Group.
-	 *   getValue - Gets the currently selected item value
-	 *   setValue - Sets the value
-	 *   disable  - Disable the button, true: disable false: enable
-	 *   onClick  - Click event
-
-	 * Depend.
-	 *   react
-	 *   bootstrap
-	 *   fontawesome
-	 *
+	 * @module ButtonGroup
+	 * @desc Depend.
+	 * <ul>
+	 *   <li>react</li>
+	 *   <li>bootstrap</li>
+	 *   <li>fontawesome</li>
+	 * </ul>
 	 * @param id
 	 * @param option
-	 * @param option.data array
-	 * @param option.value string
-	 * @param option.disabled boolean
+	 * @param {array} option.data array
+	 * @param {string} option.value
+	 * @param {boolean} option.disabled
 	 * @returns {*}
 	 */
 
@@ -21995,18 +22046,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.onClick(current);
 	  },
 
+	  /**
+	   * getValue - Gets the currently selected item value
+	   * @returns {*}
+	   */
 	  getValue: function () {
 	    return this.state.value;
 	  },
 
+	  /**
+	   * setValue - Sets the value
+	   * @param value
+	   */
 	  setValue: function (value) {
 	    this.setState({value: value});
 	  },
 
+	  /**
+	   * disable - Disable the button, true: disable false: enable
+	   * @param disabled
+	   */
 	  setDisable: function (disabled) {
 	    this.setState({disabled: disabled});
 	  },
 
+	  /**
+	   * onClick - Click event
+	   * @param value
+	   */
 	  onClick: function (value) {
 	  }
 
@@ -22017,12 +22084,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Select Box.
-	 *
-	 * Depend:
-	 *  react
-	 *  bootstrap
-	 *  fontawesome
+	 * @module SelectBox.
+	 * @desc Depend.
+	 * <ul>
+	 *   <li>react</li>
+	 *   <li>bootstrap</li>
+	 *   <li>fontawesome</li>
+	 * </ul>
 	 *
 	 * React Element Structure:
 	 *   modal
@@ -22037,20 +22105,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @param id
 	 * @param option
-	 *   type       [string]  预设类型: user group category authority role tag route function board structure
-	 *   api        [string]  检索数据用API
-	 *   condition  [object]  检索条件
-	 *   value      [array]   选中的项目, 如果指定了uk, 那么value应该是uk值列表
-	 *   uk         [string]  识别选中用的字段名称 default: _id
-	 *   name       [string]  确定按钮时, 可以返回选中项目的name
-	 *   field      [array]   显示的列名称 default: ['_id']
-	 *   single     [boolean] 只允许选择一个
-	 *   icon       [string]  显示的图标
-	 *   search     [boolean] 是否显示检索按钮 default: true
-	 *   pagination [boolean] 是否显示翻页按钮 default: true
-	 *   show       [int]     一页显示的行数 default: 10
-	 *   data       [array]   允许不使用api, 直接提供数据显示选择框 - TODO
-	 *
+	 * @param {string} option.type - 预设类型: user group category authority role tag route function board structure
+	 * @param {string} option.api - 检索数据用API
+	 * @param {object} option.condition - 检索条件
+	 * @param {array} option.value - 选中的项目, 如果指定了uk, 那么value应该是uk值列表
+	 * @param {string} option.uk - 识别选中用的字段名称 default: _id
+	 * @param {string} option.name - 确定按钮时, 可以返回选中项目的name
+	 * @param {array} option.field - 显示的列名称 default: ['_id']
+	 * @param {boolean} option.single - 只允许选择一个
+	 * @param {string} option.icon - 显示的图标
+	 * @param {boolean} option.search - 是否显示检索按钮 default: true
+	 * @param {boolean} option.pagination - 是否显示翻页按钮 default: true
+	 * @param {int} option.show - 一页显示的行数 default: 10
+	 * @param {array} option.data - 允许不使用api, 直接提供数据显示选择框 - TODO
+	 * @param {function} option.ok - done event
+	 * @param {string} option.title - title
 	 * @returns {*}
 	 */
 
@@ -22237,10 +22306,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return this;
 	  },
 
+	  /**
+	   * getValue - 选中的项目, 如果指定了uk, 那么value应该是uk值列表
+	   * @returns {*}
+	   */
 	  getValue: function () {
 	    return this.state.value;
 	  },
 
+	  /**
+	   * getName - 选中的项目name
+	   * @returns {*}
+	   */
 	  getName: function () {
 
 	    if (!this.props.name) {
@@ -22257,6 +22334,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	  },
 
+	  /**
+	   * getData - 选中项目的所有数据
+	   * @returns {Array}
+	   */
 	  getData: function () {
 	    var result = [];
 	    this.state.data.forEach(function (item) {
@@ -22563,26 +22644,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * FileSelect.
-	 *
+	 * @module FileSelect
 	 * @param id
 	 * @param option
-	 *   accept   [string]   Allowed file types (.gif, .jpg, .png). default: *
-	 *   multiple [boolean]  Allows to select multiple files at once. default: false
-	 *   size     [number]   Allowed file size. default: 5M
-	 *   url      [string]   Upload URL
-	 *   nometa   [boolean]  Whether to create META information, the default is to create
-	 *   check    [function] Custom validation function,
+	 * @param {string} option.accept - Allowed file types (.gif, .jpg, .png). default: *
+	 * @param {boolean} option.multiple - Allows to select multiple files at once. default: false
+	 * @param {number} option.size - Allowed file size. default: 5M
+	 * @param {string} option.url - Upload URL
+	 * @param {boolean} option.nometa - Whether to create META information, the default is to create
+	 * @param {function} option.check - Custom validation function,
 	 *                       if you need to upload files to do a special check, you can expand the method
-	 *   error    [function] When a file upload exception occurs, the function is called
-	 *   success  [function] When the upload file is success, call the function
-	 *   progress [function] Upload progress
-	 *   data     [object]   The custom information that is saved with the file
-	 *     extend      [object] extra information
-	 *     type        [string] custom file type
-	 *     description [string] file description
-	 *     path        [string] file logical path
-	 *
+	 * @param {function} option.error - When a file upload exception occurs, the function is called
+	 * @param {function} option.success - When the upload file is success, call the function
+	 * @param {function} option.progress - Upload progress
+	 * @param {object} option.data - The custom information that is saved with the file
+	 * @param {object} option.extend - extra information
+	 * @param {string} option.type - custom file type
+	 * @param {string} option.description - file description
+	 * @param {string} option.path - file logical path
 	 * @returns {*}
 	 */
 
@@ -22707,12 +22786,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	/**
-	 * Alertify.
-	 *
-	 * Depend:
-	 *   alertify
-	 *
-	 * @returns {object}
+	 * @module Alertify
+	 * @desc Depend.
+	 * <ul>
+	 *   <li>alertify</li>
+	 * </ul>
+	 * @type {{info: Function, error: Function, warn: Function, confirm: Function}}
 	 */
 
 	'use strict';
@@ -22744,22 +22823,23 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * DateTimePicker.
-	 *
-	 * Depend:
-	 *  react
-	 *  bootstrap
-	 *  fontawesome
-	 *  jquery
-	 *  moment
-	 *  bootstrap-datetimepicker
-	 *
+	 * @module DateTimePicker
+	 * @desc Depend.
+	 * <ul>
+	 *   <li>react</li>
+	 *   <li>bootstrap</li>
+	 *   <li>fontawesome</li>
+	 *   <li>jquery</li>
+	 *   <li>moment</li>
+	 *   <li>bootstrap-datetimepicker</li>
+	 * </ul>
 	 * @param id
 	 * @param option
-	 *   button  [string] action button ('right' 'left' 'none'). default:right
-	 *   format  [string] date format. default: YYYY-MM-DD
-	 *   maxDate [string] The minimum value that can be selected
-	 *   minDate [string] The maximum value that can be selected
+	 * @param {string} option.button - action button ('right' 'left' 'none'). default:right
+	 * @param {string} option.format - date format. default: YYYY-MM-DD
+	 * @param {string} option.maxDate - The maximum value that can be selected
+	 * @param {string} option.minDate - The minimum value that can be selected
+	 * @returns {*}
 	 */
 
 	'use strict';
@@ -22836,11 +22916,15 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	/**
-	 * Constant.
+	 * @module Constant
 	 */
 
 	'use strict';
 
+	/**
+	 * constant
+	 * @type {{TYPE_AUDIO: string, TYPE_IMAGE: string, TYPE_VIDEO: string, TYPE_PDF: string, TYPE_CSV: string, TYPE_TEXT: string, TYPE_EXCEL: string, MAX_ROW: number}}
+	 */
 	module.exports = {
 	  TYPE_AUDIO: "audio/*",
 	  TYPE_IMAGE: "image/*",
@@ -22858,28 +22942,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Created by lwx on 16/10/19.
-	 * MultiSelect
-	 * depend:
-	 * react
-	 * bootstrap
-	 * bootstrap-multiselect
-	 *
+	 * @module MultiSelect
+	 * @desc depend.
+	 * <ul>
+	 *   <li>react</li>
+	 *   <li>bootstrap</li>
+	 *   <li>bootstrap-multiselect</li>
+	 * </ul>
 	 * @param id
 	 * @param option
-	 * nonSelectedText [string] The text displayed when no option is selected
-	 * limit    [int] too much options would be displayed.
-	 * multiple [string] When the multiple attribute of the select is present, the plugin uses checkboxes
+	 * @param {string} option.api - Provide data interface
+	 * @param {string} option.id - correspond to value
+	 * @param {string} option.name - correspond to label
+	 * @param {object} option.data - Provide data
+	 * @param {string} option.nonSelectedText - The text displayed when no option is selected
+	 * @param {int} option.numberDisplayed - too much options would be displayed.
+	 * @param {string} option.multiple - When the multiple attribute of the select is present, the plugin uses checkboxes
 	 *                   to allow multiple selections.If it is not present, the plugin uses radio buttons
 	 *                   to allow single selections
-	 * selectAllText   [string] The text displayed for the select all option.
-	 * enableFiltering [boolean] Set to true or false to enable or disable the filter.
-	 * includeSelectAllOption [boolean] Set to true or false to enable or disable the select all option.
-	 * selectAllJustVisible   [boolean] if true, the select all option does always select only the visible option
-	 * maxHeight [number]   The maximum height of the dropdown. This is useful when using the plugin with plenty of options.
-	 * condition  [object]  search condition
-	 * enableClickableOptGroups [boolean]  If set to true, optgroup's will be clickable,
+	 * @param {string} option.selectAllText - The text displayed for the select all option.
+	 * @param {boolean} option.enableFiltering - Set to true or false to enable or disable the filter.
+	 * @param {boolean} option.includeSelectAllOption - Set to true or false to enable or disable the select all option.
+	 * @param {boolean} option.selectAllJustVisible - If true, the select all option does always select only the visible option
+	 * @param {number} option.maxHeight - The maximum height of the dropdown. This is useful when using the plugin with plenty of options.
+	 * @param {object} option.condition - search condition
+	 * @param {boolean} option.enableClickableOptGroups - If set to true, optgroup's will be clickable,
 	 *                                     allowing to easily select multiple options belonging to the same group.
+	 * @param {function} option.change - change event
 	 * @returns {*}
 	 */
 	'use strict';
@@ -22951,39 +23040,29 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Tree.
-	 *
-	 * can be used functions
-	 *   open             : Open the node and the parent node.
-	 *   search           : Retrieves the node.
-	 *   select           : Select a node.
-	 *   reload           : Reload all tree.
-	 *   getValue         : Gets the selected node.
-	 *
+	 * @module Tree
 	 * @param id
 	 * @param option
-	 *   width            [number]
-	 *   wholerow         [boolean]
-	 *   checkbox         [boolean]
-	 *   icon             [string | object]
-	 *                      exp. icon: 'glyphicon glyphicon-folder-open'
+	 * @param {number} option.width
+	 * @param {boolean} option.wholerow
+	 * @param {boolean} option.checkbox
+	 * @param {string | object} option.icon - exp. icon: 'glyphicon glyphicon-folder-open'
 	 *                      exp. icon: 'fa fa-folder-o'
 	 *                      exp. icon: './static/images/tree_icon.png'
-	 *   data             [array]   data json format.
-	 *     id             [string]  required
-	 *     parent         [string]  required
-	 *     text           [string]  node text
-	 *     icon           [string]  string for custom icon.
-	 *     state.opened   [boolean]
-	 *     state.disabled [boolean]
-	 *     state.selected [boolean]
-	 *   onChange         [function]
-	 *
-	 *   api              [string] TODO:
-	 *   condition        [object] TODO:
-	 *   id               [string] TODO:
-	 *   text             [string] TODO:
-	 *
+	 * @param {array} option.data - data json format.
+	 * @param {string} option.data.id - required
+	 * @param {string} option.data.parent - required
+	 * @param {string} option.data.text - node text
+	 * @param {string} option.data.icon - string for custom icon.
+	 * @param {function} option.onChange
+	 * @param {function} option.onLoaded
+	 * @param {boolean} option.state.opened
+	 * @param {boolean} option.state.disabled
+	 * @param {boolean} option.state.selected
+	 * @param {string} option.api - TODO:
+	 * @param {object} option.condition - TODO:
+	 * @param {string} option.id - TODO:
+	 * @param {string} option.text - TODO:
 	 * @returns {*}
 	 */
 
@@ -23121,7 +23200,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 
 	  /**
-	   * Gets the selected node.
+	   * Get the selected node.
 	   * @returns {*}
 	   */
 	  getValue: function () {
@@ -23135,16 +23214,19 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Created by lwx on 16/10/19.
-	 * PlaceSelect
-	 * depend:
-	 * react
-	 * light.multiselect
-	 *
+	 * @module PlaceSelect
+	 * @desc depend.
+	 * <ul>
+	 *  <li>react</li>
+	 *  <li>light.multiselect</li>
+	 * </ul>
 	 * @param id
 	 * @param option
-	 * displayDetail  [string]  if display,the detail address input shows
-	 * emitter  [jquery object] use to add event listener
+	 * @param {string} option.displayDetail - if display,the detail address input shows
+	 * @param {string} option.api - Provide data interface
+	 * @param {string} option.id - correspond to value
+	 * @param {string} option.name - correspond to label
+	 * @param {object} option.data - Provide data
 	 * @returns {*}
 	 */
 
@@ -23291,41 +23373,34 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Created by lwx on 16/10/24.
-	 *   editable.
-	 *
-	 * can be used functions
-	 *   toggle:          Toggles enabled / disabled state of editable element.
-	 *   getSingleValue:  Returns current values of editable elements.
-	 *                    When param isSingle is set to true -
-	 *                    it is supposed you have single element and will return value of editable instead of object.
-	 *   getValue:        Returns current values of editable elements.
-	 *
+	 * @module Editable
 	 * @param id
 	 * @param option
-	 * pk        [string|object|function]   Primary key of editable object.
-	 * clear     [boolean]                  Whether to show clear button
-	 * disabled  [boolean]                  Sets disabled state of editable
-	 * combodate [object]                   Combodate input - dropdown date and time picker.
-	 * source    [string|array|object|function]       Source data for list.
-	 * type      [string]                   type of input
-	 * name      [string]                   name of field
-	 * title     [string]
-	 * url       [string|function]          Url for submit
-	 * params    [object|function]           Additional params for submit
-	 * emptytext [string]                  Text shown when element is empty.
-	 * ajaxOptions[object]                  Additional options for submit ajax request
-	 * value     [string]                  initial value
-	 * placement [string]                  Placement of container relative to element. Can be top|right|bottom|left. Not used for inline container.
-	 * rows     [integer]                   Number of rows in textarea
-	 * success  [function]                 Success callback
-	 * error    [function]                 callback applied with parameter containing field names and errors
-	 * validate [function]                 Function for client-side validation
-	 * display  [function|boolean]         Callback to perform custom displaying of value in element's text.
-	 * tpl      [string]                    HTML template of input. Normally you should not change it.
-	 * format   [string]                  Format used for sending value to server. Also applied when converting date from data-value attribute.
-	 * viewformat [string]                 Format used for displaying date
-	 * template   [string]                 Template used for displaying dropdowns.
+	 * @param {string|object|function} option.pk - Primary key of editable object.
+	 * @param {boolean} option.clear - Whether to show clear button
+	 * @param {boolean} option.disabled - Sets disabled state of editable
+	 * @param {object} option.combodate - Combodate input - dropdown date and time picker.
+	 * @param {string|array|object|function} option.source - Source data for list.
+	 * @param {string} option.type - type of input
+	 * @param {string} option.name - name of field
+	 * @param {string} option.title
+	 * @param {string|function} option.url - Url for submit
+	 * @param {object|function} option.params - Additional params for submit
+	 * @param {string} option.emptytext - Text shown when element is empty.
+	 * @param {object} option.ajaxOptions - Additional options for submit ajax request
+	 * @param {string} option.value - initial value
+	 * @param {string} option.placement - Placement of container relative to element. Can be top|right|bottom|left.
+	 * Not used for inline container.
+	 * @param {integer} option.rows - Number of rows in textarea
+	 * @param {function} option.success - Success callback
+	 * @param {function} option.error - callback applied with parameter containing field names and errors
+	 * @param {function} option.validate - Function for client-side validation
+	 * @param {function|boolean} option.display - Callback to perform custom displaying of value in element's text.
+	 * @param {string} option.tpl - HTML template of input. Normally you should not change it.
+	 * @param {string} option.format - Format used for sending value to server.
+	 * Also applied when converting date from data-value attribute.
+	 * @param {string} option.viewformat - Format used for displaying date
+	 * @param {string} option.template - Template used for displaying dropdowns.
 	 * @returns {*}
 	 */
 	'use strict';
@@ -23419,13 +23494,16 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Created by lwx on 16/10/28.
-	 * rowCount [number]  row counts of every page
-	 * pageSize [number]  Number of rows per increase
-	 * totalItems  [number] total items
-	 * display   [string]   if more button shows
+	 * @module Pagination
 	 * @param id
 	 * @param option
+	 * @param {number} option.rowCount - row counts of every page
+	 * @param {number} option.pageSize - Number of rows per increase
+	 * @param {number} option.totalItems - total items
+	 * @param {string} option.display - if more button shows
+	 * @param {boolean} option.pagedisplay - if pages display
+	 * @param {function} option.show
+	 * @param {function} option.showMore
 	 * @returns {*}
 	 */
 	'use strict';
@@ -23475,7 +23553,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        },
 	        React.DOM.i({className: 'fa fa-flickr', style: {marginRight: '8px'}}), '加载更多'
 	      ),
-	      React.DOM.div({className: 'pull-right'},
+	      React.DOM.div({className: 'pull-right', style: {display: this.props.pagedisplay}},
 	        React.DOM.ul({className: 'pagination', style: {marginBottom: '0px', marginTop: '0px'}},
 	          this.canPrev(),
 	          this.page(),
@@ -23605,10 +23683,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    event.target.style.backgroundColor = '#fff';
 	  },
 
+	  /**
+	   * Show the data on each page
+	   * @param skip
+	   */
 	  show: function (skip) {
 	    this.props.show(skip);
 	  },
 
+	  /**
+	   * load more
+	   * @param skip
+	   */
 	  showMore: function (skip) {
 	    this.props.showMore(skip)
 	  }

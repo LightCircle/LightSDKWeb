@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: light.multiselect.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: light.multiselect.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module MultiSelect
+ * @desc depend.
+ * &lt;ul>
+ *   &lt;li>react&lt;/li>
+ *   &lt;li>bootstrap&lt;/li>
+ *   &lt;li>bootstrap-multiselect&lt;/li>
+ * &lt;/ul>
+ * @param id
+ * @param option
+ * @param {string} option.api - Provide data interface
+ * @param {string} option.id - correspond to value
+ * @param {string} option.name - correspond to label
+ * @param {object} option.data - Provide data
+ * @param {string} option.nonSelectedText - The text displayed when no option is selected
+ * @param {int} option.numberDisplayed - too much options would be displayed.
+ * @param {string} option.multiple - When the multiple attribute of the select is present, the plugin uses checkboxes
+ *                   to allow multiple selections.If it is not present, the plugin uses radio buttons
+ *                   to allow single selections
+ * @param {string} option.selectAllText - The text displayed for the select all option.
+ * @param {boolean} option.enableFiltering - Set to true or false to enable or disable the filter.
+ * @param {boolean} option.includeSelectAllOption - Set to true or false to enable or disable the select all option.
+ * @param {boolean} option.selectAllJustVisible - If true, the select all option does always select only the visible option
+ * @param {number} option.maxHeight - The maximum height of the dropdown. This is useful when using the plugin with plenty of options.
+ * @param {object} option.condition - search condition
+ * @param {boolean} option.enableClickableOptGroups - If set to true, optgroup's will be clickable,
+ *                                     allowing to easily select multiple options belonging to the same group.
+ * @param {function} option.change - change event
+ * @returns {*}
+ */
+'use strict';
+
+var React = require('react')
+  , ReactDOM = require('react-dom')
+  , net = require('./light.net');
+
+module.exports = function (id, option) {
+  option = option || {};
+  option.condition = option.condition || {};
+  option.nonSelectedText = '请选择' + option.nonSelectedText || '';
+  option.numberDisplayed = option.numberDisplayed || 3;
+  option.multiple = option.multiple || '';
+  option.change = option.change || function () {
+    };
+  return ReactDOM.render(
+    React.createElement(MultiSelect, option),
+    document.getElementById(id)
+  );
+};
+
+var MultiSelect = React.createClass({
+  render: function () {
+    return React.DOM.select({multiple: this.props.multiple, size: '2'})
+  },
+
+  componentDidMount: function () {
+    var node = $(ReactDOM.findDOMNode(this));
+    node.multiselect({
+      enableFiltering: this.props.enableFilter,
+      includeSelectAllOption: this.props.includeSelectAllOption,
+      selectAllJustVisible: false,
+      nonSelectedText: this.props.nonSelectedText,
+      selectAllText: this.props.selectAllText,
+      numberDisplayed: this.props.numberDisplayed,
+      maxHeight: this.props.maxHeight,
+      enableClickableOptGroups: this.props.enableClickableOptGroups,
+      onChange: function (element) {
+        if (element) {
+          this.props.change(element.val());
+        }
+      }.bind(this)
+    });
+    this.redraw(this.props);
+  },
+
+  redraw: function (props) {
+    var node = $(ReactDOM.findDOMNode(this));
+    if (props.api) {
+      net.get(props.api, props.condition, function (err, data) {
+        for (var i = 0; i &lt; data.totalItems; i++) {
+          data.items[i].value = data.items[i][props.id];
+          data.items[i].label = data.items[i][props.name];
+        }
+        node.multiselect('dataprovider', data.items);
+      }.bind(this));
+    } else {
+      if (props.data) {
+        node.multiselect('dataprovider', props.data);
+      }
+    }
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Alertify.html">Alertify</a></li><li><a href="module-ButtonGroup.html">ButtonGroup</a></li><li><a href="module-Constant.html">Constant</a></li><li><a href="module-DateTimePicker.html">DateTimePicker</a></li><li><a href="module-Editable.html">Editable</a></li><li><a href="module-FileSelect.html">FileSelect</a></li><li><a href="module-Init.html">Init</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-MultiSelect.html">MultiSelect</a></li><li><a href="module-Net.html">Net</a></li><li><a href="module-Pagination.html">Pagination</a></li><li><a href="module-PlaceSelect.html">PlaceSelect</a></li><li><a href="module-SelectBox..html">SelectBox.</a></li><li><a href="module-Tags.html">Tags</a></li><li><a href="module-Tree.html">Tree</a></li><li><a href="module-Util.html">Util</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Nov 18 2016 10:48:41 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

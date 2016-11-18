@@ -1,37 +1,27 @@
 /**
- * Tree.
- *
- * can be used functions
- *   open             : Open the node and the parent node.
- *   search           : Retrieves the node.
- *   select           : Select a node.
- *   reload           : Reload all tree.
- *   getValue         : Gets the selected node.
- *
+ * @module Tree
  * @param id
  * @param option
- *   width            [number]
- *   wholerow         [boolean]
- *   checkbox         [boolean]
- *   icon             [string | object]
- *                      exp. icon: 'glyphicon glyphicon-folder-open'
+ * @param {number} option.width
+ * @param {boolean} option.wholerow
+ * @param {boolean} option.checkbox
+ * @param {string | object} option.icon - exp. icon: 'glyphicon glyphicon-folder-open'
  *                      exp. icon: 'fa fa-folder-o'
  *                      exp. icon: './static/images/tree_icon.png'
- *   data             [array]   data json format.
- *     id             [string]  required
- *     parent         [string]  required
- *     text           [string]  node text
- *     icon           [string]  string for custom icon.
- *     state.opened   [boolean]
- *     state.disabled [boolean]
- *     state.selected [boolean]
- *   onChange         [function]
- *
- *   api              [string] TODO:
- *   condition        [object] TODO:
- *   id               [string] TODO:
- *   text             [string] TODO:
- *
+ * @param {array} option.data - data json format.
+ * @param {string} option.data.id - required
+ * @param {string} option.data.parent - required
+ * @param {string} option.data.text - node text
+ * @param {string} option.data.icon - string for custom icon.
+ * @param {function} option.onChange
+ * @param {function} option.onLoaded
+ * @param {boolean} option.state.opened
+ * @param {boolean} option.state.disabled
+ * @param {boolean} option.state.selected
+ * @param {string} option.api - TODO:
+ * @param {object} option.condition - TODO:
+ * @param {string} option.id - TODO:
+ * @param {string} option.text - TODO:
  * @returns {*}
  */
 
@@ -169,7 +159,7 @@ var Tree = React.createClass({
   },
 
   /**
-   * Gets the selected node.
+   * Get the selected node.
    * @returns {*}
    */
   getValue: function () {

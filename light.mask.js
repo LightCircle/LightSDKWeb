@@ -1,9 +1,8 @@
 /**
- * Mask.
- *
+ * @module Mask
  * @param id
  * @param option
- *   timeout  [number] Mask The maximum time to display (second). default: 60 sec.
+ * @param {number} option.timeout - Mask The maximum time to display (second). default: 60 sec.
  * @returns {*}
  */
 
@@ -53,6 +52,9 @@ var Mask = React.createClass({
     return style;
   },
 
+  /**
+   * show mask
+   */
   show: function () {
     this.state.counter = this.state.counter + 1;
     this.setState({counter: this.state.counter});
@@ -63,6 +65,9 @@ var Mask = React.createClass({
     }.bind(this), this.props.timeout);
   },
 
+  /**
+   * hide mask
+   */
   hide: function () {
     if (this.state.counter < 1) {
       clearTimeout(this.timer);

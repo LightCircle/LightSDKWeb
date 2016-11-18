@@ -1,39 +1,32 @@
 /**
- * Created by lwx on 16/10/24.
- *   editable.
- *
- * can be used functions
- *   toggle:          Toggles enabled / disabled state of editable element.
- *   getSingleValue:  Returns current values of editable elements.
- *                    When param isSingle is set to true -
- *                    it is supposed you have single element and will return value of editable instead of object.
- *   getValue:        Returns current values of editable elements.
- *
+ * @module Editable
  * @param id
  * @param option
- * pk        [string|object|function]   Primary key of editable object.
- * clear     [boolean]                  Whether to show clear button
- * disabled  [boolean]                  Sets disabled state of editable
- * combodate [object]                   Combodate input - dropdown date and time picker.
- * source    [string|array|object|function]       Source data for list.
- * type      [string]                   type of input
- * name      [string]                   name of field
- * title     [string]
- * url       [string|function]          Url for submit
- * params    [object|function]           Additional params for submit
- * emptytext [string]                  Text shown when element is empty.
- * ajaxOptions[object]                  Additional options for submit ajax request
- * value     [string]                  initial value
- * placement [string]                  Placement of container relative to element. Can be top|right|bottom|left. Not used for inline container.
- * rows     [integer]                   Number of rows in textarea
- * success  [function]                 Success callback
- * error    [function]                 callback applied with parameter containing field names and errors
- * validate [function]                 Function for client-side validation
- * display  [function|boolean]         Callback to perform custom displaying of value in element's text.
- * tpl      [string]                    HTML template of input. Normally you should not change it.
- * format   [string]                  Format used for sending value to server. Also applied when converting date from data-value attribute.
- * viewformat [string]                 Format used for displaying date
- * template   [string]                 Template used for displaying dropdowns.
+ * @param {string|object|function} option.pk - Primary key of editable object.
+ * @param {boolean} option.clear - Whether to show clear button
+ * @param {boolean} option.disabled - Sets disabled state of editable
+ * @param {object} option.combodate - Combodate input - dropdown date and time picker.
+ * @param {string|array|object|function} option.source - Source data for list.
+ * @param {string} option.type - type of input
+ * @param {string} option.name - name of field
+ * @param {string} option.title
+ * @param {string|function} option.url - Url for submit
+ * @param {object|function} option.params - Additional params for submit
+ * @param {string} option.emptytext - Text shown when element is empty.
+ * @param {object} option.ajaxOptions - Additional options for submit ajax request
+ * @param {string} option.value - initial value
+ * @param {string} option.placement - Placement of container relative to element. Can be top|right|bottom|left.
+ * Not used for inline container.
+ * @param {integer} option.rows - Number of rows in textarea
+ * @param {function} option.success - Success callback
+ * @param {function} option.error - callback applied with parameter containing field names and errors
+ * @param {function} option.validate - Function for client-side validation
+ * @param {function|boolean} option.display - Callback to perform custom displaying of value in element's text.
+ * @param {string} option.tpl - HTML template of input. Normally you should not change it.
+ * @param {string} option.format - Format used for sending value to server.
+ * Also applied when converting date from data-value attribute.
+ * @param {string} option.viewformat - Format used for displaying date
+ * @param {string} option.template - Template used for displaying dropdowns.
  * @returns {*}
  */
 'use strict';

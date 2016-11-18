@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: light.fileselect.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: light.fileselect.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module FileSelect
+ * @param id
+ * @param option
+ * @param {string} option.accept - Allowed file types (.gif, .jpg, .png). default: *
+ * @param {boolean} option.multiple - Allows to select multiple files at once. default: false
+ * @param {number} option.size - Allowed file size. default: 5M
+ * @param {string} option.url - Upload URL
+ * @param {boolean} option.nometa - Whether to create META information, the default is to create
+ * @param {function} option.check - Custom validation function,
+ *                       if you need to upload files to do a special check, you can expand the method
+ * @param {function} option.error - When a file upload exception occurs, the function is called
+ * @param {function} option.success - When the upload file is success, call the function
+ * @param {function} option.progress - Upload progress
+ * @param {object} option.data - The custom information that is saved with the file
+ * @param {object} option.extend - extra information
+ * @param {string} option.type - custom file type
+ * @param {string} option.description - file description
+ * @param {string} option.path - file logical path
+ * @returns {*}
+ */
+
+'use strict';
+
+var React = require('react')
+  , ReactDOM = require('react-dom')
+  , net = require('./light.net')
+  , alertify = require('./light.alertify');
+
+module.exports = function (id, option) {
+
+  option = option || {};
+  option.accept = option.accept || '*';
+  option.button = option.button || 'right';
+  option.size = option.size || '5242880';
+  option.url = option.url || (option.nometa ? '/api/file/upload' : '/api/file/add');
+
+  option.check = function () {
+  };
+  option.success = function () {
+  };
+  option.progress = function (val) {
+    console.log(val);
+  };
+  option.error = function (error) {
+    alertify.error(error);
+  };
+
+  return ReactDOM.render(
+    React.createElement(FileSelect, option),
+    document.getElementById(id)
+  );
+};
+
+var FileSelect = React.createClass({
+  getInitialState: function () {
+    return {}
+  },
+
+  render: function () {
+    return React.DOM.div({className: 'input-group'},
+      this.button('left'),
+      React.DOM.input({
+        type: 'text',
+        className: 'form-control',
+        readOnly: true,
+        style: {backgroundColor: '#fff'},
+        onClick: this.click
+      }),
+      this.input(),
+      this.button('right')
+    );
+  },
+
+  button: function (side) {
+    if (side == this.props.button) {
+      return React.DOM.span({className: 'input-group-btn', style: {backgroundColor: '#fff'}},
+        React.DOM.button({className: 'btn btn-default', type: 'button', onClick: this.click},
+          React.DOM.i({className: 'fa fa-folder-open'}),
+          React.DOM.span({}, 'Choose file')
+        )
+      );
+    }
+
+    return undefined;
+  },
+
+  input: function () {
+
+    return React.DOM.input({
+      style: {display: 'none'},
+      accept: this.props.accept,
+      multiple: this.props.multiple,
+      onChange: this.change,
+      type: 'file',
+      ref: 'file'
+    });
+  },
+
+  change: function (event) {
+    var files = event.target.files;
+
+    // No files selected
+    if (!files || files.length &lt;= 0) {
+      return false;
+    }
+
+    // Create form data
+    var fd = new FormData(), size = 0;
+    for (var i = 0; i &lt; files.length; i++) {
+      var file = files[i];
+
+      size += file.size;
+      fd.append('files', file);
+    }
+
+    // Check file size
+    if (size > this.props.size) {
+      return this.props.error('The file is too large');
+    }
+
+    // Upload file
+    net.postData(this.props.url, {data: this.props.data}, fd, function (err, result) {
+      if (err) {
+        return this.props.error('error');
+      }
+
+      this.props.success(result);
+    }.bind(this), this.props.progress);
+  },
+
+  click: function () {
+    $(ReactDOM.findDOMNode(this.refs.file)).trigger('click');
+  }
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Alertify.html">Alertify</a></li><li><a href="module-ButtonGroup.html">ButtonGroup</a></li><li><a href="module-Constant.html">Constant</a></li><li><a href="module-DateTimePicker.html">DateTimePicker</a></li><li><a href="module-Editable.html">Editable</a></li><li><a href="module-FileSelect.html">FileSelect</a></li><li><a href="module-Init.html">Init</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-MultiSelect.html">MultiSelect</a></li><li><a href="module-Net.html">Net</a></li><li><a href="module-Pagination.html">Pagination</a></li><li><a href="module-PlaceSelect.html">PlaceSelect</a></li><li><a href="module-SelectBox..html">SelectBox.</a></li><li><a href="module-Tags.html">Tags</a></li><li><a href="module-Tree.html">Tree</a></li><li><a href="module-Util.html">Util</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Nov 18 2016 10:48:41 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,10 +1,11 @@
 /**
- * Select Box.
- *
- * Depend:
- *  react
- *  bootstrap
- *  fontawesome
+ * @module SelectBox.
+ * @desc Depend.
+ * <ul>
+ *   <li>react</li>
+ *   <li>bootstrap</li>
+ *   <li>fontawesome</li>
+ * </ul>
  *
  * React Element Structure:
  *   modal
@@ -19,20 +20,21 @@
  *
  * @param id
  * @param option
- *   type       [string]  预设类型: user group category authority role tag route function board structure
- *   api        [string]  检索数据用API
- *   condition  [object]  检索条件
- *   value      [array]   选中的项目, 如果指定了uk, 那么value应该是uk值列表
- *   uk         [string]  识别选中用的字段名称 default: _id
- *   name       [string]  确定按钮时, 可以返回选中项目的name
- *   field      [array]   显示的列名称 default: ['_id']
- *   single     [boolean] 只允许选择一个
- *   icon       [string]  显示的图标
- *   search     [boolean] 是否显示检索按钮 default: true
- *   pagination [boolean] 是否显示翻页按钮 default: true
- *   show       [int]     一页显示的行数 default: 10
- *   data       [array]   允许不使用api, 直接提供数据显示选择框 - TODO
- *
+ * @param {string} option.type - 预设类型: user group category authority role tag route function board structure
+ * @param {string} option.api - 检索数据用API
+ * @param {object} option.condition - 检索条件
+ * @param {array} option.value - 选中的项目, 如果指定了uk, 那么value应该是uk值列表
+ * @param {string} option.uk - 识别选中用的字段名称 default: _id
+ * @param {string} option.name - 确定按钮时, 可以返回选中项目的name
+ * @param {array} option.field - 显示的列名称 default: ['_id']
+ * @param {boolean} option.single - 只允许选择一个
+ * @param {string} option.icon - 显示的图标
+ * @param {boolean} option.search - 是否显示检索按钮 default: true
+ * @param {boolean} option.pagination - 是否显示翻页按钮 default: true
+ * @param {int} option.show - 一页显示的行数 default: 10
+ * @param {array} option.data - 允许不使用api, 直接提供数据显示选择框 - TODO
+ * @param {function} option.ok - done event
+ * @param {string} option.title - title
  * @returns {*}
  */
 
@@ -219,10 +221,18 @@ var SelectBox = React.createClass({
     return this;
   },
 
+  /**
+   * getValue - 选中的项目, 如果指定了uk, 那么value应该是uk值列表
+   * @returns {*}
+   */
   getValue: function () {
     return this.state.value;
   },
 
+  /**
+   * getName - 选中的项目name
+   * @returns {*}
+   */
   getName: function () {
 
     if (!this.props.name) {
@@ -239,6 +249,10 @@ var SelectBox = React.createClass({
     return result;
   },
 
+  /**
+   * getData - 选中项目的所有数据
+   * @returns {Array}
+   */
   getData: function () {
     var result = [];
     this.state.data.forEach(function (item) {

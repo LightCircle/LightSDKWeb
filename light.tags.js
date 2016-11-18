@@ -1,8 +1,10 @@
 /**
- * Tags.
- *
+ * @module Tags
  * @param id
  * @param option
+ * @param {array} option.data
+ * @param {array} option.value
+ * @param option.disabled
  * @returns {*}
  */
 
@@ -97,6 +99,11 @@ var Tags = React.createClass({
     this.onClick(current);
   },
 
+  /**
+   * getValue
+   * @desc get current value
+   * @returns {*}
+   */
   getValue: function () {
     return this.state.value;
   },

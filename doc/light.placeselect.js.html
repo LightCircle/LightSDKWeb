@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: light.placeselect.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: light.placeselect.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module PlaceSelect
+ * @desc depend.
+ * &lt;ul>
+ *  &lt;li>react&lt;/li>
+ *  &lt;li>light.multiselect&lt;/li>
+ * &lt;/ul>
+ * @param id
+ * @param option
+ * @param {string} option.displayDetail - if display,the detail address input shows
+ * @param {string} option.api - Provide data interface
+ * @param {string} option.id - correspond to value
+ * @param {string} option.name - correspond to label
+ * @param {object} option.data - Provide data
+ * @returns {*}
+ */
+
+'use strict';
+
+var React = require('react')
+  , ReactDOM = require('react-dom');
+
+module.exports = function (id, option) {
+  option = option || {};
+  option.displayDetail = option.displayDetail || 'display';
+  option.emitter = $({});
+  return ReactDOM.render(
+    React.createElement(PlaceSelect, option),
+    document.getElementById(id)
+  );
+};
+
+var PlaceSelect = React.createClass({
+  getInitialState: function () {
+    return {}
+  },
+
+  render: function () {
+    return React.DOM.div({className: 'placesel'},
+      React.createElement(Province, this.props),
+      React.createElement(City, this.props),
+      React.createElement(District, this.props),
+      React.DOM.input({
+        className: 'detail',
+        style: {height: '34px', display: this.props.displayDetail},
+        placeholder: '详细地址'
+      })
+    )
+  }
+});
+
+var Province = React.createClass({
+  render: function () {
+    return React.DOM.div({id: 'province', style: {float: 'left', marginRight: '5px'}})
+  },
+
+  componentDidMount: function () {
+    if (this.props.api) {
+      light.multiselect('province', {
+        change: function (selected) {
+          this.props.emitter.trigger('changeProvince', selected);
+        }.bind(this),
+        api: this.props.api,
+        id: this.props.id,
+        name: this.props.name,
+        nonSelectedText: '省',
+        condition: {condition: {parent: 'root'}}
+      });
+    } else {
+      var data = [];
+      this.props.data.map(function (item) {
+        if (item['parent'] == 'root') {
+          data.push(item);
+        }
+      });
+      light.multiselect('province', {
+        data: data,
+        nonSelectedText: '省',
+        change: function (selected) {
+          this.props.emitter.trigger('changeProvince', selected);
+        }.bind(this)
+      });
+    }
+  }
+});
+
+var City = React.createClass({
+  render: function () {
+    return React.DOM.div({id: 'city', style: {float: 'left', marginRight: '5px'}})
+  },
+
+  componentDidMount: function () {
+    this.city = light.multiselect('city', {
+      change: function (selected) {
+        this.props.emitter.trigger('changeCity', selected);
+      }.bind(this),
+      nonSelectedText: '市'
+    });
+    this.props.emitter.on('changeProvince', function (event, selected) {
+      if (this.props.api) {
+        this.city.redraw({
+          api: this.props.api,
+          id: this.props.id,
+          name: this.props.name,
+          condition: {condition: {parent: selected}}
+        });
+      } else {
+        var data = [];
+        this.props.data.map(function (item) {
+          if (item['parent'] == selected) {
+            data.push(item);
+          }
+        });
+        this.city.redraw({
+          data: data
+        });
+      }
+    }.bind(this));
+  }
+});
+
+var District = React.createClass({
+  render: function () {
+    return React.DOM.div({id: 'district', style: {float: 'left', marginRight: '5px'}})
+  },
+  componentDidMount: function () {
+    this.district = light.multiselect('district', {
+      change: function (selected) {
+      },
+      nonSelectedText: '区'
+    });
+    this.props.emitter.on('changeCity', function (event, selected) {
+      if (this.props.api) {
+        this.district.redraw({
+          api: this.props.api,
+          id: this.props.id,
+          name: this.props.name,
+          condition: {condition: {parent: selected}}
+        });
+      } else {
+        var data = [];
+        this.props.data.map(function (item) {
+          if (item['parent'] == selected) {
+            data.push(item);
+          }
+        });
+        this.district.redraw({
+          data: data
+        });
+      }
+    }.bind(this));
+  }
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Alertify.html">Alertify</a></li><li><a href="module-ButtonGroup.html">ButtonGroup</a></li><li><a href="module-Constant.html">Constant</a></li><li><a href="module-DateTimePicker.html">DateTimePicker</a></li><li><a href="module-Editable.html">Editable</a></li><li><a href="module-FileSelect.html">FileSelect</a></li><li><a href="module-Init.html">Init</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-MultiSelect.html">MultiSelect</a></li><li><a href="module-Net.html">Net</a></li><li><a href="module-Pagination.html">Pagination</a></li><li><a href="module-PlaceSelect.html">PlaceSelect</a></li><li><a href="module-SelectBox..html">SelectBox.</a></li><li><a href="module-Tags.html">Tags</a></li><li><a href="module-Tree.html">Tree</a></li><li><a href="module-Util.html">Util</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Nov 18 2016 10:48:41 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

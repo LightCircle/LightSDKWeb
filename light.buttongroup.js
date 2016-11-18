@@ -1,20 +1,16 @@
 /**
- * Button Group.
- *   getValue - Gets the currently selected item value
- *   setValue - Sets the value
- *   disable  - Disable the button, true: disable false: enable
- *   onClick  - Click event
-
- * Depend.
- *   react
- *   bootstrap
- *   fontawesome
- *
+ * @module ButtonGroup
+ * @desc Depend.
+ * <ul>
+ *   <li>react</li>
+ *   <li>bootstrap</li>
+ *   <li>fontawesome</li>
+ * </ul>
  * @param id
  * @param option
- * @param option.data array
- * @param option.value string
- * @param option.disabled boolean
+ * @param {array} option.data array
+ * @param {string} option.value
+ * @param {boolean} option.disabled
  * @returns {*}
  */
 
@@ -69,18 +65,34 @@ var ButtonGroup = React.createClass({
     this.onClick(current);
   },
 
+  /**
+   * getValue - Gets the currently selected item value
+   * @returns {*}
+   */
   getValue: function () {
     return this.state.value;
   },
 
+  /**
+   * setValue - Sets the value
+   * @param value
+   */
   setValue: function (value) {
     this.setState({value: value});
   },
 
+  /**
+   * disable - Disable the button, true: disable false: enable
+   * @param disabled
+   */
   setDisable: function (disabled) {
     this.setState({disabled: disabled});
   },
 
+  /**
+   * onClick - Click event
+   * @param value
+   */
   onClick: function (value) {
   }
 

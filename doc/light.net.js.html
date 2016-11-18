@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: light.net.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: light.net.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Net
+ */
+
+'use strict';
+
+var util = require('./light.util')
+  , DATA_TYPE = 'json'
+  , CONTENT_TYPE = 'application/json'
+  , CSRF_KEY = '_csrf';
+
+/**
+ * GET Method.
+ * @param url
+ * @param data
+ * @param callback
+ */
+exports.get = function (url, data, callback) {
+
+  if (typeof data == 'function') {
+    callback = data;
+    data = undefined;
+  }
+
+  $.ajax({
+    type: 'GET',
+    url: url,
+    data: data,
+    dataType: DATA_TYPE,
+    success: function (result) {
+      callback(result.error, result.data);
+    },
+    error: function (err) {
+      console.error('do ajax ' + url + '   error');
+      callback(err);
+    }
+  });
+};
+
+/**
+ * POST Method.
+ * @param url
+ * @param data
+ * @param callback
+ */
+exports.post = function (url, data, callback) {
+
+  data.uid = util.uid();
+
+  $.ajax({
+    url: util.param(url, CSRF_KEY, util.csrf()),
+    type: 'POST',
+    async: true,
+    data: JSON.stringify(data),
+    dataType: DATA_TYPE,
+    contentType: CONTENT_TYPE,
+    processData: false,
+    success: function (result) {
+      callback(result.error, result.data);
+    },
+    error: function (err) {
+      console.error('do ajax ' + url + '   error');
+      callback(err);
+    }
+  });
+};
+
+/**
+ * PUT Method.
+ * @param url
+ * @param data
+ * @param callback
+ */
+exports.put = function (url, data, callback) {
+  $.ajax({
+    url: util.param(url, CSRF_KEY, util.csrf()),
+    type: 'PUT',
+    async: true,
+    data: JSON.stringify(data),
+    dataType: DATA_TYPE,
+    contentType: CONTENT_TYPE,
+    success: function (result) {
+      callback(result.error, result.data);
+    }, error: function (err) {
+      console.error('do ajax ' + url + '   error');
+      callback(err);
+    }
+  });
+};
+
+/**
+ * DELETE Method.
+ * @param url
+ * @param data
+ * @param callback
+ */
+exports.delete = function (url, data, callback) {
+  $.ajax({
+    url: util.param(url, CSRF_KEY, util.csrf()),
+    type: 'DELETE',
+    async: true,
+    data: JSON.stringify(data),
+    dataType: DATA_TYPE,
+    contentType: CONTENT_TYPE,
+    processData: false,
+    success: function (result) {
+      callback(result.error, result.data);
+    },
+    error: function (err) {
+      console.error('do ajax ' + url + '   error');
+      callback(err);
+    }
+  });
+};
+
+/**
+ * POST FormData.
+ * @param url
+ * @param params - QueryParams
+ * @param data - FormData
+ * @param callback
+ * @param progress
+ */
+exports.postData = function (url, params, data, callback, progress) {
+
+  data.append("uid", util.uid());
+
+  params._csrf = decodeURIComponent(util.csrf());
+  url += '?' + $.param(params);
+
+  $.ajax({
+    url: url,
+    type: "POST",
+    async: true,
+    data: data,
+    dataType: DATA_TYPE,
+    contentType: false,
+    processData: false,
+    xhr: function () {
+      var XHR = $.ajaxSettings.xhr();
+      if (XHR.upload) {
+        XHR.upload.addEventListener('progress', function (event) {
+          if (progress) {
+            progress(parseInt(event.loaded / event.total * 10000) / 100);
+          }
+        }, false);
+      }
+      return XHR;
+    },
+    success: function (result) {
+      callback(result.error, result.data);
+    },
+    error: function (err) {
+      console.error('do ajax ' + url + '   error');
+      callback(err);
+    }
+  });
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Alertify.html">Alertify</a></li><li><a href="module-ButtonGroup.html">ButtonGroup</a></li><li><a href="module-Constant.html">Constant</a></li><li><a href="module-DateTimePicker.html">DateTimePicker</a></li><li><a href="module-Editable.html">Editable</a></li><li><a href="module-FileSelect.html">FileSelect</a></li><li><a href="module-Init.html">Init</a></li><li><a href="module-Mask.html">Mask</a></li><li><a href="module-MultiSelect.html">MultiSelect</a></li><li><a href="module-Net.html">Net</a></li><li><a href="module-Pagination.html">Pagination</a></li><li><a href="module-PlaceSelect.html">PlaceSelect</a></li><li><a href="module-SelectBox..html">SelectBox.</a></li><li><a href="module-Tags.html">Tags</a></li><li><a href="module-Tree.html">Tree</a></li><li><a href="module-Util.html">Util</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Fri Nov 18 2016 10:48:41 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

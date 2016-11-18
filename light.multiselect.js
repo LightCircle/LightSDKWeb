@@ -1,26 +1,31 @@
 /**
- * Created by lwx on 16/10/19.
- * MultiSelect
- * depend:
- * react
- * bootstrap
- * bootstrap-multiselect
- *
+ * @module MultiSelect
+ * @desc depend.
+ * <ul>
+ *   <li>react</li>
+ *   <li>bootstrap</li>
+ *   <li>bootstrap-multiselect</li>
+ * </ul>
  * @param id
  * @param option
- * nonSelectedText [string] The text displayed when no option is selected
- * limit    [int] too much options would be displayed.
- * multiple [string] When the multiple attribute of the select is present, the plugin uses checkboxes
+ * @param {string} option.api - Provide data interface
+ * @param {string} option.id - correspond to value
+ * @param {string} option.name - correspond to label
+ * @param {object} option.data - Provide data
+ * @param {string} option.nonSelectedText - The text displayed when no option is selected
+ * @param {int} option.numberDisplayed - too much options would be displayed.
+ * @param {string} option.multiple - When the multiple attribute of the select is present, the plugin uses checkboxes
  *                   to allow multiple selections.If it is not present, the plugin uses radio buttons
  *                   to allow single selections
- * selectAllText   [string] The text displayed for the select all option.
- * enableFiltering [boolean] Set to true or false to enable or disable the filter.
- * includeSelectAllOption [boolean] Set to true or false to enable or disable the select all option.
- * selectAllJustVisible   [boolean] if true, the select all option does always select only the visible option
- * maxHeight [number]   The maximum height of the dropdown. This is useful when using the plugin with plenty of options.
- * condition  [object]  search condition
- * enableClickableOptGroups [boolean]  If set to true, optgroup's will be clickable,
+ * @param {string} option.selectAllText - The text displayed for the select all option.
+ * @param {boolean} option.enableFiltering - Set to true or false to enable or disable the filter.
+ * @param {boolean} option.includeSelectAllOption - Set to true or false to enable or disable the select all option.
+ * @param {boolean} option.selectAllJustVisible - If true, the select all option does always select only the visible option
+ * @param {number} option.maxHeight - The maximum height of the dropdown. This is useful when using the plugin with plenty of options.
+ * @param {object} option.condition - search condition
+ * @param {boolean} option.enableClickableOptGroups - If set to true, optgroup's will be clickable,
  *                                     allowing to easily select multiple options belonging to the same group.
+ * @param {function} option.change - change event
  * @returns {*}
  */
 'use strict';

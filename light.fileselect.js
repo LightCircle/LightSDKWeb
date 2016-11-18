@@ -1,24 +1,22 @@
 /**
- * FileSelect.
- *
+ * @module FileSelect
  * @param id
  * @param option
- *   accept   [string]   Allowed file types (.gif, .jpg, .png). default: *
- *   multiple [boolean]  Allows to select multiple files at once. default: false
- *   size     [number]   Allowed file size. default: 5M
- *   url      [string]   Upload URL
- *   nometa   [boolean]  Whether to create META information, the default is to create
- *   check    [function] Custom validation function,
+ * @param {string} option.accept - Allowed file types (.gif, .jpg, .png). default: *
+ * @param {boolean} option.multiple - Allows to select multiple files at once. default: false
+ * @param {number} option.size - Allowed file size. default: 5M
+ * @param {string} option.url - Upload URL
+ * @param {boolean} option.nometa - Whether to create META information, the default is to create
+ * @param {function} option.check - Custom validation function,
  *                       if you need to upload files to do a special check, you can expand the method
- *   error    [function] When a file upload exception occurs, the function is called
- *   success  [function] When the upload file is success, call the function
- *   progress [function] Upload progress
- *   data     [object]   The custom information that is saved with the file
- *     extend      [object] extra information
- *     type        [string] custom file type
- *     description [string] file description
- *     path        [string] file logical path
- *
+ * @param {function} option.error - When a file upload exception occurs, the function is called
+ * @param {function} option.success - When the upload file is success, call the function
+ * @param {function} option.progress - Upload progress
+ * @param {object} option.data - The custom information that is saved with the file
+ * @param {object} option.extend - extra information
+ * @param {string} option.type - custom file type
+ * @param {string} option.description - file description
+ * @param {string} option.path - file logical path
  * @returns {*}
  */
 

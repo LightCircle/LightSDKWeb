@@ -1,5 +1,6 @@
 /**
  * @module FileSelect
+ * @desc fileselect.
  * @param id
  * @param option
  * @param {string} option.accept - Allowed file types (.gif, .jpg, .png). default: *

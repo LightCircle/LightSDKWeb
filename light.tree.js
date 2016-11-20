@@ -1,5 +1,6 @@
 /**
  * @module Tree
+ * @desc tree.
  * @param id
  * @param option
  * @param {number} option.width

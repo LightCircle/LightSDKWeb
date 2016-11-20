@@ -1,5 +1,6 @@
 /**
  * @module Editable
+ * @desc editable.
  * @param id
  * @param option
  * @param {string|object|function} option.pk - Primary key of editable object.

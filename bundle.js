@@ -411,6 +411,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @module Tags
+	 * @desc tags.
 	 * @param id
 	 * @param option
 	 * @param {array} option.data
@@ -22645,6 +22646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @module FileSelect
+	 * @desc fileselect.
 	 * @param id
 	 * @param option
 	 * @param {string} option.accept - Allowed file types (.gif, .jpg, .png). default: *
@@ -23041,6 +23043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @module Tree
+	 * @desc tree.
 	 * @param id
 	 * @param option
 	 * @param {number} option.width
@@ -23374,6 +23377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @module Editable
+	 * @desc editable.
 	 * @param id
 	 * @param option
 	 * @param {string|object|function} option.pk - Primary key of editable object.

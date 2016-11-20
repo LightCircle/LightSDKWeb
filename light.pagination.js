@@ -1,5 +1,6 @@
 /**
  * @module Pagination
+ * @desc pagination.
  * @param id
  * @param option
  * @param {number} option.rowCount - row counts of every page

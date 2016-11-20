@@ -1,5 +1,6 @@
 /**
  * @module Mask
+ * @desc mask.
  * @param id
  * @param option
  * @param {number} option.timeout - Mask The maximum time to display (second). default: 60 sec.

@@ -21898,6 +21898,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @module Mask
+	 * @desc mask.
 	 * @param id
 	 * @param option
 	 * @param {number} option.timeout - Mask The maximum time to display (second). default: 60 sec.
@@ -23499,6 +23500,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @module Pagination
+	 * @desc pagination.
 	 * @param id
 	 * @param option
 	 * @param {number} option.rowCount - row counts of every page

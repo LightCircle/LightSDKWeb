@@ -1,5 +1,5 @@
 /**
- * @module SelectBox.
+ * @module SelectBox
  * @desc Depend.
  * <ul>
  *   <li>react</li>

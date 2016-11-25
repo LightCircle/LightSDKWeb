@@ -183,6 +183,7 @@ var Pagination = React.createClass({
 
   onmouseover: function (event) {
     event.target.style.backgroundColor = '#e67e22';
+    event.target.style.cursor = 'pointer';
   },
 
   onmouseout: function (event) {

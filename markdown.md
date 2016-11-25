@@ -26,13 +26,19 @@
 
 ### Install
 
-- First you need to make sure that the bower is installed.
-    Reference to [bower](https://bower.io/)
-- Try to install light-sdk-web in the project folder，save new dependencies to your bower.json using the following command
-    `bower install light-sdk-web --save`
-    Reference to [bower](https://bower.io/)
-- View version
-    `bower info light-sdk-web`
+- manual download
+
+    https://github.com/LightCircle/LightSDKWeb
+
+- install with bower
+
+     First you need to make sure that the bower is installed.
+Reference to [bower](https://bower.io/)
+     Try to install light-sdk-web in the project folder，save new dependencies to your bower.json using the following command
+`bower install light-sdk-web --save`
+Reference to [bower](https://bower.io/)
+     View version
+`bower info light-sdk-web`
 
 ### Use light-sdk-web
 

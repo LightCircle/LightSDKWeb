@@ -22086,7 +22086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @module SelectBox.
+	 * @module SelectBox
 	 * @desc Depend.
 	 * <ul>
 	 *   <li>react</li>
@@ -23683,6 +23683,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  onmouseover: function (event) {
 	    event.target.style.backgroundColor = '#e67e22';
+	    event.target.style.cursor = 'pointer';
 	  },
 
 	  onmouseout: function (event) {
